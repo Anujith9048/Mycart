@@ -1,0 +1,97 @@
+body{
+    background-color: rgb(253, 255, 251) !important;
+    overflow: hidden;
+}
+.main-color{
+    background-image:url(../images/output.jpg);
+    background-size: 95px;
+    background-position: center;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ----Login-Page--- */
+.login-form{
+    background-color: rgb(255, 255, 255);
+    filter: drop-shadow(0 0 0.35rem rgba(0, 0, 0, 0.274));
+    border-top: 0;
+   
+}
+.log-content{
+    min-height: 90vh;
+}
+.log-bg{
+    background-image:radial-gradient(white,white,#dbdbdb7e);
+}
+.navbar{
+    z-index: 1040;
+}
+
+.btn-outline{
+    border: 1px solid #49be02;
+    border-radius: .4rem;
+    color: rgb(0, 0, 0) !important;
+    position: relative;
+    overflow: hidden;
+    
+}
+.btn-outline:hover{
+    border: 1px solid #49be02;
+    color: white !important;
+}
+.btn-outline1::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: #49be02;
+    z-index: -1;
+    transition: 0.8s;
+    border-radius: 0 10px 10px 0 ;
+}
+.btn-outline1::after{
+    content: '';
+    position: absolute;
+    right: 0px;
+    width: 0%;
+    height: 100%;
+    background: #4abe028f;
+    z-index: -1;
+    transition: 0.8s;
+    border-radius:  10px 0 0 10px ;
+}
+.btn-outline1::before ,.btn-outline1::after{
+    top: 0;
+}
+.btn-outline1:hover::before{
+    width: 180%;
+}
+.btn-outline1:hover::after{
+    width: 180%;
+}
+
+
+/* Admin homepage */
+.body-adminhomepage{
+    height: 80vh;
+    align-items: center !important  ;
+}
+.admin-nav{
+    background-color: #eeffed;
+}
+.list-items{
+    height: 27rem;
+    overflow-y: scroll;
+}
+.list-desi{
+    background-color: #86ff8f;
+    cursor: pointer;
+    
+}
+.list-desi:hover{
+    background-color: #76df7d;
+}
+.content-heading-wrapper{
+    z-index: 1040;
+}
