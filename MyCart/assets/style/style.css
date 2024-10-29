@@ -86,7 +86,6 @@ body{
 }
 .list-desi{
     background-color: #86ff8f;
-    cursor: pointer;
     
 }
 .list-desi:hover{
@@ -94,4 +93,16 @@ body{
 }
 .content-heading-wrapper{
     z-index: 1040;
+}
+.price-tag{
+    color: #ff6100;
+}
+.productname{
+    white-space: nowrap; 
+  width: 100%; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bottom-space{
+    box-shadow: 1px 1px 1px white !important;
 }

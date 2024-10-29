@@ -1,11 +1,15 @@
+<cfoutput>
 <cfif session.isLog>
+    <cfset local.productObj = createObject("component", "models.getlist")>
+    <cfset local.category = local.productObj.getCategoryId(url.subid)>
+    <cfset local.subName = local.productObj.getSubcategoryName(url.subid)>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyCart|Home</title>
+    <title>MyCart|Product</title>
 
     
     <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
@@ -15,7 +19,7 @@
     
     <nav class="navbar navbar-expand-lg px-4 row admin-nav">
         <div class="col-6 d-flex align-items-center">
-          <a class="navbar-brand fs-2 fw-bold" href="#"><span class="main-color">My</span>Cart
+          <a class="navbar-brand fs-2 fw-bold" href="##"><span class="main-color">My</span>Cart
             <img src="../assets/images/logo-img.png" width="30" alt=""></a>
             <p class="fw-bold text-dark m-0">ADMIN</p>
         </div>
@@ -28,7 +32,7 @@
     </div>
         <cfelse>
          <div class="col-6 justify-content-end d-flex me-lg-4" id="navbarNavDropdown">
-              <a class="nav-link p-0" href="#" role="button" id="adminLogin">
+              <a class="nav-link p-0" href="##" role="button" id="adminLogin">
                 Login <img src="../assets/images/login.png" width="18" class="login-img" alt="">
               </a>
         </div>
@@ -36,42 +40,84 @@
     </nav>
 
     <div class="contents body-adminhomepage d-flex">
-        <div class="col-4 mx-auto rounded-3 border border-1 py-4 px-3 list-items shadow-lg">
+        <div class="col-9 mx-auto rounded-3 border border-1 py-4 px-3 list-items shadow-lg">
             <div class="col-12 d-flex align-items-center position-sticky top-0 content-heading-wrapper bg-white">
-                <p class="fw-bold m-0 p-0 fs-5 " id="mainHeader">SubCategories</p>
-                <a href="#" id="addSubCategories" class="fw-bold text-decoration-none ms-2 btn btn-outline-success">
+                <p class="fw-bold m-0 p-0 fs-5 ps-2" id="mainHeader">#local.subName.category.FLDSUBCATEGORYNAME#</p>
+                <a href="##" id="addProduct" sub-id="#url.subid#" cate-id="#local.category.categoryId#" class="fw-bold text-decoration-none ms-2 btn btn-outline btn-outline1">
                     Add+
                 </a>
             </div>
-
+            
             <ul class="list-group d-grid gap-3 mt-3" id="subcategory-list">
-                <!--- List items --->
+                <div class="row">
+                <cfset local.productList = local.productObj.getProducts(subid=url.subid)>
+                <cfloop query="#local.productList.products#" >
+                    
+                        <div class="col-6 mb-2">
+                            <li class="px-5 list-group-item rounded-pill border broder-1 list-desi p-0 d-flex justify-content-between" title="#FLDPRODUCTDESCRIPTION#">
+                                <div class="col-5 overflow-hidden">
+                                    <div class="fw-bold productname">#FLDPRODUCTNAME#</div>
+                                    <div class="form-text p-0 m-0">#FLDBRANDNAME#</div>
+                                    <div class="fw-bold price-tag fs-4">&##8377;#FLDPRODUCTPRICE#</div>
+                                </div>
+
+                                <div class="col-3 align-content-center">
+                                    <img src="../assets/productImage/#FLDPRODUCTIMAGE#" class="rounded-circle " width="60" height="60" alt="">
+                                </div>
+
+                                <div class="col-3 align-content-center">
+                                <div class="float-end">
+                                    <a class="btn btn-outline-light py-0 px-2 editProduct" data-id="#FLDPRODUCT_ID#"> 
+                                    <img src="../assets/images/edit.png" width="20"> 
+                                    </a>
+                                
+                                    <a href="" class="btn btn-outline-light p-1 py-0 deleteItem" data-id="#FLDPRODUCT_ID#"> 
+                                    <img src="../assets/images/delete.png" width="20"> 
+                                    </a>
+                                </div>
+                                </div>
+                            </li>
+                        </div>
+                    
+                </cfloop>
+                </div>
             </ul>
+                
         </div>  
     </div>
     
 <!-- Modal -->
-    <div class="modal fade" id="subCategoriesModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="productModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog d-flex gap-0">
             <div class="modal-content border-0 rounded-0 rounded-start">
                 <div class="modal-header create-bg">
                     <h5 class="modal-title color-address create-title w-100 text-center py-2 rounded-pill" id="exampleModalLabel"></h5>
                 </div>
                 <div class="modal-body">
-                    <form action="homePage.cfm" method="post" enctype="multipart/form-data">
+                    <form action="homePage.cfm" method="post" id="productForm" enctype="multipart/form-data">
                         <table class="table">
                             <tbody>
                                 <tr id="categories">
                                     <td>
-                                        <label for="" class="form-text fw-bold color-address">Categories Name*</label>
-                                        <input type="text" class="form-control" placeholder="Categories Name" id="categoriesName">
+                                        <cfset categoryList = local.productObj.getCategories()>
+                                            <label for="" class="form-text fw-bold color-address">Categories Name*</label>
+                                            <select name="" class="form-control" id="categoriesName" class="productCategory">
+                                                <cfloop query="categoryList.categories">
+                                                    <option value="#FLDCATEGORY_NAME#">#FLDCATEGORY_NAME#</option>
+                                                </cfloop>
+                                            </select>
                                         <p id="errorCategory" class="text-danger"></p>
                                     </td>
                                 </tr>
                                 <tr id="subcategories">
-                                    <td>
+                                    <td><cfset subcategoryList = local.productObj.getSubCategories(local.category.categoryId)>
                                         <label for="" class="form-text fw-bold color-address">SubCategories Name*</label>
-                                        <input type="text" class="form-control" placeholder="SubCategories Name" id="subCategoriesName">
+                                        <select name="" class="form-control" id="subCategoriesName">
+                                            <cfloop query="subcategoryList.subcategories">
+                                                <option value="#subcategoryList.subcategories.FLDSUBCATEGORYNAME#">#subcategoryList.subcategories.FLDSUBCATEGORYNAME#</option>
+                                            </cfloop>
+                                        </select>
+                                        
                                         <p id="errorSubcategory" class="text-danger"></p>
                                     </td>
                                 </tr>
@@ -84,8 +130,15 @@
                                 </tr>
                                 <tr class="product-rows">
                                     <td>
+                                        <label for="" class="form-text fw-bold color-address">Product Brand*</label>
+                                        <input type="text" class="form-control" placeholder="Product Brand" id="productBrand">
+                                        <p id="errorProductBrand" class="text-danger"></p>
+                                    </td>
+                                </tr>
+                                <tr class="product-rows">
+                                    <td>
                                         <label for="" class="form-text fw-bold color-address">Product Description*</label>
-                                        <input type="text" class="form-control" placeholder="Product Description" id="productDEscription">
+                                        <input type="text" class="form-control" placeholder="Product Description" id="productDescription">
                                         <p id="errorProductDesc" class="text-danger"></p>
                                     </td>
                                 </tr>
@@ -109,8 +162,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="closeModalAdd" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" id="modalSubmit" class="btn btn-primary" data-id="">Submit</button>
+                    <button type="button" id="closeProduct" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="modalSubmit" class="btn btn-primary" data-id="" data-type="product">Submit</button>
                 </div>
             </div>
         </div>
@@ -135,7 +188,7 @@
                 <button type="button" id="" class="btn btn-primary"
                     data-bs-dismiss="modal">Close</button>
                     <div id="deleteItem"></div>
-                <button type="button" id="confirmDelete" class="btn btn-danger">Delete</button>
+                <button type="button" id="deleteProduct" class="btn btn-danger">Delete</button>
             </div>
         </div>
     </div>
@@ -152,3 +205,4 @@
 <cfelse>
     <cflocation url="Adminlogin.cfm">
 </cfif>
+</cfoutput>
