@@ -36,18 +36,21 @@
         </cfif>
     </nav>
 
-    <div class="contents body-adminhomepage d-flex">
-        <div class="col-4 mx-auto rounded-3 border border-1 pb-4 px-3 list-items shadow-lg">
+    <div class="contents body-adminhomepage d-flex ">
+        <div class="col-4 mx-auto rounded-3 border border-1  px-3 list-items shadow-lg ">
             <div class="col-12 d-flex align-items-center position-sticky top-0 content-heading-wrapper bg-white pt-3 pb-2">
                 <p class="fw-bold m-0 p-0 fs-5 " id="mainHeader">Categories</p>
-                <a href="#" id="addCategories" data-type="categories" class="fw-bold text-decoration-none ms-2 btn btn-outline-success">
+                <a href="#" id="addCategories" data-type="categories" class="fw-bold text-decoration-none ms-2 btn btn-outline btn-outline1">
                     Add+
                 </a>
             </div>
 
-            <ul class="list-group d-grid gap-3 mt-3" id="item-list">
+            <ul class="list-group d-grid gap-3 mt-3 pb-0" id="item-list">
                 <!--- List items --->
             </ul>
+
+            <div class="col-12 d-flex align-items-center position-sticky bottom-0 bg-white pt-3 pb-2 bottom-space">
+            </div>
         </div>  
     </div>
     

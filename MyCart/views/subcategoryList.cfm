@@ -1,13 +1,14 @@
 <cfoutput>
 <cfif session.isLog>
 <cfset local.subcategObj = createObject("component", "models.getlist")>
+<cfset local.cateName = local.subcategObj.selectCategoryName(url.id)>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyCart|Home</title>
+    <title>MyCart|Subcategories</title>
     <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/style/style.css">
 </head>
@@ -38,8 +39,8 @@
     <div class="contents body-adminhomepage d-flex">
         <div class="col-4 mx-auto rounded-3 border border-1 py-4 px-3 list-items shadow-lg">
             <div class="col-12 d-flex align-items-center position-sticky top-0 content-heading-wrapper bg-white">
-                <p class="fw-bold m-0 p-0 fs-5 " id="mainHeader">SubCategories</p>
-                <a href="##" id="addSubCategories" data-id="#url.id#" class="fw-bold text-decoration-none ms-2 btn btn-outline-success">
+                <p class="fw-bold m-0 p-0 fs-5 " id="mainHeader">#local.cateName.category.FLDCATEGORY_NAME#</p>
+                <a href="##" id="addSubCategories" data-id="#url.id#" class="fw-bold text-decoration-none ms-2 btn btn-outline btn-outline1">
                     Add+
                 </a>
             </div>
@@ -57,7 +58,9 @@
                             <img src="../assets/images/delete.png" width="20"> 
                             </a>
         
-                            <a href="" class="list-content" data-id="#FLDSUBCATEGORY_ID#">Products</a>
+                            <a href="productList.cfm?subid=#FLDSUBCATEGORY_ID#" class="list-product btn btn-outline-light p-0 px-3 text-decoration-none align-content-center" data-id="#FLDSUBCATEGORY_ID#">
+                                <img src="../assets/images/right.svg" width="15" class="text-light p-0" alt="">
+                            </a>
                         </div>
                     </li>
                 </cfloop>
@@ -78,8 +81,13 @@
                             <tbody>
                                 <tr id="categories">
                                     <td>
+                                        <cfset categoryList = local.subcategObj.getCategories()>
                                         <label for="" class="form-text fw-bold color-address">Categories Name*</label>
-                                        <input type="text" class="form-control" placeholder="Categories Name" id="categoriesName">
+                                        <select name="" class="form-control" id="categoriesName">
+                                            <cfloop query="categoryList.categories">
+                                                <option value="#FLDCATEGORY_NAME#">#FLDCATEGORY_NAME#</option>
+                                            </cfloop>
+                                        </select>
                                         <p id="errorCategory" class="text-danger"></p>
                                     </td>
                                 </tr>
@@ -123,7 +131,7 @@
                 <button type="button" id="" class="btn btn-primary"
                     data-bs-dismiss="modal">Close</button>
                     <div id="deleteItem"></div>
-                <button type="button" id="confirmDelete" class="btn btn-danger">Delete</button>
+                <button type="button" id="deleteSubcategory" class="btn btn-danger">Delete</button>
             </div>
         </div>
     </div>
