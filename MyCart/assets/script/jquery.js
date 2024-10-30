@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    // Login User
+    // Login Admin
     $("#submitButton").off('click').on('click', function(event) {
         event.preventDefault();
         var isValid = validateForm();
@@ -618,7 +618,108 @@ $(document).ready(function() {
         location.reload();
     });
 
-  
+
+    // -------------User View------------------------
+
+    
+    $("#addToCart").off('click').on('click', function(event) {
+        event.preventDefault();
+        var proid = $(this).attr("pro-id");
+        $.ajax({
+            url: '../models/savedetails.cfc?method=addCart',
+            method: 'post',
+            data: {proid},
+            dataType: 'JSON',
+            success: function(response) {
+             
+                if (response.result === true) {
+                    alert("Added To Cart");
+                }
+                else if(response.result === "login"){
+                    window.location.href="userloginPage.cfm";
+                }
+                else{
+                    alert("Item already added to cart");
+                }
+            },
+            error: function(status, error) {
+                console.log("AJAX error: " + status + ", " + error);
+            }
+        });
+    });
+
+
+    // Login User
+    $("#submitLogin").off('click').on('click', function(event) {
+        event.preventDefault();
+        var isValid = validateForm();
+        if (isValid) {
+            var username = jQuery.trim($('#InputUname').val());
+            var email = jQuery.trim($('#InputEmail').val());
+            var password = jQuery.trim($('#InputPassword').val());
+
+            $.ajax({
+                url: '../controllers/loginUser.cfc?method=checkLogin',
+                method: 'post',
+                data: { username, email, password },
+                dataType: 'JSON',
+                success: function(response) {
+                    if (response.result === true) {
+                        $("#InputEmail,#InputUname,#InputPassword,#roleOptions").removeClass("is-invalid");
+                        $("#InputEmail,#InputUname,#InputPassword,#roleOptions").addClass("is-valid");
+                        $("#passwordHelp").text('');
+                        window.location.href="homePage.cfm";
+                    } else{
+                        $("#InputEmail,#InputUname,#InputPassword,#roleOptions").addClass("is-invalid");
+                        $("#InputEmail,#InputUname,#InputPassword,#roleOptions").removeClass("is-valid");
+                        $("#passwordHelp").addClass("text-danger");
+                        $("#passwordHelp").removeClass("text-success");
+                        $("#passwordHelp").text("login faild");
+                    }
+                },
+                error: function(status, error) {
+                    console.log("AJAX error: " + status + ", " + error);
+                }
+            });
+        }
+    });
+
+     // Logout
+     $("#Userlogout").off('click').on('click', function() {
+        $.ajax({
+            url: '../models/loginUser.cfc?method=logout',
+            method: 'post',
+            dataType: 'JSON',
+            success: function(response) {
+                if (response) {
+                    window.location.href="userloginPage.cfm";
+                }
+            },
+            error: function(status, error) {
+                console.log("AJAX error: " + status + ", " + error);
+            }
+        });
+    });
+
+    // Remove Cart
+    $(".removeCart").off('click').on('click', function() {
+        var proid = $(this).attr("pro-id");
+        $.ajax({
+            url: '../models/savedetails.cfc?method=removeCart',
+            method: 'post',
+            data:{proid},
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.result) {
+                    window.location.href="cartPage.cfm";
+                }
+            },
+            error: function(status, error) {
+                console.log("AJAX error: " + status + ", " + error);
+            }
+        });
+    });
+
 
 
 

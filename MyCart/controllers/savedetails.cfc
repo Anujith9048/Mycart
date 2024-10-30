@@ -25,8 +25,6 @@ component{
 
     }
 
-
-
     remote any function addSubCategory(categoryName,subCategoryName,type,id) returnFormat="JSON"{
         local.objSave = createObject("component", "models.savedetails");
         if(trim(len(categoryName)) EQ 0 OR trim(len(subCategoryName)) EQ 0){

@@ -281,4 +281,50 @@
         </cfquery>
       <cfreturn {"result":true}>
   </cffunction>
+
+  <!--- Add Cart --->
+  <cffunction name="addCart" access="remote" returnformat="JSON">
+    <cfargument name="proid" type="any" >
+    <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
+
+    <cfquery name="checkCart" datasource="sqlDatabase" result="checkResult">
+      SELECT 1 FROM tblcart
+      WHERE fldProductID = <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_varchar">
+      AND fldActive = <cfqueryparam value="1"  cfsqltype="cf_sql_varchar">;
+    </cfquery>
+    
+      <cfif checkResult.recordCount>
+        <cfreturn {"result":false}>
+        <cfelse>
+          <cfif session.isLog>
+            <cfquery name="addCart" datasource="sqlDatabase" result="addResult">
+              INSERT INTO tblcart (fldUserID,fldCartDate,fldProductID)
+              VALUES(
+                  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">,
+                  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
+                  <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_varchar">
+              );
+            </cfquery>
+            <cfreturn {"result":true}>
+
+            <cfelse>
+              <cfreturn {"result":"login"}>
+          </cfif>
+      </cfif>
+  </cffunction>
+
+  <!--- Remove Cart --->
+  <cffunction name="removeCart" access="remote" returnformat="JSON">
+    <cfargument name="proid" type="any" >
+        <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
+        <cfquery name="deleteSubCategoryList" datasource="sqlDatabase" result="editResult">
+          UPDATE tblcart
+          SET
+            fldRemoveDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
+            fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_varchar">
+          WHERE fldProductID =  <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_varchar">;
+        </cfquery>
+      <cfreturn {"result":true}>
+  </cffunction>
+
 </cfcomponent>

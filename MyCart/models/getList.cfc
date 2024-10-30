@@ -82,6 +82,16 @@
         <cfreturn { "product": selectProduct,"subcategory": selectSubCategory}>
     </cffunction>
 
+    <cffunction name="getSingleProduct" access="remote" returnFormat="JSON">
+        <cfargument name="proId" type="any">
+        <cfquery name="selectProduct" datasource="sqlDatabase">
+            SELECT fldProductName,fldProductDescription,fldProductPrice,fldBrandName,fldProductImage  FROM tblproducts
+            WHERE fldProduct_ID = <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+        
+        <cfreturn { "product": selectProduct}>
+    </cffunction>
+
     <cffunction name="getSubcategoryName" access="remote" returnFormat="JSON">
         <cfargument name="subid" type="any">
         <cfquery name="selectCategory" datasource="sqlDatabase" result="name">
@@ -91,4 +101,47 @@
         <cfreturn { "category": selectCategory, "name": name}>
     </cffunction>
 
+
+    <cffunction name="getRandomProducts" access="remote" returnFormat="JSON">
+        <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
+            SELECT fldProduct_ID,fldProductName ,fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
+            WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+            ORDER BY RAND()
+            LIMIT 4;
+        </cfquery>
+        <cfreturn { "products": selectProducts }>
+    </cffunction>
+
+    <cffunction name="getCart" access="remote" returnFormat="JSON">
+        <cfargument name="userId" type="string">
+        <cfquery name="selectCartItems" datasource="sqlDatabase" result="cartItems">
+            SELECT p.fldProduct_ID, p.fldProductName, p.fldProductPrice, p.fldBrandName, p.fldProductImage, p.fldProductDescription
+            FROM tblproducts p INNER JOIN tblcart c ON p.fldProduct_ID = c.fldProductID
+            WHERE c.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar"> 
+            AND c.fldUserID = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_varchar">
+            AND p.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+        </cfquery>
+        <cfreturn { "cartItems": selectCartItems }>
+    </cffunction>
+
+    <cffunction name="getCartPrice" access="remote" returnFormat="JSON">
+        <cfargument name="userId" type="string">
+        <cfquery name="selectCartAmount" datasource="sqlDatabase" result="cartamount">
+            SELECT SUM(p.fldProductPrice) as sum
+            FROM tblproducts p INNER JOIN tblcart c ON p.fldProduct_ID = c.fldProductID
+            Where c.fldUserID = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_varchar">
+            AND c.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+        <cfreturn { "price": selectCartAmount }>
+    </cffunction>
+
+    <cffunction name="getCartCount" access="remote" returnFormat="JSON">
+        <cfquery name="selectCartCount" datasource="sqlDatabase" result="cartamount">
+            SELECT COUNT(fldUserID) AS count
+            FROM tblcart
+            where fldActive = 1 
+            AND fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+        <cfreturn { "count": selectCartCount }>
+    </cffunction>
 </cfcomponent>
