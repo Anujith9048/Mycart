@@ -16,63 +16,19 @@
 </head>
 <body>
     
-    <nav class="navbar navbar-expand-lg px-4 justify-content-between position-sticky top-0 bg-light">
-        <div class="container-fluid">
-          <a class="navbar-brand fw-bold" href="homePage.cfm">MyCart</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="##navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-        </div>
-        <input type="text" name="" id="" class="form-control w-50" placeholder="Search product">
-        <div class="collapse navbar-collapse d-flex me-4" id="navbarNavDropdown">
-            <ul class="navbar-nav">
-              <li class="nav-item dropdown">
-                <a class="nav-link" href="cartPage.cfm">
-                  Cart
-                </a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link" href="##" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Login
-                </a>
-              </li>
-            </ul>
-          </div>
-    </nav>
+  <cfinclude  template="navbar.cfm">
 
-<!-- Category List -->
-    <div class="row ">
-      <div class="container-fluid bg-dark text-light px-5">
-        <div class="collapse navbar-collapse d-flex" id="navbarNavDropdown">
-          <ul class="navbar-nav w-100 d-flex flex-row justify-content-between">
-            <cfset local.categorylist = local.getlistObj.getCategories()>
-            <cfloop query="local.categorylist.categories">
-              <li class="nav-item">
-                <a class="nav-link dropdown-toggle" href="##" role="button" data-bs-toggle="dropdown" aria-expanded="false" cate-id="#FLDCATEGORY_ID#">
-                  #FLDCATEGORY_NAME#
-                </a>
-                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink" cate-id="#FLDCATEGORY_ID#">
-                  <cfset local.subcategorylist = local.getlistObj.getSubCategories(FLDCATEGORY_ID)>
-                  <cfloop query="local.subcategorylist.subcategories">
-                    <li class="subcategory-item" sub-id="#FLDSUBCATEGORY_ID#"><a class="dropdown-item " href="userProductList.cfm?subid=#FLDSUBCATEGORY_ID#">#FLDSUBCATEGORYNAME#</a></li>
-                  </cfloop>
-                </ul>
-              </li>
-            </cfloop>
-          </ul>
-        </div>
-      </div>
-    </div>
+  <cfinclude  template="bottomNav.cfm">
     
     
     <div class="row d-flex pb-5">
       <div class="cart-wrapper col-8 ">
         <cfloop query="local.cartList.cartItems">
           <div class="col-12 mt-5 px-2  d-flex justify-content-center">
-            <div class="col-2 ">
+            <div class="col-4 d-flex justify-content-center ">
               <img src="../assets/productImage/#FLDPRODUCTIMAGE#" height="150" alt="" class=" float-start">
             </div>
-            <div class="col-3 ms-5">
+            <div class="col-3">
               <h4 class="fw-bold  productname">#FLDPRODUCTNAME#</h4>
               <p class="form-text p-0 productname">#FLDBRANDNAME#</p>
               <p class="form-text p-0 productname">#FLDPRODUCTDESCRIPTION#</p>
@@ -82,7 +38,23 @@
               </div>
             </div>
             <div class="col-3 ms-3">
-              <p class="price-tag fw-bolder fs-4 ">&##8377;#FLDPRODUCTPRICE#</p>
+              <p class="price-tag fw-bolder fs-4 mb-0">&##8377;#FLDPRODUCTPRICE#</p>
+              <cfif FLDACTIVE EQ 0>
+                <p class="text-danger p-0 m-0">Out Of Stock</p>
+                <cfelse>
+                  <p class="text-danger p-0 m-0"></p>
+              </cfif>
+
+              <p class="mb-1 mt-2 form-text">Quantity</p>
+              <div class="d-flex gap-2">
+                <cfif FLDQUANTITY GT 1>
+                  <div class="btn rounded-circle btn-outline-dark py-0 fw-bold quantityControl px-0" data-type="decrease" pro-id="#FLDPRODUCT_ID#">-</div>
+                  <cfelse>
+                    <div class="btn rounded-circle btn-outline-secondary py-0 fw-bold quantityControl px-0 disabled" data-type="decrease" pro-id="#FLDPRODUCT_ID#">-</div>
+                </cfif>
+                <div class="cartQuantity border border-1 w-25 text-center rounded">#FLDQUANTITY#</div>
+                <div class="btn rounded-circle btn-outline-dark py-0 fw-bold quantityControl px-0" data-type="increase" pro-id="#FLDPRODUCT_ID#">+</div>
+              </div>
             </div>
           </div>
         </cfloop>
@@ -95,7 +67,7 @@
           <div class="d-flex justify-content-between">
             <p>Total Price</p>
             <cfset local.totalPrice = local.getlistObj.getCartPrice(session.userId)>
-            <p class="fw-bold">&##8377;#local.totalPrice.price.SUM#</p>
+            <p class="fw-bold price-tag">&##8377;#local.totalPrice.price.SUM#</p>
           </div>
           <a href="" class="btn btn-outline btn-outline1">Bought Together</a>
         </div>
