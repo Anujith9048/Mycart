@@ -634,6 +634,7 @@ $(document).ready(function() {
              
                 if (response.result === true) {
                     alert("Added To Cart");
+                    location.reload();
                 }
                 else if(response.result === "login"){
                     window.location.href="userloginPage.cfm";
@@ -720,7 +721,69 @@ $(document).ready(function() {
         });
     });
 
+// Search Item
+    $("#searchItem").off('click').on('click', function(event) {
+        event.preventDefault();
+        var productName = $("#productName").val();
+        window.location.href=`userProductList.cfm?search=${productName}`;
+    });
 
+ // Cart Quantity
+ $(".quantityControl").off('click').on('click', function(event) {
+    event.preventDefault();
+    var id = $(this).attr("pro-id");
+    var type =$(this).attr("data-type");
+    
+    $.ajax({
+        url: '../models/savedetails.cfc?method=addQuantity',
+        method: 'post',
+        data: {id,type},
+        dataType: 'JSON',
+        success: function(response) {
+            if (response.result) {
+                window.location.href = "cartPage.cfm";
+            }
+        },
+        error: function(status, error) {
+            console.log("AJAX error: " + status + ", " + error);
+        }
+    });
+});
+
+// Sort Items
+$(".sort").off('click').on('click', function(event) {
+    event.preventDefault();
+    var type =$(this).attr("type");
+    var data =$(this).attr("data-id");
+    var mode =$(this).attr("data-mode");
+    if (mode==="search") {
+        window.location.href = `userProductList.cfm?search=${data}&sort=${type}`;
+    }
+    else if(mode==="sub"){
+        window.location.href = `userProductList.cfm?subid=${data}&sort=${type}`;
+    }
+});
+
+// Cart Quantity
+// $(".category-list-items").off('click').on('click', function(event) {
+//     event.preventDefault();
+//     var id = $(this).attr("cate-id");
+    
+//     $.ajax({
+//         url: '../models/getList.cfc?method=getSubCategories',
+//         method: 'post',
+//         data: {id},
+//         dataType: 'JSON',
+//         success: function(response) {
+//             if (response.result) {
+//                alert("hey");
+//             }
+//         },
+//         error: function(status, error) {
+//             console.log("AJAX error: " + status + ", " + error);
+//         }
+//     });
+// });
 
 
 

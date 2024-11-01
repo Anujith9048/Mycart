@@ -54,11 +54,48 @@
 
     <cffunction name="getProducts" access="remote" returnFormat="JSON">
         <cfargument name="subid" type="string">
-        <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
-            SELECT fldProduct_ID,fldProductName ,fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
-            WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
-            AND fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_varchar">;
-        </cfquery>
+        <cfargument name="limit" type="string">
+        <cfif structKeyExists(arguments, "limit")>
+            <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
+                SELECT fldProduct_ID,fldProductName ,fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
+                WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+                AND fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_varchar">
+                ORDER BY RAND()
+                LIMIT 8;
+            </cfquery>
+
+            <cfelse>
+                <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
+                    SELECT fldProduct_ID,fldProductName ,fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
+                    WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+                    AND fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_varchar">;
+                </cfquery>
+        </cfif>
+        <cfreturn { "products": selectProducts }>
+    </cffunction>
+
+    <cffunction name="getProductsSorted" access="remote" returnFormat="JSON">
+        <cfargument name="subid" type="string">
+        <cfargument name="sort" type="string">
+        <cfif sort EQ 'asc'>
+            <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
+                SELECT fldProduct_ID, fldProductName, fldProductPrice, fldBrandName, fldProductImage, fldProductDescription 
+                FROM tblproducts
+                WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+                AND fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_varchar">
+                ORDER BY fldProductPrice ASC;
+            </cfquery>
+
+            <cfelse>
+                <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
+                    SELECT fldProduct_ID, fldProductName, fldProductPrice, fldBrandName, fldProductImage, fldProductDescription 
+                    FROM tblproducts
+                    WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+                    AND fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_varchar">
+                    ORDER BY fldProductPrice DESC;
+                </cfquery>
+        </cfif>
+        
         <cfreturn { "products": selectProducts }>
     </cffunction>
 
@@ -115,11 +152,10 @@
     <cffunction name="getCart" access="remote" returnFormat="JSON">
         <cfargument name="userId" type="string">
         <cfquery name="selectCartItems" datasource="sqlDatabase" result="cartItems">
-            SELECT p.fldProduct_ID, p.fldProductName, p.fldProductPrice, p.fldBrandName, p.fldProductImage, p.fldProductDescription
+            SELECT p.fldActive,p.fldProduct_ID, p.fldProductName, p.fldProductPrice, p.fldBrandName, p.fldProductImage, p.fldProductDescription, c.fldQuantity
             FROM tblproducts p INNER JOIN tblcart c ON p.fldProduct_ID = c.fldProductID
             WHERE c.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar"> 
             AND c.fldUserID = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_varchar">
-            AND p.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
         </cfquery>
         <cfreturn { "cartItems": selectCartItems }>
     </cffunction>
@@ -127,11 +163,13 @@
     <cffunction name="getCartPrice" access="remote" returnFormat="JSON">
         <cfargument name="userId" type="string">
         <cfquery name="selectCartAmount" datasource="sqlDatabase" result="cartamount">
-            SELECT SUM(p.fldProductPrice) as sum
-            FROM tblproducts p INNER JOIN tblcart c ON p.fldProduct_ID = c.fldProductID
-            Where c.fldUserID = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_varchar">
-            AND c.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">;
+            SELECT SUM(p.fldProductPrice * c.fldQuantity) as sum
+            FROM tblproducts p
+            INNER JOIN tblcart c ON p.fldProduct_ID = c.fldProductID
+            WHERE c.fldUserID = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_varchar">
+            AND c.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
         </cfquery>
+        
         <cfreturn { "price": selectCartAmount }>
     </cffunction>
 
@@ -144,4 +182,37 @@
         </cfquery>
         <cfreturn { "count": selectCartCount }>
     </cffunction>
+
+    <cffunction name="searchProduct" access="remote" returnFormat="JSON">
+        <cfargument name='productName' type="any">
+        <cfquery name="searchProduct" datasource="sqlDatabase" result="cartamount">
+            SELECT fldProduct_ID,fldProductName ,fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
+            WHERE fldProductName LIKE <cfqueryparam value="%#arguments.productName#%" cfsqltype="cf_sql_varchar">
+            AND fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+        <cfreturn { "products": searchProduct }>
+    </cffunction>
+    
+    <cffunction name="searchProductSorted" access="remote" returnFormat="JSON">
+        <cfargument name='productName' type="any">
+        <cfargument  name="sort" type="string">
+        <cfif sort EQ 'asc'>
+            <cfquery name="searchProduct" datasource="sqlDatabase" result="cartamount">
+                SELECT fldProduct_ID,fldProductName ,fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
+                WHERE fldProductName LIKE <cfqueryparam value="%#arguments.productName#%" cfsqltype="cf_sql_varchar">
+                AND fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+                ORDER BY fldProductPrice ASC;
+            </cfquery>
+
+            <cfelse>
+                <cfquery name="searchProduct" datasource="sqlDatabase" result="cartamount">
+                    SELECT fldProduct_ID,fldProductName ,fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
+                    WHERE fldProductName LIKE <cfqueryparam value="%#arguments.productName#%" cfsqltype="cf_sql_varchar">
+                    AND fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+                    ORDER BY fldProductPrice DESC;
+                </cfquery>
+        </cfif>
+        <cfreturn { "products": searchProduct }>
+    </cffunction>
+
 </cfcomponent>

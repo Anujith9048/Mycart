@@ -56,11 +56,22 @@
         <cfquery name="editCategoryList" datasource="sqlDatabase" result="editResult">
           UPDATE tblsubcategories
           SET
-            fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">,
-            fldDeactivatedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
-            fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_varchar">
-          WHERE fldCategoryID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_varchar">;
+              fldDeactivatedBy = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">,
+              fldDeactivatedDate = <cfqueryparam value="#local.currentDate#" cfsqltype="cf_sql_varchar">,
+              fldActive = <cfqueryparam value="0" cfsqltype="cf_sql_varchar">
+          WHERE fldCategoryID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_varchar">
         </cfquery>
+
+        <cfquery name="updateProductList" datasource="sqlDatabase">
+          UPDATE tblproducts
+          SET fldActive = <cfqueryparam value="0" cfsqltype="cf_sql_varchar">
+          WHERE fldSubcategoryID IN (
+              SELECT fldSubcategory_ID
+              FROM tblsubcategories
+              WHERE fldCategoryID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_varchar">
+          )
+        </cfquery>
+
       <cfreturn {"result":true}>
   </cffunction>
 
@@ -127,6 +138,15 @@
           <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
           <cfquery name="deleteSubCategoryList" datasource="sqlDatabase" result="editResult">
             UPDATE tblsubcategories
+            SET
+              fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">,
+              fldDeactivatedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
+              fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_varchar">
+            WHERE fldSubcategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_varchar">;
+          </cfquery>
+
+          <cfquery name="deleteSubCategoryProduct" datasource="sqlDatabase" result="editResult">
+            UPDATE tblproducts
             SET
               fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">,
               fldDeactivatedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
@@ -327,4 +347,27 @@
       <cfreturn {"result":true}>
   </cffunction>
 
+<!---  addQuantity  --->
+  <cffunction name="addQuantity" access="remote" returnformat="JSON">
+    <cfargument name="id" type="any" >
+    <cfargument name="type" type="string" >
+        <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
+        <cfif arguments.type EQ 'increase'>
+          <cfquery name="addQuantity" datasource="sqlDatabase" result="editResult">
+            UPDATE tblcart
+            SET
+              fldQuantity =  fldQuantity + 1
+              WHERE fldProductID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_varchar">;
+          </cfquery>
+
+          <cfelse>
+          <cfquery name="addQuantity" datasource="sqlDatabase" result="editResult">
+            UPDATE tblcart
+            SET
+              fldQuantity =  fldQuantity - 1
+              WHERE fldProductID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_varchar">;
+          </cfquery>
+        </cfif>
+      <cfreturn {"result":true}>
+  </cffunction>
 </cfcomponent>

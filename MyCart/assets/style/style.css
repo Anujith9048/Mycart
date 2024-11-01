@@ -1,6 +1,7 @@
 body{
     background-color: rgb(253, 255, 251) !important;
     overflow-x: hidden;
+    padding-bottom: 70px;
 }
 .main-color{
     background-image:url(../images/output.jpg);
@@ -189,3 +190,27 @@ body{
 .btn-outline2:hover::after, .btn-outline3:hover::after{
     width: 180%;
 }
+.quantityControl{
+    width: 28px;
+    height: 28px;
+    text-align: center;
+}
+
+
+
+.dropdown-menu {
+    display: none;
+  }
+
+  .categ-head:hover .dropdown-menu {
+    display: block;
+  }
+
+  .dropdown-menu {
+    top: 101%;
+    left: 0;
+    z-index: 1000;
+  }
+  .subcategory-label:hover{
+    text-decoration: underline !important;
+  }
