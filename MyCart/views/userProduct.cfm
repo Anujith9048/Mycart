@@ -18,7 +18,6 @@
 <body>
     
   <cfinclude  template="navbar.cfm">
-
   <cfinclude  template="bottomNav.cfm">
     
     
@@ -32,14 +31,51 @@
           <p class="fs-5"><span class="fw-bold form-text"> <u>Description:</u> </span>#local.product.FLDPRODUCTDESCRIPTION#</p>
           <p class="price-tag fw-bolder fs-4">&##8377;#local.product.FLDPRODUCTPRICE#</p>
           <div class="btn-items d-flex gap-2">
-            <a href="##" class="btn btn-outline btn-outline1" id="buyNow" pro-id="#url.proid#">Buy Now</a>
+            <a href="##" class="btn btn-outline btn-outline1" id="buyNow" pro-id="#url.proid#"  data-bs-toggle="modal" data-bs-target="##addressModal">Buy Now</a>
             <a href="##" class="btn btn-outline2" id="addToCart" pro-id="#url.proid#">Add to Cart</a>
           </div>
         </div>
       </div>
 
 
+      <!-- Modal -->
+    <div class=" shadow-lg modal fade" id="addressModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 rounded">
+          <div class="modal-header create-bg">
+            <h5 class="modal-title color-address create-title w-100 text-center py-2 rounded-pill" id="exampleModalLabel">Select Address</h5>
+          </div>
+          <div class="modal-body">
+            
+          <cfset local.userAddress = local.getlistObj.getUserAddress()>
+            
+            <p class="text-primary h6 form-text">Saved Addresses</p>
+            <table class="w-100 mb-4 table table-hover">
+            <cfloop query="local.userAddress.data">
+              <tr class="border border-1 w-100 ">
+                <td class="p-3">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="addressRadio" id="addressRadio" value="#fldaddress_id#" checked>
+                <label class="form-check-label" for="flexRadioDefault1">
+                  <p class="h6">#fldfullname# <span class="ms-3">#fldphone#</span></p>
+                  <p class="form-text text-dark mb-0">#fldbuildingname# , #fldcity# , #fldarea# , #fldstate#</p>
+                  <p class="form-text text-dark m-0 p-0 h6">#fldpincode#</p>
+                </label>
+              </div>
+                </td>
+              </tr>
+            </cfloop>
+            </table>
 
+          </div>
+          <div class="modal-footer">
+            <a href="userProfile.cfm" class="float-start  ">Add Address</a>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="selectAddress" proid="#url.proid#">Payment Details</button>
+          </div>
+      </div>
+    </div>
+    </div>
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>

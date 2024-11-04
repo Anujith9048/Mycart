@@ -215,4 +215,33 @@
         <cfreturn { "products": searchProduct }>
     </cffunction>
 
+    <cffunction name="getUserDetails" access="remote" returnFormat="JSON">
+        <cfquery name="getUserDetails" datasource="sqlDatabase" result="Products">
+            SELECT fldUserName ,fldEmail FROM tbluserlogin
+            WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+            AND fldUser_ID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+        <cfreturn { "data": getUserDetails }>
+    </cffunction>
+
+    <cffunction name="getUserAddress" access="remote" returnFormat="JSON">
+        <cfquery name="getUserAddress" datasource="sqlDatabase" result="Products">
+            SELECT fldAddress_ID ,fldFullname ,fldPhone ,fldPincode ,fldState ,fldCity ,fldBuildingName ,fldArea FROM tblsavedaddress
+            WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+            AND fldAddressUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
+            ORDER BY fldAddress_ID DESC;
+        </cfquery>
+        <cfreturn { "data": getUserAddress }>
+    </cffunction>
+
+    <cffunction name="getselectedAddress" access="remote" returnFormat="JSON">
+        <cfargument name="addressId" type="any">
+        <cfquery name="getselectedAddress" datasource="sqlDatabase" result="Products">
+            SELECT fldFullname ,fldPhone ,fldPincode ,fldState ,fldCity ,fldBuildingName ,fldArea FROM tblsavedaddress
+            WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+            AND fldAddress_ID  = <cfqueryparam value="#arguments.addressId#" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+        <cfreturn { "result": getselectedAddress }>
+    </cffunction>
+
 </cfcomponent>

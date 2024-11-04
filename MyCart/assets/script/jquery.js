@@ -764,30 +764,127 @@ $(".sort").off('click').on('click', function(event) {
     }
 });
 
-// Cart Quantity
-// $(".category-list-items").off('click').on('click', function(event) {
-//     event.preventDefault();
-//     var id = $(this).attr("cate-id");
+// Submit Address
+$("#submitAddress").off('click').on('click', function(event) {
+    event.preventDefault();
+    var validate = validateAddress();
+    if(validate){
+        var name = jQuery.trim($('#name').val());
+        var phone = jQuery.trim($('#phone').val());
+        var pincode = jQuery.trim($('#pincode').val());
+        var state = jQuery.trim($('#state').val());
+        var city = jQuery.trim($('#city').val());
+        var building = jQuery.trim($('#building').val());
+        var area = jQuery.trim($('#area').val());
+        $.ajax({
+            url: '../models/savedetails.cfc?method=addAddress',
+            method: 'post',
+            data: {name,phone,pincode,state,city,building,area},
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.result) {
+                    window.location.href = "userProfile.cfm";
+                }
+            },
+            error: function(status, error) {
+                console.log("AJAX error: " + status + ", " + error);
+            }
+        });
+    }
+});
+
+// selectAddress
+$("#selectAddress").off('click').on('click', function(event) {
     
-//     $.ajax({
-//         url: '../models/getList.cfc?method=getSubCategories',
-//         method: 'post',
-//         data: {id},
-//         dataType: 'JSON',
-//         success: function(response) {
-//             if (response.result) {
-//                alert("hey");
-//             }
-//         },
-//         error: function(status, error) {
-//             console.log("AJAX error: " + status + ", " + error);
-//         }
-//     });
-// });
+    event.preventDefault();
+    var addressId = $('input[name="addressRadio"]:checked').val();
+    var proid = $(this).attr('proid');
+    if(proid === ""){
+        window.location.href=`paymentPage.cfm?addressid=${addressId}&order=cart`
+    }
+    else{
+        window.location.href=`paymentPage.cfm?addressid=${addressId}&proid=${proid}`
+    }
+});
 
+$(".quantityControlPayment").off('click').on('click', function(event) {event.preventDefault();
+    var type = $(this).attr('data-type');
+    var quantity = parseInt($("#productQuantity").text(), 10); 
+    
+    if (type === 'increase') {
+        quantity = quantity + 1;
+    } else if (type === 'decrease') {
+        quantity = quantity - 1;
+    }
+    if (quantity < 1) {
+        quantity = 1;
+    }
+    
+    $("#productQuantity").text(quantity);
+    
+});
 
+// PAY
+$("#pay").off('click').on('click', function(event) {
+    var cardnumber =  jQuery.trim($('#cardnumber').val());
+    var cvv =  jQuery.trim($('#cvv').val());
+    var result = true;
+    if(cardnumber != '11111111111'){
+       $('#cardnumber').addClass("is-invalid");
+       result = false;
+    }
+    else{
+       $('#cardnumber').removeClass("is-invalid");
+       $('#cardnumber').addClass("is-valid");
+    }
+    if(cvv != '123'){
+       $('#cvv').addClass("is-invalid");
+       result = false;
+    }
+    else{
+       $('#cvv').removeClass("is-invalid");
+       $('#cvv').addClass("is-valid");
+    }
+    if(result){
+        var addressId =$(this).attr("address-id");
+        var proid =$(this).attr("proid");
+        var price =$("#productprice").attr("price");
+        var quantity =$('#productQuantity').text();
 
-
+        if(isNaN(proid)){
+            $.ajax({
+                url: '../models/savedetails.cfc?method=orderCartProduct',
+                method: 'post',
+                data: {addressId},
+                dataType: 'JSON',
+                success: function(response) {
+                    if (response.result) {
+                        window.location.href="paysuccess.cfm"
+                    }
+                },
+                error: function(status, error) {
+                    console.log("AJAX error: " + status + ", " + error);
+                }
+            });
+        }
+        else{
+        $.ajax({
+            url: '../models/savedetails.cfc?method=orderProduct',
+            method: 'post',
+            data: {cardnumber,cvv,addressId,proid,quantity,price},
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.result) {
+                    window.location.href="paysuccess.cfm"
+                }
+            },
+            error: function(status, error) {
+                console.log("AJAX error: " + status + ", " + error);
+            }
+        });
+    }
+    }
+});
 
 
 
@@ -991,3 +1088,111 @@ function validateModal(type){
         return result;
     }
 }
+
+function validateAddress(){ 
+    var name = jQuery.trim($('#name').val());
+    var phone = jQuery.trim($('#phone').val());
+    var pincode = jQuery.trim($('#pincode').val());
+    var state = jQuery.trim($('#state').val());
+    var city = jQuery.trim($('#city').val());
+    var building = jQuery.trim($('#building').val());
+    var area = jQuery.trim($('#area').val());
+    var result = true;
+    if(name.length){
+        $("#name").removeClass("is-invalid");
+        $("#name").addClass("is-valid");
+        $("#errorName").text("");
+        
+    }
+    else{
+        $("#name").addClass("is-invalid");
+        $("#name").removeClass("is-valid");
+        $("#errorName").text("Enter Full Name");
+        $("#errorName").addClass("text-danger");
+        result = false;
+    }
+
+    let phonePattern = /^(?:\+91)?[0-9]{10}$/; 
+    if(phone.length && phonePattern.test(phone)){
+        $("#phone").removeClass("is-invalid");
+        $("#phone").addClass("is-valid");
+        $("#errorPhone").text("");
+    } else {
+        $("#phone").addClass("is-invalid");
+        $("#phone").removeClass("is-valid");
+        $("#errorPhone").text("Enter a valid Phone Number");
+        $("#errorPhone").addClass("text-danger");
+        result = false;
+    }
+
+    if(pincode.length){
+        $("#pincode").removeClass("is-invalid");
+        $("#pincode").addClass("is-valid");
+        $("#errorPincode").text("");
+    }
+    else{
+        $("#pincode").addClass("is-invalid");
+        $("#pincode").removeClass("is-valid");
+        $("#errorPincode").text("Enter Pincode");
+        $("#errorPincode").addClass("text-danger");
+        $("#errorPincode").removeClass("text-success");
+        result = false;
+    }
+
+    if(state.length){
+        $("#state").removeClass("is-invalid");
+        $("#state").addClass("is-valid");
+        $("#errorState").text("");
+    }
+    else{
+        $("#state").addClass("is-invalid");
+        $("#state").removeClass("is-valid");
+        $("#errorState").text("Enter State");
+        $("#errorState").addClass("text-danger");
+        $("#errorState").removeClass("text-success");
+        result = false;
+    }
+
+    if(city.length){
+        $("#city").removeClass("is-invalid");
+        $("#city").addClass("is-valid");
+        $("#errorCity").text("");
+    }
+    else{
+        $("#city").addClass("is-invalid");
+        $("#city").removeClass("is-valid");
+        $("#errorCity").text("Enter City");
+        $("#errorCity").addClass("text-danger");
+        $("#errorCity").removeClass("text-success");
+        result = false;
+    }
+
+    if(building.length){
+        $("#building").removeClass("is-invalid");
+        $("#building").addClass("is-valid");
+        $("#errorBuilding").text("");
+    }
+    else{
+        $("#building").addClass("is-invalid");
+        $("#building").removeClass("is-valid");
+        $("#errorBuilding").text("Enter Building");
+        $("#errorBuilding").addClass("text-danger");
+        $("#errorBuilding").removeClass("text-success");
+        result = false;
+    }
+
+    if(area.length){
+        $("#area").removeClass("is-invalid");
+        $("#area").addClass("is-valid");
+        $("#errorArea").text("");
+    }
+    else{
+        $("#area").addClass("is-invalid");
+        $("#area").removeClass("is-valid");
+        $("#errorArea").text("Enter Area");
+        $("#errorArea").addClass("text-danger");
+        $("#errorArea").removeClass("text-success");
+        result = false;
+    }
+    return result;
+};

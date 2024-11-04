@@ -14,23 +14,29 @@
   </div>
   <div class="collapse navbar-collapse d-flex me-4" id="navbarNavDropdown">
     <ul class="navbar-nav">
+      <a href="userProfile.cfm" class="text-decoration-none ms-2">
+        <li class="nav-item dropdown align-items-center d-flex mx-2 " style="cursor: pointer;" >
+          <img src="../assets/images/default_user22.png" width="20" height="20" alt="" title="Profile" >
+          <p class="mb-0 nav-link ">profile</p>
+        </li>
+      </a>
       <li class="nav-item dropdown mx-2">
         <cfset local.count = local.getlistObj.getCartCount()>
         <a href="cartPage.cfm" type="button" class="nav-link btn btn-light position-relative">
           Cart
           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
             #local.count.count.count#
-            <span class="visually-hidden">unread messages</span>
+            <span class="visually-hidden">Items in cart</span>
           </span>
         </a>
       </li>
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown mx-2">
         <cfif session.isLog>
-          <a class="nav-link" id="Userlogout" href="##" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link btn btn-light" id="Userlogout" href="##" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Logout
           </a>
           <cfelse>
-            <a class="nav-link" id="" href="userloginPage.cfm" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link btn btn-light" id="" href="userloginPage.cfm" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Login
             </a>
       </cfif>

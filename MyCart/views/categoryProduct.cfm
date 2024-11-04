@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyCart|Home</title>
+    <title>MyCart|productlist</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
@@ -18,19 +18,18 @@
     <link rel="stylesheet" href="../assets/style/style.css">
 </head>
 <body>
-    
+<!---   Navbar   --->
   <cfinclude  template="navbar.cfm">
 
+  <!---   CategoryList   --->
   <cfinclude  template="bottomNav.cfm">
 
     <cfloop query="local.subcatgories">
-      <cfset local.productsList = local.getlistObj.getProducts(FLDSUBCATEGORY_ID,8)> 
-
+      <cfset local.productsList = local.getlistObj.getProducts(FLDSUBCATEGORY_ID,8)>
       <div class="container-fluid px-4 mt-5 mb-1">
         <div class="row d-flex">
           <a href='userProductList.cfm?subid=#FLDSUBCATEGORY_ID#' title="View more on #FLDSUBCATEGORYNAME#" class="fw-bold h4 text-decoration-none subcategory-label">#FLDSUBCATEGORYNAME#</a>
         </div>
-
         <div class="row ">
               <cfloop query="local.productslist.products">
                 <div class="col-md-3 mt-2">
@@ -45,7 +44,6 @@
                   </div>
                 </div>
               </cfloop>
-  
           </div>
         </div>
       </div>

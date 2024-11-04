@@ -104,6 +104,12 @@ body{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.productnameMin{
+    white-space: nowrap; 
+    width: 90% !important; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .bottom-space{
     box-shadow: 1px 1px 1px white !important;
 }
@@ -195,6 +201,11 @@ body{
     height: 28px;
     text-align: center;
 }
+.quantityControlPayment{
+    width: 28px;
+    height: 28px;
+    text-align: center;
+}
 
 
 
@@ -213,4 +224,11 @@ body{
   }
   .subcategory-label:hover{
     text-decoration: underline !important;
+  }
+  .modal{
+    filter: drop-shadow(8px 8px 8px rgba(41, 41, 41, 0.247));
+  }
+  
+  .paybody{
+    height: 70vh;
   }

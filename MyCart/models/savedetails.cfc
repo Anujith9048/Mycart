@@ -370,4 +370,99 @@
         </cfif>
       <cfreturn {"result":true}>
   </cffunction>
+
+  <!---  addAddress  --->
+  <cffunction name="addAddress" access="remote" returnformat="JSON">
+    <cfargument name="name" type="string" >
+    <cfargument name="phone" type="string" >
+    <cfargument name="pincode" type="string" >
+    <cfargument name="state" type="string" >
+    <cfargument name="city" type="string" >
+    <cfargument name="building" type="string" >
+    <cfargument name="area" type="string" >
+    <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
+    
+    <cfquery name="addAddress" datasource="sqlDatabase" result="addressResult">
+      INSERT INTO tblsavedaddress (fldAddressUserID,fldFullname,fldPhone,fldPincode,fldState,fldCity,fldBuildingName,fldArea,fldAddedDate)
+      VALUES(
+          <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#arguments.name#"  cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#arguments.phone#"  cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#arguments.pincode#"  cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#arguments.state#"  cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#arguments.city#"  cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#arguments.building#"  cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#arguments.area#"  cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">
+      );
+    </cfquery>
+    <cfset local.id = addressResult.generatedKey>
+    <cfreturn {"result":true,"id":local.id}>
+  </cffunction>
+
+    <!---  Order Product  --->
+    <cffunction name="orderProduct" access="remote" returnformat="JSON">
+      <cfargument name="cardnumber" type="any" >
+      <cfargument name="cvv" type="any" >
+      <cfargument name="addressId" type="any" >
+      <cfargument name="proid" type="any" >
+      <cfargument name="quantity" type="any" >
+      <cfargument name="price" type="any" >
+      <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
+      
+      <cfquery name="addAddress" datasource="sqlDatabase" result="orderId">
+        INSERT INTO tblorder (fldUserID,fldOrderDate,fldShippingAddress)
+        VALUES(
+            <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">,
+            <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
+            <cfqueryparam value="#arguments.addressId#"  cfsqltype="cf_sql_varchar">
+        );
+      </cfquery>
+      <cfset local.id = orderId.generatedKey>
+
+      <cfquery name="addAddress" datasource="sqlDatabase" result="orderResult">
+        INSERT INTO tblorderproducts (fldOrderID,fldProduct,fldProductQuantity,fldOrderDate,fldProductPrice)
+        VALUES(
+            <cfqueryparam value="#local.id#"  cfsqltype="cf_sql_varchar">,
+            <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_varchar">,
+            <cfqueryparam value="#arguments.quantity#"  cfsqltype="cf_sql_varchar">,
+            <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
+            <cfqueryparam value="#arguments.price#"  cfsqltype="cf_sql_varchar">
+        );
+      </cfquery>
+      <cfreturn {"result":true,"orderid":local.id}>
+    </cffunction>
+
+     <!---  Order Cart Product  --->
+     <cffunction name="orderCartProduct" access="remote" returnformat="JSON">
+      <cfargument name="addressId" type="any" >
+      <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
+      
+      <cfquery name="addAddress" datasource="sqlDatabase" result="orderId">
+        INSERT INTO tblorder (fldUserID,fldOrderDate,fldShippingAddress)
+        VALUES(
+            <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">,
+            <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
+            <cfqueryparam value="#arguments.addressId#"  cfsqltype="cf_sql_varchar">
+        );
+      </cfquery>
+      <cfset local.id = orderId.generatedKey>
+
+      
+      <cfset local.getlistObj = createObject("component", "models.getlist")>
+      <cfset local.cartList = local.getlistObj.getCart(session.userId)>
+      <cfloop query="local.cartList.cartItems">
+      <cfquery name="addAddress" datasource="sqlDatabase" result="orderResult">
+        INSERT INTO tblorderproducts (fldOrderID,fldProduct,fldProductQuantity,fldOrderDate,fldProductPrice)
+        VALUES(
+            <cfqueryparam value="#local.id#"  cfsqltype="cf_sql_varchar">,
+            <cfqueryparam value="#FLDPRODUCT_ID#"  cfsqltype="cf_sql_varchar">,
+            <cfqueryparam value="#FLDQUANTITY#"  cfsqltype="cf_sql_varchar">,
+            <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
+            <cfqueryparam value="#FLDPRODUCTPRICE#"  cfsqltype="cf_sql_varchar">
+        );
+      </cfquery>
+      </cfloop>
+      <cfreturn {"result":true,"orderid":local.id}>
+    </cffunction>
 </cfcomponent>
