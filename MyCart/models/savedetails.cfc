@@ -310,7 +310,8 @@
     <cfquery name="checkCart" datasource="sqlDatabase" result="checkResult">
       SELECT 1 FROM tblcart
       WHERE fldProductID = <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_varchar">
-      AND fldActive = <cfqueryparam value="1"  cfsqltype="cf_sql_varchar">;
+      AND fldActive = <cfqueryparam value="1"  cfsqltype="cf_sql_varchar">
+      AND fldUserID = <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">;
     </cfquery>
     
       <cfif checkResult.recordCount>

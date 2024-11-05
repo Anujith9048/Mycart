@@ -20,7 +20,7 @@
       <img src="../assets/images/success.png" width="200px" height="200px" alt="">
       <h5 class="text-success fw-bold">Payment Successfull</h5>
       <a href="homePage.cfm" class="btn btn-outline btn-outline1 w-100 mb-3">Continue Shopping</a>
-      <a href="" class="btn btn-outline2 w-100">Order Details</a>
+      <a href="orderHistory.cfm" class="btn btn-outline2 w-100">Order Details</a>
     </div>
   </div>
 </body>

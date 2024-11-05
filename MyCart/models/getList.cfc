@@ -244,4 +244,38 @@
         <cfreturn { "result": getselectedAddress }>
     </cffunction>
 
+    <cffunction name="getorderHistory" access="remote" returnFormat="JSON">
+        <cfquery name="getOrderHistory" datasource="sqlDatabase">
+            SELECT o.fldOrder_ID,  o.fldShippingAddress, o.fldOrderDate, op.fldProduct AS fldProduct_ID,op.fldProductQuantity, 
+                   SUM(op.fldProductPrice * op.fldProductQuantity) AS totalOrderCost, p.fldProductName, p.fldBrandName, p.fldProductImage,
+                   a.fldFullname,a.fldPhone,a.fldPincode,a.fldState,a.fldCity,a.fldBuildingName,a.fldArea
+            FROM tblorder o
+            INNER JOIN tblorderproducts op ON o.fldOrder_ID = op.fldOrderID
+            INNER JOIN tblproducts p ON op.fldProduct = p.fldProduct_ID
+            INNER JOIN tblsavedaddress a ON o.fldShippingAddress = a.fldAddress_ID
+            WHERE o.fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
+            GROUP BY o.fldOrder_ID, o.fldShippingAddress, o.fldOrderDate, op.fldProduct, op.fldProductQuantity, p.fldProductName, p.fldBrandName, p.fldProductImage
+        </cfquery>
+        <cfdump var="#getOrderHistory#">
+        <cfset orderStruct = {}>
+
+        <cfloop query="getOrderHistory">
+            <cfset orderID = FLDORDER_ID>
+        
+            <cfif NOT structKeyExists(orderStruct, orderID)>
+                <cfset orderStruct[orderID] = { productList = [] }>
+            </cfif>
+        
+            <cfset var product = { ProductName = fldProductName }>
+        
+            <cfset ArrayAppend(orderStruct[orderID].productList, product)>
+        </cfloop>
+
+        <cfdump var="#orderStruct#">
+
+        <cfdump var="#orderStruct#">
+
+        <cfabort>
+        <cfreturn { "result": getOrderHistory }>
+    </cffunction>
 </cfcomponent>

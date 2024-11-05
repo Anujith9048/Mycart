@@ -4,9 +4,6 @@
   <div class="container-fluid">
     <a class="navbar-brand fw-bold" href="homePage.cfm"><span class="main-color">My</span>Cart
       <img src="../assets/images/logo-img.png" width="30" alt=""></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="##navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
   </div>
   <div class="input-group">
     <input type="text" class="form-control" placeholder="Search Product" id="productName">
@@ -32,11 +29,11 @@
       </li>
       <li class="nav-item dropdown mx-2">
         <cfif session.isLog>
-          <a class="nav-link btn btn-light" id="Userlogout" href="##" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link btn btn-light" id="Userlogout" href="##">
             Logout
           </a>
           <cfelse>
-            <a class="nav-link btn btn-light" id="" href="userloginPage.cfm" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link btn btn-light" href="../views/userloginPage.cfm">
               Login
             </a>
       </cfif>

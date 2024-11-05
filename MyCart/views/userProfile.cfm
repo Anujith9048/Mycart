@@ -39,22 +39,17 @@
         <table class="w-100 mb-4 table table-hover">
         <cfloop query="local.userAddress.data">
           <tr class="border border-1 w-100 ">
-            <td class="p-3">
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="addressRadio" data-id="#fldaddress_id#" checked>
-            <label class="form-check-label" for="flexRadioDefault1">
+            <td class="p-3">            
               <p class="h6">#fldfullname# <span class="ms-3">#fldphone#</span></p>
               <p class="form-text text-dark mb-0">#fldbuildingname# , #fldcity# , #fldarea# , #fldstate#</p>
               <p class="form-text text-dark m-0 p-0 h6">#fldpincode#</p>
-            </label>
-          </div>
             </td>
           </tr>
         </cfloop>
         </table>
         <button class="btn btn-outline2" data-bs-toggle="modal" data-bs-target="##exampleModal">Add New Address</button>
 
-        <button class="btn btn-outline1 btn-outline">Order Details</button>
+        <a href="orderHistory.cfm" class="btn btn-outline1 btn-outline">Order Details</a>
       </div>
       </div>
     </div>
