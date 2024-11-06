@@ -22,10 +22,18 @@
     
     
       <div class="row mt-5 px-4 justify-content-center">
-        <div class="col-md-6 col-12 justify-content-center d-flex ">
+        <div class="col-md-6 col-12 justify-content-center d-flex">
           <img src="../assets/productImage/#local.product.FLDPRODUCTIMAGE#" height="400" alt="" class="float-end">
         </div>
         <div class="col-md-6 col-12 pe-4">
+          <div class="path d-flex align-items-center">
+            <cfset local.path = local.getlistObj.getpath(url.proid)>
+            <a href="categoryProduct.cfm?cateid=#local.path.path.FLDCATEGORYID#" class="link-secondary" id="FLDCATEGORYID"> #local.path.path.FLDCATEGORY_NAME# </a> 
+            <img src="../assets/images/right.png" width="20" height="20" alt="">
+            <a href="userProductList.cfm?subid=#local.path.path.FLDSUBCATEGORYID#" class="link-secondary" id="FLDSUBCATEGORYID"> #local.path.path.FLDSUBCATEGORYNAME#  </a>
+            <img src="../assets/images/right.png" width="20" height="20" alt=""> 
+            <a class="text-secondary"> #local.product.FLDPRODUCTNAME#</a>
+          </div>
           <h4 class="fw-bold pt-4">#local.product.FLDPRODUCTNAME#</h4>
           <p class="form-text p-0">#local.product.FLDBRANDNAME#</p>
           <p class="fs-5"><span class="fw-bold form-text"> <u>Description:</u> </span>#local.product.FLDPRODUCTDESCRIPTION#</p>

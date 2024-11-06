@@ -183,4 +183,8 @@ component{
         
         return local.getSubcategory;
     }
+
+    remote any function filterSort(checkedValues) returnFormat="JSON"{
+        writeDump(checkedValues);
+    }
 }

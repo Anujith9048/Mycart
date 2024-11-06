@@ -1,6 +1,6 @@
 <cfset local.getlistObj = createObject("component", "models.getlist")>
 <cfoutput>
-<nav class="navbar navbar-expand-lg px-4 py-3 justify-content-between position-sticky top-0 bg-light">
+<nav class="navbar navbar-expand-lg px-4 py-3 justify-content-between position-sticky top-0 bg-light shadow">
   <div class="container-fluid">
     <a class="navbar-brand fw-bold" href="homePage.cfm"><span class="main-color">My</span>Cart
       <img src="../assets/images/logo-img.png" width="30" alt=""></a>
@@ -18,14 +18,21 @@
         </li>
       </a>
       <li class="nav-item dropdown mx-2">
-        <cfset local.count = local.getlistObj.getCartCount()>
-        <a href="cartPage.cfm" type="button" class="nav-link btn btn-light position-relative">
-          Cart
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            #local.count.count.count#
-            <span class="visually-hidden">Items in cart</span>
-          </span>
-        </a>
+        <cfif session.islog>
+          <cfset local.count = local.getlistObj.getCartCount()>
+          <a href="cartPage.cfm" type="button" class="nav-link btn btn-light position-relative">
+            Cart
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              #local.count.count.count#
+              <span class="visually-hidden">Items in cart</span>
+            </span>
+          </a>
+        <cfelse>
+          <a href="cartPage.cfm" type="button" class="nav-link btn btn-light position-relative">
+            Cart
+          </a>
+        </cfif>
+        
       </li>
       <li class="nav-item dropdown mx-2">
         <cfif session.isLog>

@@ -32,17 +32,17 @@
         </div>
         <div class="row ">
               <cfloop query="local.productslist.products">
-                <div class="col-md-3 mt-2">
-                  <div class="card" style="width: 18rem; height: 24rem;">
-                    <img src="../assets/productImage/#FLDPRODUCTIMAGE#" class="card-img-top p-2 " width="70" height="200" alt="...">
+                <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
+                  <div class="card" style="width: 19rem; height: 24rem;">
+                    <img src="../assets/productImage/#FLDPRODUCTIMAGE#" class="card-img-top p-2 " height="250" alt="...">
                     <div class="card-body">
-                      <h5 class="card-title productname">#FLDPRODUCTNAME#</h5>
-                      <p class="card-text productname">#FLDPRODUCTDESCRIPTION#</p>
-                      <p class="card-text fw-bold price-tag">&##8377;#FLDPRODUCTPRICE#</p>
-                      <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="btn btn-primary" id="productCheck" proid="#FLDPRODUCT_ID#">Check</a>
+                      <h5 class="card-title productname ">#FLDPRODUCTNAME#</h5>
+                      <p class="card-text productname ">#FLDPRODUCTDESCRIPTION#</p>
+                      <p class="card-text fw-bold price-tag ">&##8377;#FLDPRODUCTPRICE#</p>
+                      
                     </div>
                   </div>
-                </div>
+                </a>
               </cfloop>
           </div>
         </div>

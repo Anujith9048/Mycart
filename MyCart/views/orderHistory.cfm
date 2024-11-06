@@ -1,6 +1,7 @@
 <cfoutput>
   <cfset local.getlistObj = createObject("component", "models.getlist")>
   <cfset local.orderHistory = local.getlistObj.getorderHistory()>
+  
 
 <cfif session.isLog>
 <!DOCTYPE html>
@@ -20,44 +21,47 @@
     
     <cfinclude  template="navbar.cfm">
 
-    <div class="row justify-content-center">
-      <div class="col-7">
-        <div class="row bg-primary align-items-center d-flex justify-content-between">
-          <p class="text-light fw-bold mb-0 p-3 col-3">ORDER HISTORY</p>
-          <a href="orderpdf.cfm" class="col-1" title="Download invoice"><img src="../assets/images/pdf.png" height="40" alt=""></a>
-        </div>
-        <table class="w-100 mb-4 table">
-          <cfloop query="local.orderHistory.result">
-            <tr>
-              <td>
-                <div class="col-12 d-flex">
-                  <div class="col-2">
-                    <img src="../assets/productImage/#FLDPRODUCTIMAGE#" width="100" alt="">
+    <div class="row justify-content-center mt-4">
+      <div class="col-7 p-0">
+          <div class="bg-primary align-items-center d-flex justify-content-between mb-3">
+              <p class="text-light fw-bold mb-0 p-3 col-3">ORDER HISTORY</p>
+          </div>
+  
+          <cfloop collection="#local.orderHistory.result#" item="orderID">
+              <div class="card mb-3 bg-light">
+                  <div class="card-header bg-success text-white align-items-center d-flex">
+                      <p class="m-0 col-6">Order id:  #orderID#</p>
+                      <div class="align-items-center col-6 d-flex">
+                        <a href="orderpdf.cfm?orderid=#orderID#" class="ms-auto" title="Download invoice" order-id="#orderID#"><img src="../assets/images/pdf.png" height="40" alt=""></a>
+                        <p class="float-end m-0">Order Date: #dateFormat(local.orderHistory.result[orderID][1].orderDate, 'mmm dd, yyyy')#</p>
+                      </div>
                   </div>
-                  <div class="col-4">
-                    <h5 class="form-text text-dark mb-0 productnameMin">#FLDPRODUCTNAME# 
-                      <cfif FLDPRODUCTQUANTITY GT 1>
-                        <span class="text-secondary">(#FLDPRODUCTQUANTITY#)</span>
-                      </cfif>
-                    </h5>
-                    <p class="form-text productnameMin">#FLDBRANDNAME#</p>
-                    <p class="form-text price-tag fw-bold">&##8377;#TOTALORDERCOST#</p>
+                  <div class="card-body">
+                      <cfloop array="#local.orderHistory.result[orderID]#" index="product">
+                          <div class="row mb-3">
+                              <div class="col-3">
+                                  <img src="../assets/productImage/#product.productImage#" class="img-fluid" alt="#product.productName#">
+                              </div>
+                              <div class="col-9">
+                                  <p><strong>#product.productName#</strong></p>
+                                  <p><strong>Brand:</strong> #product.productBrand#</p>
+                                  <p><strong>Quantity:</strong> #product.productQuantity#</p>
+                                  <p class="mb-0"><strong>Shipping Address:</strong></p>
+                                  <p>#product.building# #product.area#, #product.city#, #product.state# #product.pincode#</p>
+                                  <p><strong>Contact:</strong> #product.name# - #product.phone#</p>
+                                  <p>Price: <strong class="price-tag">&##8377;#product.cost#</strong></p>
+                              </div>
+                          </div>
+                      </cfloop>
                   </div>
-                  <div class="col-4 ps-2">
-                    <p class="m-0 p-0 form-text text-dark">#FLDFULLNAME# <span class="ms-3">#FLDPHONE#</span></p>
-                    <p class="m-0 p-0 form-text productname">#FLDBUILDINGNAME#,#FLDSTATE#,#FLDCITY#,#FLDAREA#<br> <span class="text-dark">#FLDPINCODE#</span> </p>
-                    <p class="text-primary form-text">Order Id :#FLDORDER_ID#</p>
+                  <div class="card-footer text-muted">
+                    <cfset local.totalcost = local.getlistObj.getorderTotalCost(orderID)>
+                    <p>Total Cost <strong class="price-tag">&##8377;#local.totalcost.result.totalcost#</strong></p>
                   </div>
-                  <div class="col-2 justify-content-center d-flex">
-                    <p class="form-text">Ordered in : <br><span class="text-dark"> #FLDORDERDATE#</span></p>
-                  </div>
-                </div>
-              </td>
-            </tr>
+              </div>
           </cfloop>
-        </table>
       </div>
-    </div>
+  </div>
 
 
 

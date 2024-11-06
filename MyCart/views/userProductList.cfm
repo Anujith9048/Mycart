@@ -25,22 +25,83 @@
         <div class="d-flex gap-4 mb-2">
           <a href="" class="text-decoration-none sort" type="asc"  data-mode="#variable.mode#" data-id="#variable.data#">Price: Low to High</a>
           <a href="" class="text-decoration-none sort" type="desc" data-mode="#variable.mode#" data-id="#variable.data#">Price: High to Low</a>
+          <a href=""class="btn btn-light ms-auto float-end border border-1" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="../assets/images/filter.png" class="mb-1 me-2" width="20" alt="">Filter
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li>
+              <a class="dropdown-item" href="##">
+                <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="0to1000" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  0 to 1000
+                </label>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="##">
+                <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="1000to10000" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  1000 to 10,000
+                </label>
+                </div>
+              </a>
+            </li>
+            
+            <li>
+              <a class="dropdown-item" href="##">
+                <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="10000to15000" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  10,000 to 15,000
+                </label>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="##">
+                <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="15000to25000" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  15,000 to 25,000
+                </label>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="##">
+                <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="25000above" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  25,000 and above
+                </label>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a class="w-100 btn btn-light border border-1" id="submitFilter" sub-id="#url.subid#" href="##">
+                Submit
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row item-row">
             <cfloop query="local.productslist.products">
-              <div class="col-md-3">
+              <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
                 <div class="card" style="width: 18rem; height: 24rem;">
-                  <img src="../assets/productImage/#FLDPRODUCTIMAGE#" class="card-img-top p-2 " width="70" height="200" alt="...">
+                  <img src="../assets/productImage/#FLDPRODUCTIMAGE#" class="card-img-top p-2 " height="250" alt="...">
                   <div class="card-body">
-                    <h5 class="card-title productname">#FLDPRODUCTNAME#</h5>
-                    <p class="card-text productname">#FLDPRODUCTDESCRIPTION#</p>
-                    <p class="card-text fw-bold price-tag">&##8377;#FLDPRODUCTPRICE#</p>
-                    <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="btn btn-primary" id="productCheck" proid="#FLDPRODUCT_ID#">Check</a>
+                    <h5 class="card-title productname ">#FLDPRODUCTNAME#</h5>
+                    <p class="card-text productname ">#FLDPRODUCTDESCRIPTION#</p>
+                    <p class="card-text fw-bold price-tag ">&##8377;#FLDPRODUCTPRICE#</p>
+                    
                   </div>
                 </div>
-              </div>
+              </a>
             </cfloop>
 
         </div>

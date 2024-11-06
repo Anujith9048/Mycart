@@ -1,6 +1,6 @@
 <cfcomponent>
 
-    <!--- Check category --->
+  <!--- Check category --->
   <cffunction name="checkCategory" access="remote" returnformat="JSON">
     <cfargument name="categoryName" type="string" >
     <cfquery name="checkCategoryList" datasource="sqlDatabase" result="checkResult">
@@ -10,7 +10,7 @@
     <cfreturn {"result":checkResult}>
   </cffunction>
 
-<!--- Add Category --->
+  <!--- Add Category --->
   <cffunction name="addCategory" access="remote" returnformat="JSON">
     <cfargument name="categoryName" type="string" >
         <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
@@ -132,8 +132,8 @@
       <cfreturn {"result":true}>
   </cffunction>
 
-    <!--- Delete SubCategories --->
-    <cffunction name="deleteSubCategories" access="remote" returnformat="JSON">
+  <!--- Delete SubCategories --->
+  <cffunction name="deleteSubCategories" access="remote" returnformat="JSON">
       <cfargument name="id" type="any" >
           <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
           <cfquery name="deleteSubCategoryList" datasource="sqlDatabase" result="editResult">
@@ -154,9 +154,9 @@
             WHERE fldSubcategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_varchar">;
           </cfquery>
         <cfreturn {"result":true}>
-    </cffunction>
+  </cffunction>
 
-    <!--- Check getSubCategoryID --->
+  <!--- Check getSubCategoryID --->
   <cffunction name="getSubCategoryID" access="remote" returnformat="JSON">
     <cfargument name="subCategoryName" type="string" >
     <cfquery name="checkSubCategoryList" datasource="sqlDatabase" result="id">
@@ -167,8 +167,8 @@
     <cfreturn {"result":checkSubCategoryList}>
   </cffunction>
 
-   <!--- Valid subcategory --->
-   <cffunction name="validSubcategory" access="remote" returnformat="JSON">
+  <!--- Valid subcategory --->
+  <cffunction name="validSubcategory" access="remote" returnformat="JSON">
     <cfargument name="categoryId" type="string" >
     <cfargument name="subid" type="string" >
     <cfquery name="checkSubCategoryList" datasource="sqlDatabase" result="id">
@@ -179,7 +179,7 @@
     <cfreturn {"result":id}>
   </cffunction>
 
-    <!--- Check Product --->
+  <!--- Check Product --->
   <cffunction name="checkProduct" access="remote" returnformat="JSON">
     <cfargument name="productName" type="string" >
     <cfargument name="productBrand" type="string" >
@@ -194,7 +194,7 @@
     <cfreturn {"result":checkResult.recordCount}>
   </cffunction>
 
-   <!--- Add Product --->
+  <!--- Add Product --->
   <cffunction name="addProduct" access="remote" returnformat="JSON">
     <cfargument name="ProductName" type="string" >
     <cfargument name="subcategoryID" type="string" >
@@ -285,8 +285,8 @@
       <cfreturn {"result":true}>
   </cffunction>
 
-   <!--- Delete Product --->
-   <cffunction name="deleteProduct" access="remote" returnformat="JSON">
+  <!--- Delete Product --->
+  <cffunction name="deleteProduct" access="remote" returnformat="JSON">
     <cfargument name="id" type="any" >
     <cfargument name="subId" type="any" >
         <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
@@ -315,7 +315,13 @@
     </cfquery>
     
       <cfif checkResult.recordCount>
-        <cfreturn {"result":false}>
+        <cfquery name="addQuantity" datasource="sqlDatabase" result="editResult">
+          UPDATE tblcart
+          SET
+            fldQuantity =  fldQuantity + 1
+            WHERE fldProductID =  <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_varchar">;
+        </cfquery>
+            <cfreturn {"result":false}>
         <cfelse>
           <cfif session.isLog>
             <cfquery name="addCart" datasource="sqlDatabase" result="addResult">
@@ -348,7 +354,7 @@
       <cfreturn {"result":true}>
   </cffunction>
 
-<!---  addQuantity  --->
+  <!---  addQuantity  --->
   <cffunction name="addQuantity" access="remote" returnformat="JSON">
     <cfargument name="id" type="any" >
     <cfargument name="type" type="string" >
@@ -401,8 +407,8 @@
     <cfreturn {"result":true,"id":local.id}>
   </cffunction>
 
-    <!---  Order Product  --->
-    <cffunction name="orderProduct" access="remote" returnformat="JSON">
+  <!---  Order Product  --->
+  <cffunction name="orderProduct" access="remote" returnformat="JSON">
       <cfargument name="cardnumber" type="any" >
       <cfargument name="cvv" type="any" >
       <cfargument name="addressId" type="any" >
@@ -410,16 +416,18 @@
       <cfargument name="quantity" type="any" >
       <cfargument name="price" type="any" >
       <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
+        
+      <cfset local.id = createuuid()>
       
       <cfquery name="addAddress" datasource="sqlDatabase" result="orderId">
-        INSERT INTO tblorder (fldUserID,fldOrderDate,fldShippingAddress)
+        INSERT INTO tblorder (fldOrder_ID,fldUserID,fldOrderDate,fldShippingAddress)
         VALUES(
-            <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">,
-            <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
-            <cfqueryparam value="#arguments.addressId#"  cfsqltype="cf_sql_varchar">
+          <cfqueryparam value="#local.id#"  cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#arguments.addressId#"  cfsqltype="cf_sql_varchar">
         );
       </cfquery>
-      <cfset local.id = orderId.generatedKey>
 
       <cfquery name="addAddress" datasource="sqlDatabase" result="orderResult">
         INSERT INTO tblorderproducts (fldOrderID,fldProduct,fldProductQuantity,fldOrderDate,fldProductPrice)
@@ -432,22 +440,23 @@
         );
       </cfquery>
       <cfreturn {"result":true,"orderid":local.id}>
-    </cffunction>
+  </cffunction>
 
-     <!---  Order Cart Product  --->
-     <cffunction name="orderCartProduct" access="remote" returnformat="JSON">
+  <!---  Order Cart Product  --->
+  <cffunction name="orderCartProduct" access="remote" returnformat="JSON">
       <cfargument name="addressId" type="any" >
       <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
+      <cfset local.id = createuuid()>
       
       <cfquery name="addAddress" datasource="sqlDatabase" result="orderId">
-        INSERT INTO tblorder (fldUserID,fldOrderDate,fldShippingAddress)
+        INSERT INTO tblorder (fldOrder_ID,fldUserID,fldOrderDate,fldShippingAddress)
         VALUES(
+            <cfqueryparam value="#local.id#"  cfsqltype="cf_sql_varchar">,
             <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">,
             <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
             <cfqueryparam value="#arguments.addressId#"  cfsqltype="cf_sql_varchar">
         );
       </cfquery>
-      <cfset local.id = orderId.generatedKey>
 
       
       <cfset local.getlistObj = createObject("component", "models.getlist")>
@@ -465,5 +474,50 @@
       </cfquery>
       </cfloop>
       <cfreturn {"result":true,"orderid":local.id}>
-    </cffunction>
+  </cffunction>
+
+  <!--- Remove Cart Product --->
+  <cffunction name="removeCartProduct" access="remote" returnformat="JSON">
+        <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
+        <cfquery name="removeCartProduct" datasource="sqlDatabase">
+          UPDATE tblcart
+          SET
+            fldRemoveDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
+            fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_varchar">
+          WHERE fldUserID =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">;
+        </cfquery>
+      <cfreturn {"result":true}>
+  </cffunction>
+
+  <!--- Filter Sort --->
+  <cffunction name="filterSort" access="remote" returnformat="json">
+    <cfargument name="checkedValues" type="string" required="true">
+    <cfargument name="subid" type="any">
+    <cfset local.priceRanges = deserializeJSON(arguments.checkedValues)>
+    <cfset local.conditions = []>
+    <cfset local.params = {}>
+
+    <cfloop array="#local.priceRanges#" index="range">
+        <cfif range eq "0to1000">
+            <cfset arrayAppend(local.conditions, "fldProductPrice BETWEEN 0 AND 1000")>
+        <cfelseif range eq "1000to10000">
+            <cfset arrayAppend(local.conditions, "fldProductPrice BETWEEN 1000 AND 10000")>
+        <cfelseif range eq "10000to15000">
+            <cfset arrayAppend(local.conditions, "fldProductPrice BETWEEN 10000 AND 15000")>
+        <cfelseif range eq "15000to25000">
+            <cfset arrayAppend(local.conditions, "fldProductPrice BETWEEN 15000 AND 25000")>
+        <cfelseif range eq "25000above">
+            <cfset arrayAppend(local.conditions, "fldProductPrice >= 25000")>
+        </cfif>
+    </cfloop>
+
+    <cfset local.whereClause = arrayLen(local.conditions) ? arrayToList(local.conditions, " OR ") : "">
+    <cfquery name="filteredProducts" datasource="sqlDatabase">
+        SELECT fldProduct_ID, fldProductName, fldProductDescription, fldProductPrice, fldProductImage
+        FROM tblproducts
+        WHERE fldSubcategoryID = <cfqueryparam value="#arguments.subid#"  cfsqltype="cf_sql_varchar"> AND
+        (#whereClause#)
+    </cfquery>
+    <cfreturn serializeJSON(filteredProducts)>
+</cffunction>
 </cfcomponent>

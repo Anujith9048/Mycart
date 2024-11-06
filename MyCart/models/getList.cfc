@@ -256,26 +256,73 @@
             WHERE o.fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
             GROUP BY o.fldOrder_ID, o.fldShippingAddress, o.fldOrderDate, op.fldProduct, op.fldProductQuantity, p.fldProductName, p.fldBrandName, p.fldProductImage
         </cfquery>
-        <cfdump var="#getOrderHistory#">
+        
         <cfset orderStruct = {}>
 
         <cfloop query="getOrderHistory">
             <cfset orderID = FLDORDER_ID>
         
             <cfif NOT structKeyExists(orderStruct, orderID)>
-                <cfset orderStruct[orderID] = { productList = [] }>
+                <cfset orderStruct[orderID] = []>
             </cfif>
         
-            <cfset var product = { ProductName = fldProductName }>
+            <cfset local.product = { 
+                productImage =FLDPRODUCTIMAGE,
+                productName = fldProductName,
+                productQuantity = FLDPRODUCTQUANTITY,
+                productBrand = FLDBRANDNAME,
+                area = FLDAREA,
+                building = FLDBUILDINGNAME,
+                city = FLDCITY,
+                name = FLDFULLNAME,
+                orderDate = FLDORDERDATE,
+                orderId = FLDORDER_ID,
+                phone = FLDPHONE,
+                pincode = FLDPINCODE,
+                state = FLDSTATE,
+                cost = TOTALORDERCOST
+            }>
         
-            <cfset ArrayAppend(orderStruct[orderID].productList, product)>
+            <cfset ArrayAppend(orderStruct[orderID], product)>
         </cfloop>
+        <cfreturn { "result": orderStruct }>
+    </cffunction>
 
-        <cfdump var="#orderStruct#">
+    <cffunction name="getorderTotalCost" access="remote" returnFormat="JSON">
+        <cfargument name="orderId" type="any">
+        <cfquery name="getorderTotalCost" datasource="sqlDatabase" result="Products">
+            SELECT sum(fldProductPrice * fldProductQuantity) as totalCost FROM tblorderproducts
+            WHERE fldOrderStatus = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+            AND fldOrderID  = <cfqueryparam value="#arguments.orderId#" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+        <cfreturn { "result": getorderTotalCost }>
+    </cffunction>
 
-        <cfdump var="#orderStruct#">
+    <cffunction name="getItemsInOrderID" access="remote" returnFormat="JSON">
+        <cfargument name="orderId" type="any">
+        <cfquery name="getItemsInOrderID" datasource="sqlDatabase">
+            SELECT o.fldShippingAddress, o.fldOrderDate, op.fldProduct AS fldProduct_ID,op.fldProductQuantity, 
+                   SUM(op.fldProductPrice * op.fldProductQuantity) AS totalOrderCost, p.fldProductName, p.fldBrandName, p.fldProductImage,
+                   a.fldFullname,a.fldPhone,a.fldPincode,a.fldState,a.fldCity,a.fldBuildingName,a.fldArea
+            FROM tblorder o
+            INNER JOIN tblorderproducts op ON o.fldOrder_ID = op.fldOrderID
+            INNER JOIN tblproducts p ON op.fldProduct = p.fldProduct_ID
+            INNER JOIN tblsavedaddress a ON o.fldShippingAddress = a.fldAddress_ID
+            WHERE o.fldOrder_ID = <cfqueryparam value="#arguments.orderId#" cfsqltype="cf_sql_varchar">
+            GROUP BY o.fldOrder_ID, o.fldShippingAddress, o.fldOrderDate, op.fldProduct, op.fldProductQuantity, p.fldProductName, p.fldBrandName, p.fldProductImage
+        </cfquery>
+        <cfreturn { "result": getItemsInOrderID }>
+    </cffunction>
 
-        <cfabort>
-        <cfreturn { "result": getOrderHistory }>
+    <cffunction name="getpath" access="remote" returnFormat="JSON">
+        <cfargument name="proId" type="any">
+        <cfquery name="getpath" datasource="sqlDatabase">
+            SELECT p.fldSubcategoryID ,s.fldCategoryID ,c.fldCategory_name ,s.fldSubcategoryName FROM tblproducts p
+            INNER JOIN tblsubcategories s ON p.fldSubcategoryID = s.fldSubcategory_ID
+            INNER JOIN tblcategories c ON s.fldCategoryID = c.fldCategory_ID
+            WHERE fldProduct_ID = <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_varchar">;
+        </cfquery>
+        
+        <cfreturn { "path": getpath}>
     </cffunction>
 </cfcomponent>

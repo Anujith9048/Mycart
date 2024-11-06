@@ -238,3 +238,10 @@ body{
   .wi-100{
     width: 100% !important;
   }
+  .card:hover{
+    filter: drop-shadow(0 0 0.75rem #0000002a);
+    background-color: #f6fffe;
+  }
+  .text-decor-none{
+    text-decoration: none !important;
+  }

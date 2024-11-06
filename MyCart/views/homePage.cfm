@@ -40,20 +40,20 @@
     <!-- Random Products -->
     <div class="random-product-list px-4 mt-3">
       <h4 class="fw-bold py-2">Random Products</h4>
-      <div class="row ">
+      <div class="row d-flex">
         <cfset local.randomlist = local.getlistObj.getRandomProducts()>
         <cfloop query="local.randomlist.products">
-          <div class="col-md-3 col-12">
+          <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
             <div class="card">
-              <img src="../assets/productImage/#FLDPRODUCTIMAGE#" class="card-img-top p-2" height="200" alt="...">
+              <img src="../assets/productImage/#FLDPRODUCTIMAGE#" class="card-img-top p-2 " height="250" alt="...">
               <div class="card-body">
-                <h5 class="card-title productname">#FLDPRODUCTNAME#</h5>
-                <p class="card-text productname">#FLDPRODUCTDESCRIPTION#</p>
-                <p class="card-text fw-bold price-tag">&##8377;#FLDPRODUCTPRICE#</p>
-                <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="btn btn-primary" id="productCheck" proid="#FLDPRODUCT_ID#">Check</a>
+                <h5 class="card-title productname ">#FLDPRODUCTNAME#</h5>
+                <p class="card-text productname ">#FLDPRODUCTDESCRIPTION#</p>
+                <p class="card-text fw-bold price-tag ">&##8377;#FLDPRODUCTPRICE#</p>
+                
               </div>
             </div>
-          </div>
+          </a>
         </cfloop>
 
       </div>

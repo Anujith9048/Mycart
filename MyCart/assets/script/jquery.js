@@ -640,7 +640,7 @@ $(document).ready(function() {
                     window.location.href="userloginPage.cfm";
                 }
                 else{
-                    alert("Item already added to cart");
+                    alert("Added product Quantity");
                 }
             },
             error: function(status, error) {
@@ -859,7 +859,19 @@ $("#pay").off('click').on('click', function(event) {
                 dataType: 'JSON',
                 success: function(response) {
                     if (response.result) {
-                        window.location.href="paysuccess.cfm"
+                        $.ajax({
+                            url: '../models/savedetails.cfc?method=removeCartProduct',
+                            method: 'post',
+                            dataType: 'JSON',
+                            success: function(response) {
+                                if (response.result) {
+                                    window.location.href="paysuccess.cfm"
+                                }
+                            },
+                            error: function(status, error) {
+                                console.log("AJAX error: " + status + ", " + error);
+                            }
+                        });
                     }
                 },
                 error: function(status, error) {
@@ -885,6 +897,53 @@ $("#pay").off('click').on('click', function(event) {
     }
     }
 });
+
+
+$("#submitFilter").off('click').on('click', function(event) {
+    event.preventDefault();
+    var checkedValues = $(".form-check-input:checked").map(function() {
+        return $(this).val();
+    }).get();
+    var subid=$(this).attr("sub-id");
+
+    $.ajax({
+        url: '../models/savedetails.cfc?method=filterSort',
+        method: 'post',
+        data: {checkedValues: JSON.stringify(checkedValues),subid},
+        dataType: 'json',
+        success: function(response) {
+            
+            var productsHtml = '';
+            if(response.DATA.length === 0){
+                productsHtml =`
+                <h1 class="fw-bold">OOPS!!</h5>
+                <p class="card-text productname fs-1">No Product found!</p>`
+            }
+            
+            
+            response.DATA.forEach(function(product) {
+                productsHtml += `
+                <a href="userProduct.cfm?proid=${product[0]}" class="col-md-3 mt-3 text-decor-none" proid="${product[0]}">
+                    <div class="card" style="width: 18rem; height: 24rem;">
+                        <img src="../assets/productImage/${product[4]}" class="card-img-top p-2" height="250" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title productname ">${product[1]}</h5>
+                            <p class="card-text productname ">${product[2]}</p>
+                            <p class="card-text fw-bold price-tag ">&#8377;${product[3]}</p>
+                        </div>
+                    </div>
+                </a>`;
+            });
+            
+            $('.item-row').empty().html(productsHtml);
+        },
+        
+        error: function(xhr, status, error) {
+            console.error("AJAX error: " + status + ", " + error);
+        }
+    });
+});
+
 
 
 
