@@ -1,7 +1,6 @@
 body{
     background-color: rgb(253, 255, 251) !important;
     overflow-x: hidden;
-    padding-bottom: 70px;
 }
 .main-color{
     background-image:url(../images/output.jpg);
@@ -244,4 +243,7 @@ body{
   }
   .text-decor-none{
     text-decoration: none !important;
+  }
+  .text-decor-none:hover{
+    text-decoration: underline !important;
   }

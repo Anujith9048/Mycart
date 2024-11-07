@@ -67,6 +67,7 @@
 <!---  Logout user  --->
 <cffunction name="logout" access="remote" returnformat="JSON">
   <cfset StructClear(session)>  
+  <cfset session.isLog = false>
   <cfreturn true>
 </cffunction>
 </cfcomponent>

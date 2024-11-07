@@ -439,6 +439,28 @@
             <cfqueryparam value="#arguments.price#"  cfsqltype="cf_sql_varchar">
         );
       </cfquery>
+      <cfset local.getlistObj=createObject("component", "models.getlist" )>
+      <cfset local.local.productslist=local.getlistObj.getSingleProduct(local.id)>
+      <cfset local.userDetails = local.getlistObj.getUserDetails()>
+      <cfset local.getselectedAddress = local.getlistObj.getselectedAddress(arguments.addressId)>
+      <cfmail from="mycart@gmail.com"
+        subject="Your Booking is Confirmed!"  
+        to="#local.userDetails.data.fldemail#"
+        server="smtp.gmail.com"
+        port="25">
+        Dear #session.username#,
+          Thank you for shopping with us! 
+          We’re excited to let you know that we’ve received your order. 
+          Below are the details of your purchase:
+          
+            Product Name : #local.product.FLDPRODUCTNAME#
+            Brand : #local.product.FLDBRANDNAME#
+            Price : Rs.#local.product.FLDPRODUCTPRICE#/-
+            Order ID: #orderID#
+            Order Date: #local.currentDate#
+            Shipping Address:
+            #product.building# #product.area#, #product.city#, #product.state# #product.pincode#
+      </cfmail>
       <cfreturn {"result":true,"orderid":local.id}>
   </cffunction>
 
@@ -461,19 +483,24 @@
       
       <cfset local.getlistObj = createObject("component", "models.getlist")>
       <cfset local.cartList = local.getlistObj.getCart(session.userId)>
+      
       <cfloop query="local.cartList.cartItems">
-      <cfquery name="addAddress" datasource="sqlDatabase" result="orderResult">
-        INSERT INTO tblorderproducts (fldOrderID,fldProduct,fldProductQuantity,fldOrderDate,fldProductPrice)
-        VALUES(
-            <cfqueryparam value="#local.id#"  cfsqltype="cf_sql_varchar">,
-            <cfqueryparam value="#FLDPRODUCT_ID#"  cfsqltype="cf_sql_varchar">,
-            <cfqueryparam value="#FLDQUANTITY#"  cfsqltype="cf_sql_varchar">,
-            <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
-            <cfqueryparam value="#FLDPRODUCTPRICE#"  cfsqltype="cf_sql_varchar">
-        );
-      </cfquery>
+        <cfquery name="addAddress" datasource="sqlDatabase" result="orderResult">
+          INSERT INTO tblorderproducts (fldOrderID,fldProduct,fldProductQuantity,fldOrderDate,fldProductPrice)
+          VALUES(
+              <cfqueryparam value="#local.id#"  cfsqltype="cf_sql_varchar">,
+              <cfqueryparam value="#FLDPRODUCT_ID#"  cfsqltype="cf_sql_varchar">,
+              <cfqueryparam value="#FLDQUANTITY#"  cfsqltype="cf_sql_varchar">,
+              <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
+              <cfqueryparam value="#FLDPRODUCTPRICE#"  cfsqltype="cf_sql_varchar">
+          );
+        </cfquery>
       </cfloop>
+      <cfset local.saveObj = createObject("component", "models.saveDetails")>
+      <cfset local.removeCart = local.saveObj.removeCartProduct()>
+      <cfif local.removeCart.result>
       <cfreturn {"result":true,"orderid":local.id}>
+      </cfif>
   </cffunction>
 
   <!--- Remove Cart Product --->

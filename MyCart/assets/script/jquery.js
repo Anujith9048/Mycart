@@ -858,21 +858,7 @@ $("#pay").off('click').on('click', function(event) {
                 data: {addressId},
                 dataType: 'JSON',
                 success: function(response) {
-                    if (response.result) {
-                        $.ajax({
-                            url: '../models/savedetails.cfc?method=removeCartProduct',
-                            method: 'post',
-                            dataType: 'JSON',
-                            success: function(response) {
-                                if (response.result) {
-                                    window.location.href="paysuccess.cfm"
-                                }
-                            },
-                            error: function(status, error) {
-                                console.log("AJAX error: " + status + ", " + error);
-                            }
-                        });
-                    }
+                    window.location.href="paysuccess.cfm"
                 },
                 error: function(status, error) {
                     console.log("AJAX error: " + status + ", " + error);
@@ -944,6 +930,11 @@ $("#submitFilter").off('click').on('click', function(event) {
     });
 });
 
+$("#orderSearch").off('click').on('click', function(event) {
+    event.preventDefault();
+    var orderid = $("#orderidInput").val();
+    window.location.href=`orderHistory.cfm?orderid=${orderid}`
+});
 
 
 
