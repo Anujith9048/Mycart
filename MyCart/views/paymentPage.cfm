@@ -1,6 +1,5 @@
 <cfoutput>
-  <cfset local.getlistObj = createObject("component", "models.getlist")>
-  <cfset local.selectedAddress = local.getlistObj.getselectedAddress(url.addressid)>
+  <cfset local.selectedAddress = application.getlistObj.getselectedAddress(url.addressid)>
   <cfif session.isLog>
      <!DOCTYPE html>
      <html lang="en">

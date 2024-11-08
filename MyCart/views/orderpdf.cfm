@@ -1,6 +1,5 @@
 <cfhtmltopdf destination="#ExpandPath('../assets/pdf/order-invoice.pdf')#" overwrite="true">
-    <cfset local.getlistObj = createObject("component", "models.getlist")>
-    <cfset local.orderHistory = local.getlistObj.getItemsInOrderID(url.orderid)>
+    <cfset local.orderHistory = application.getlistObj.getItemsInOrderID(url.orderid)>
     <!DOCTYPE html>
     <html lang="en">
         <head>

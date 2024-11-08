@@ -1,7 +1,6 @@
 <cfoutput>
     <cfif session.isLog>
-       <cfset local.subcategObj = createObject("component", "models.getlist")>
-       <cfset local.cateName = local.subcategObj.selectCategoryName(url.id)>
+       <cfset local.cateName = application.getlistObj.selectCategoryName(url.id)>
        <!DOCTYPE html>
        <html lang="en">
           <head>
@@ -41,7 +40,7 @@
                       </a>
                    </div>
                    <ul class="list-group d-grid gap-3 mt-3" id="subcategory-list">
-                      <cfset local.subCateList = local.subcategObj.getSubCategories(id=url.id)>
+                      <cfset local.subCateList = application.getlistObj.getSubCategories(id=url.id)>
                       <cfloop query="#local.subCateList.subcategories#" >
                          <li class="px-3 list-group-item rounded-pill border broder-1 list-desi">
                             #FLDSUBCATEGORYNAME#
@@ -74,7 +73,7 @@
                                <tbody>
                                   <tr id="categories">
                                      <td>
-                                        <cfset categoryList = local.subcategObj.getCategories()>
+                                        <cfset categoryList = application.getlistObj.getCategories()>
                                         <label for="" class="form-text fw-bold color-address">Categories Name*</label>
                                         <select name="" class="form-control" id="categoriesName">
                                            <cfloop query="categoryList.categories">

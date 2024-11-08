@@ -1,7 +1,6 @@
 <cfoutput>
-  <cfset local.getlistObj = createObject("component", "models.getlist")>
-  <cfset local.cartList = local.getlistObj.getCart(session.userId)>
   <cfif session.isLog>
+  <cfset local.cartList = application.getlistObj.getCart(session.userId)>
      <!DOCTYPE html>
      <html lang="en">
         <head>

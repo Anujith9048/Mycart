@@ -1,4 +1,3 @@
-<cfset local.getlistObj = createObject("component", "models.getlist")>
 <!DOCTYPE html>
 <html lang="en">
    <head>
@@ -32,7 +31,7 @@
          <div class="random-product-list px-4 mt-3">
             <h4 class="fw-bold py-2">Random Products</h4>
             <div class="row d-flex">
-               <cfset local.randomlist = local.getlistObj.getRandomProducts()>
+               <cfset local.randomlist = application.getlistObj.getRandomProducts()>
                <cfloop query="local.randomlist.products">
                   <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
                      <div class="card">

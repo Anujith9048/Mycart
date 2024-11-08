@@ -103,7 +103,7 @@
         <cfargument name="subId" type="any">
         <cfargument name="proId" type="any">
         <cfquery name="selectProduct" datasource="sqlDatabase">
-            SELECT fldProductName,fldProductDescription,fldProductPrice,fldBrandName,fldProductImage  FROM tblproducts
+            SELECT fldProductName,fldProductDescription,fldProductPrice,fldBrandName,fldProductImage,fldProductTax  FROM tblproducts
             WHERE fldSubcategoryID = <cfqueryparam value="#arguments.subId#" cfsqltype="cf_sql_varchar">
             AND fldProduct_ID = <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_varchar">;
         </cfquery>

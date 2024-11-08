@@ -1,8 +1,7 @@
 <cfoutput>
     <cfif session.isLog>
-       <cfset local.productObj = createObject("component", "models.getlist")>
-       <cfset local.category = local.productObj.getCategoryId(url.subid)>
-       <cfset local.subName = local.productObj.getSubcategoryName(url.subid)>
+       <cfset local.category = application.getlistObj.getCategoryId(url.subid)>
+       <cfset local.subName = application.getlistObj.getSubcategoryName(url.subid)>
        <!DOCTYPE html>
        <html lang="en">
           <head>
@@ -43,7 +42,7 @@
                    </div>
                    <ul class="list-group d-grid gap-3 mt-3" id="subcategory-list">
                       <div class="row">
-                         <cfset local.productList = local.productObj.getProducts(subid=url.subid)>
+                         <cfset local.productList = application.getlistObj.getProducts(subid=url.subid)>
                          <cfloop query="#local.productList.products#" >
                             <div class="col-6 mb-2">
                                <li class="px-5 list-group-item rounded-pill border broder-1 list-desi p-0 d-flex justify-content-between" title="#FLDPRODUCTDESCRIPTION#">
@@ -85,7 +84,7 @@
                                <tbody>
                                   <tr id="categories">
                                      <td>
-                                        <cfset categoryList = local.productObj.getCategories()>
+                                        <cfset categoryList = application.getlistObj.getCategories()>
                                         <label for="" class="form-text fw-bold color-address">Categories Name*</label>
                                         <select name="" class="form-control" id="categoriesName" class="productCategory">
                                            <cfloop query="categoryList.categories">
@@ -97,7 +96,7 @@
                                   </tr>
                                   <tr id="subcategories">
                                      <td>
-                                        <cfset subcategoryList = local.productObj.getSubCategories(local.category.categoryId)>
+                                        <cfset subcategoryList = application.getlistObj.getSubCategories(local.category.categoryId)>
                                         <label for="" class="form-text fw-bold color-address">SubCategories Name*</label>
                                         <select name="" class="form-control" id="subCategoriesName">
                                            <cfloop query="subcategoryList.subcategories">
@@ -140,6 +139,13 @@
                                         <label for="" class="form-text fw-bold color-address">Product Image*</label>
                                         <input type="file" class="form-control" id="productImage">
                                         <p id="errorProductImage" class="text-danger"></p>
+                                     </td>
+                                  </tr>
+                                  <tr class="product-rows">
+                                     <td>
+                                        <label for="" class="form-text fw-bold color-address">Product Tax*</label>
+                                        <input type="text" class="form-control" id="productTax" placeholder="Product Tax">
+                                        <p id="errorProductTax" class="text-danger"></p>
                                      </td>
                                   </tr>
                                </tbody>

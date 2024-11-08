@@ -191,6 +191,7 @@ $(document).ready(function() {
                     var productBrand = jQuery.trim($("#productBrand").val());
                     var productDescription = jQuery.trim($("#productDescription").val());
                     var productPrice = jQuery.trim($("#productPrice").val());
+                    var productTax = jQuery.trim($("#productTax").val());
                     
 
                     var formData = new FormData();
@@ -201,7 +202,7 @@ $(document).ready(function() {
                     formData.append("productBrand", productBrand);
                     formData.append("productPrice", productPrice);
                     formData.append("productImage", $("#productImage")[0].files[0]);
-
+                    formData.append("productTax", productTax);
 
                     $.ajax({
                         url: '../controllers/savedetails.cfc?method=addProduct',
@@ -247,6 +248,7 @@ $(document).ready(function() {
                         var productBrand = jQuery.trim($("#productBrand").val());
                         var productDescription = jQuery.trim($("#productDescription").val());
                         var productPrice = jQuery.trim($("#productPrice").val());
+                        var productTax = jQuery.trim($("#productTax").val());
 
                         var formData = new FormData();
                         formData.append("categoryName", categoryName);
@@ -258,6 +260,7 @@ $(document).ready(function() {
                         formData.append("productImage", $("#productImage")[0].files[0]);
                         formData.append("condition", condition);
                         formData.append("proId", proId);
+                        formData.append("productTax", productTax);
 
 
                         $.ajax({
@@ -303,6 +306,7 @@ $(document).ready(function() {
                         var productBrand = jQuery.trim($("#productBrand").val());
                         var productDescription = jQuery.trim($("#productDescription").val());
                         var productPrice = jQuery.trim($("#productPrice").val());
+                        var productTax = jQuery.trim($("#productTax").val());
 
                         var formData = new FormData();
                         formData.append("categoryName", categoryName);
@@ -313,6 +317,7 @@ $(document).ready(function() {
                         formData.append("productPrice", productPrice);
                         formData.append("condition", condition);
                         formData.append("proId", proId);
+                        formData.append("productTax", productTax);
 
 
                         $.ajax({
@@ -547,6 +552,7 @@ $(document).ready(function() {
                     $("#productDescription").val(product[1]);
                     $("#productPrice").val(product[2]);
                     $("#subCategoriesName").val(subcategory);
+                    $("#productTax").val(product[5]);
                     $("#productModal").modal('show');
                 }
             },
@@ -633,14 +639,13 @@ $(document).ready(function() {
             success: function(response) {
              
                 if (response.result === true) {
-                    alert("Added To Cart");
-                    location.reload();
+                    window.location.href="cartPage.cfm";
                 }
                 else if(response.result === "login"){
                     window.location.href="userloginPage.cfm";
                 }
                 else{
-                    alert("Added product Quantity");
+                    window.location.href="cartPage.cfm";
                 }
             },
             error: function(status, error) {
@@ -1049,7 +1054,7 @@ function validateModal(type){
         var productName = jQuery.trim($("#productName").val());
         var productDescription = jQuery.trim($("#productDescription").val());
         var productPrice = jQuery.trim($("#productPrice").val());
-        // var productImage = jQuery.trim($("#productImage").val());
+        var productTax = jQuery.trim($("#productTax").val());
         var productBrand = jQuery.trim($("#productBrand").val());
         var result = true;
         if(categoryName.length){
@@ -1124,17 +1129,17 @@ function validateModal(type){
             result = false;
         }
         
-        // if(productImage.length){
-        //     $("#productImage").removeClass("is-invalid");
-        //     $("#productImage").addClass("is-valid");
-        //     $("#errorProductImage").text("");
-        // }
-        // else{
-        //     $("#productImage").addClass("is-invalid");
-        //     $("#productImage").removeClass("is-valid");
-        //     $("#errorProductImage").text("Select Product Image");
-        //     result = false;
-        // }
+        if(productTax.length){
+            $("#productTax").removeClass("is-invalid");
+            $("#productTax").addClass("is-valid");
+            $("#errorProductTax").text("");
+        }
+        else{
+            $("#productTax").addClass("is-invalid");
+            $("#productTax").removeClass("is-valid");
+            $("#errorProductTax").text("Enter Tax Percentage");
+            result = false;
+        }
         return result;
     }
 }

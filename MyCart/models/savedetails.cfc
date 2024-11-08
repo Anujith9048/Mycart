@@ -202,6 +202,7 @@
     <cfargument name="ProductBrand" type="string" >
     <cfargument name="ProductPrice" type="string" >
     <cfargument name="ProductImage" type="string" >
+    <cfargument name="productTax" type="any" default=1>
 
     <cffile action="upload"
             filefield="ProductImage"
@@ -212,7 +213,7 @@
 
         <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
         <cfquery name="addCategoryList" datasource="sqlDatabase" result="addResult">
-            INSERT INTO tblproducts (fldSubcategoryID,fldProductName,fldProductDescription,fldProductPrice,fldCreatedBy,fldCreatedDate,fldBrandName,fldProductImage)
+            INSERT INTO tblproducts (fldSubcategoryID,fldProductName,fldProductDescription,fldProductPrice,fldCreatedBy,fldCreatedDate,fldBrandName,fldProductImage,fldProductTax)
             VALUES(
                 <cfqueryparam value="#arguments.subcategoryID#"  cfsqltype="cf_sql_varchar">,
                 <cfqueryparam value="#arguments.ProductName#"  cfsqltype="cf_sql_varchar">,
@@ -221,13 +222,14 @@
                 <cfqueryparam value="#session.userID#"  cfsqltype="cf_sql_varchar">,
                 <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
                 <cfqueryparam value="#arguments.ProductBrand#"  cfsqltype="cf_sql_varchar">,
-                <cfqueryparam value="#local.uploadedFile#"  cfsqltype="cf_sql_varchar">
+                <cfqueryparam value="#local.uploadedFile#"  cfsqltype="cf_sql_varchar">,
+                <cfqueryparam value="#arguments.productTax#"  cfsqltype="cf_sql_varchar">
             );
           </cfquery>
       <cfreturn {"result":true}>
   </cffunction>
 
-  <!--- Edit Product --->
+  <!--- Edit Product With image --->
   <cffunction name="editProduct" access="remote" returnformat="JSON">
     <cfargument name="ProductName" type="string" >
     <cfargument name="subcategoryID" type="string" >
@@ -236,6 +238,7 @@
     <cfargument name="ProductPrice" type="string" >
     <cfargument name="ProductImage" type="string" >
     <cfargument name="proId" type="any" >
+    <cfargument name="productTax" type="any" default=1>
 
     <cffile action="upload"
             filefield="ProductImage"
@@ -254,14 +257,15 @@
                 fldProductPrice = <cfqueryparam value="#arguments.ProductPrice#"  cfsqltype="cf_sql_varchar">,
                 fldBrandName = <cfqueryparam value="#arguments.ProductBrand#"  cfsqltype="cf_sql_varchar">,
                 fldProductImage = <cfqueryparam value="#local.uploadedFile#"  cfsqltype="cf_sql_varchar">,
-                fldSubcategoryID = <cfqueryparam value="#arguments.subcategoryID#"  cfsqltype="cf_sql_varchar">
+                fldSubcategoryID = <cfqueryparam value="#arguments.subcategoryID#"  cfsqltype="cf_sql_varchar">,
+                fldProductTax = <cfqueryparam value="#arguments.productTax#"  cfsqltype="cf_sql_varchar">
             WHERE fldProduct_ID =  <cfqueryparam value="#arguments.proId#"  cfsqltype="cf_sql_varchar">;
           </cfquery>
       <cfreturn {"result":true}>
   </cffunction>
 
 
-  <!--- Edit Product --->
+  <!--- Edit Product WithOut image --->
   <cffunction name="editProductWithOutImage" access="remote" returnformat="JSON">
     <cfargument name="ProductName" type="string" >
     <cfargument name="subcategoryID" type="string" >
@@ -269,6 +273,7 @@
     <cfargument name="ProductBrand" type="string" >
     <cfargument name="ProductPrice" type="string" >
     <cfargument name="proId" type="any" >
+    <cfargument name="productTax" type="any" default=1>
 
         <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
         <cfquery name="editCategoryList" datasource="sqlDatabase" result="addResult">
@@ -279,7 +284,8 @@
                 fldProductDescription = <cfqueryparam value="#arguments.ProductDescription#"  cfsqltype="cf_sql_varchar">,
                 fldProductPrice = <cfqueryparam value="#arguments.ProductPrice#"  cfsqltype="cf_sql_varchar">,
                 fldBrandName = <cfqueryparam value="#arguments.ProductBrand#"  cfsqltype="cf_sql_varchar">,
-                fldSubcategoryID = <cfqueryparam value="#arguments.subcategoryID#"  cfsqltype="cf_sql_varchar">
+                fldSubcategoryID = <cfqueryparam value="#arguments.subcategoryID#"  cfsqltype="cf_sql_varchar">,
+                fldProductTax = <cfqueryparam value="#arguments.productTax#"  cfsqltype="cf_sql_varchar">
             WHERE fldProduct_ID =  <cfqueryparam value="#arguments.proId#"  cfsqltype="cf_sql_varchar">;
           </cfquery>
       <cfreturn {"result":true}>
@@ -307,12 +313,13 @@
     <cfargument name="proid" type="any" >
     <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
 
-    <cfquery name="checkCart" datasource="sqlDatabase" result="checkResult">
-      SELECT 1 FROM tblcart
-      WHERE fldProductID = <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_varchar">
-      AND fldActive = <cfqueryparam value="1"  cfsqltype="cf_sql_varchar">
-      AND fldUserID = <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">;
-    </cfquery>
+    <cfif session.isLog>
+      <cfquery name="checkCart" datasource="sqlDatabase" result="checkResult">
+        SELECT 1 FROM tblcart
+        WHERE fldProductID = <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_varchar">
+        AND fldActive = <cfqueryparam value="1"  cfsqltype="cf_sql_varchar">
+        AND fldUserID = <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">;
+      </cfquery>
     
       <cfif checkResult.recordCount>
         <cfquery name="addQuantity" datasource="sqlDatabase" result="editResult">
@@ -323,21 +330,19 @@
         </cfquery>
             <cfreturn {"result":false}>
         <cfelse>
-          <cfif session.isLog>
-            <cfquery name="addCart" datasource="sqlDatabase" result="addResult">
-              INSERT INTO tblcart (fldUserID,fldCartDate,fldProductID)
-              VALUES(
-                  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">,
-                  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
-                  <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_varchar">
-              );
-            </cfquery>
-            <cfreturn {"result":true}>
-
-            <cfelse>
-              <cfreturn {"result":"login"}>
-          </cfif>
+          <cfquery name="addCart" datasource="sqlDatabase" result="addResult">
+            INSERT INTO tblcart (fldUserID,fldCartDate,fldProductID)
+            VALUES(
+                <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_varchar">,
+                <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
+                <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_varchar">
+            );
+          </cfquery>
+          <cfreturn {"result":true}>
       </cfif>
+    <cfelse>
+      <cfreturn {"result":"login"}>
+    </cfif>
   </cffunction>
 
   <!--- Remove Cart --->
@@ -439,10 +444,10 @@
             <cfqueryparam value="#arguments.price#"  cfsqltype="cf_sql_varchar">
         );
       </cfquery>
-      <cfset local.getlistObj=createObject("component", "models.getlist" )>
-      <cfset local.local.productslist=local.getlistObj.getSingleProduct(local.id)>
-      <cfset local.userDetails = local.getlistObj.getUserDetails()>
-      <cfset local.getselectedAddress = local.getlistObj.getselectedAddress(arguments.addressId)>
+      <cfset local.productslist=application.getlistObj.getSingleProduct(arguments.proid)>
+      <cfset local.product = local.productslist.product>
+      <cfset local.userDetails = application.getlistObj.getUserDetails()>
+      <cfset local.address = application.getlistObj.getselectedAddress(arguments.addressId)>
       <cfmail from="mycart@gmail.com"
         subject="Your Booking is Confirmed!"  
         to="#local.userDetails.data.fldemail#"
@@ -453,13 +458,16 @@
           We’re excited to let you know that we’ve received your order. 
           Below are the details of your purchase:
           
-            Product Name : #local.product.FLDPRODUCTNAME#
-            Brand : #local.product.FLDBRANDNAME#
-            Price : Rs.#local.product.FLDPRODUCTPRICE#/-
-            Order ID: #orderID#
-            Order Date: #local.currentDate#
-            Shipping Address:
-            #product.building# #product.area#, #product.city#, #product.state# #product.pincode#
+          Product Name : #local.product.FLDPRODUCTNAME#
+          Brand : #local.product.FLDBRANDNAME#
+          Price : Rs.#local.product.FLDPRODUCTPRICE#/-
+          Order ID: #local.id#
+          Order Date: #local.currentDate#
+          Shipping Address:
+          #local.address.result.FLDBUILDINGNAME# #local.address.result.FLDAREA#, #local.address.result.FLDCITY#, #local.address.result.FLDSTATE# #local.address.result.FLDPINCODE#
+          Contact Details:
+          Name:#local.address.result.FLDFULLNAME#
+          Phone:#local.address.result.FLDPHONE#
       </cfmail>
       <cfreturn {"result":true,"orderid":local.id}>
   </cffunction>
@@ -481,8 +489,7 @@
       </cfquery>
 
       
-      <cfset local.getlistObj = createObject("component", "models.getlist")>
-      <cfset local.cartList = local.getlistObj.getCart(session.userId)>
+      <cfset local.cartList = application.getlistObj.getCart(session.userId)>
       
       <cfloop query="local.cartList.cartItems">
         <cfquery name="addAddress" datasource="sqlDatabase" result="orderResult">
@@ -496,6 +503,36 @@
           );
         </cfquery>
       </cfloop>
+
+      <cfset local.userDetails = application.getlistObj.getUserDetails()>
+      <cfset local.address = application.getlistObj.getselectedAddress(arguments.addressId)>
+      <cfmail from="mycart@gmail.com"
+        subject="Your Booking is Confirmed!"  
+        to="#local.userDetails.data.fldemail#"
+        server="smtp.gmail.com"
+        port="25">
+        Dear #session.username#,
+          Thank you for shopping with us! 
+          We’re excited to let you know that we’ve received your order. 
+          Below are the details of your purchase:
+          <cfloop query="local.cartList.cartItems">
+            <cfset local.productslist=application.getlistObj.getSingleProduct(FLDPRODUCT_ID)>
+            <cfset local.product = local.productslist.product>
+            Product Name : #local.product.FLDPRODUCTNAME#
+            Brand : #local.product.FLDBRANDNAME#
+            Price : Rs.#local.product.FLDPRODUCTPRICE#/-
+            Order ID: #local.id#
+            Order Date: #local.currentDate#
+            Shipping Address:
+            #local.address.result.FLDBUILDINGNAME# #local.address.result.FLDAREA#, #local.address.result.FLDCITY#, #local.address.result.FLDSTATE# #local.address.result.FLDPINCODE#
+            Contact Details:
+            Name:#local.address.result.FLDFULLNAME#
+            Phone:#local.address.result.FLDPHONE#
+
+          </cfloop>
+      </cfmail>
+
+
       <cfset local.saveObj = createObject("component", "models.saveDetails")>
       <cfset local.removeCart = local.saveObj.removeCartProduct()>
       <cfif local.removeCart.result>
@@ -546,5 +583,5 @@
         (#whereClause#)
     </cfquery>
     <cfreturn serializeJSON(filteredProducts)>
-</cffunction>
+  </cffunction>
 </cfcomponent>

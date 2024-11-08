@@ -1,6 +1,5 @@
 <cfoutput>
-  <cfset local.getlistObj = createObject("component", "models.getlist")>
-  <cfset local.productslist = local.getlistObj.getSingleProduct(url.proid)>
+  <cfset local.productslist = application.getlistObj.getSingleProduct(url.proid)>
   <cfset local.product = local.productslist.product>
   <!DOCTYPE html>
   <html lang="en">

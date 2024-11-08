@@ -1,6 +1,5 @@
 <cfoutput>
-  <cfset local.getlistObj = createObject("component", "models.getlist")>
-  <cfset local.subcategoriesList = local.getlistObj.getSubCategories(url.cateid)>
+  <cfset local.subcategoriesList = application.getlistObj.getSubCategories(url.cateid)>
   <cfset local.subcatgories = local.subcategoriesList.subcategories>
   <!DOCTYPE html>
   <html lang="en">
