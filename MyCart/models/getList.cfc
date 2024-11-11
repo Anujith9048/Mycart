@@ -57,7 +57,7 @@
         <cfargument name="limit" type="string">
         <cfif structKeyExists(arguments, "limit")>
             <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
-                SELECT fldProduct_ID,fldProductName ,fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
+                SELECT fldProduct_ID,fldProductName ,ROUND((fldProductTax / 100) *fldProductPrice +fldProductPrice, 2) AS fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
                 WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
                 AND fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_varchar">
                 ORDER BY RAND()
@@ -66,7 +66,7 @@
 
             <cfelse>
                 <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
-                    SELECT fldProduct_ID,fldProductName ,fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
+                    SELECT fldProduct_ID,fldProductName ,ROUND((fldProductTax / 100) *fldProductPrice +fldProductPrice, 2) AS fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
                     WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
                     AND fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_varchar">;
                 </cfquery>
@@ -79,7 +79,7 @@
         <cfargument name="sort" type="string">
         <cfif sort EQ 'asc'>
             <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
-                SELECT fldProduct_ID, fldProductName, fldProductPrice, fldBrandName, fldProductImage, fldProductDescription 
+                SELECT fldProduct_ID, fldProductName, ROUND((fldProductTax / 100) *fldProductPrice +fldProductPrice, 2) AS fldProductPrice, fldBrandName, fldProductImage, fldProductDescription 
                 FROM tblproducts
                 WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
                 AND fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_varchar">
@@ -88,7 +88,7 @@
 
             <cfelse>
                 <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
-                    SELECT fldProduct_ID, fldProductName, fldProductPrice, fldBrandName, fldProductImage, fldProductDescription 
+                    SELECT fldProduct_ID, fldProductName, ROUND((fldProductTax / 100) *fldProductPrice +fldProductPrice, 2) AS fldProductPrice, fldBrandName, fldProductImage, fldProductDescription 
                     FROM tblproducts
                     WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
                     AND fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_varchar">
@@ -103,7 +103,7 @@
         <cfargument name="subId" type="any">
         <cfargument name="proId" type="any">
         <cfquery name="selectProduct" datasource="sqlDatabase">
-            SELECT fldProductName,fldProductDescription,fldProductPrice,fldBrandName,fldProductImage,fldProductTax  FROM tblproducts
+            SELECT fldProductName,fldProductDescription,ROUND((fldProductTax / 100) *fldProductPrice +fldProductPrice, 2) AS fldProductPrice,fldBrandName,fldProductImage,fldProductTax  FROM tblproducts
             WHERE fldSubcategoryID = <cfqueryparam value="#arguments.subId#" cfsqltype="cf_sql_varchar">
             AND fldProduct_ID = <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_varchar">;
         </cfquery>
@@ -122,10 +122,9 @@
     <cffunction name="getSingleProduct" access="remote" returnFormat="JSON">
         <cfargument name="proId" type="any">
         <cfquery name="selectProduct" datasource="sqlDatabase">
-            SELECT fldProductName,fldProductDescription,fldProductPrice,fldBrandName,fldProductImage  FROM tblproducts
+            SELECT fldProductName,fldProductDescription,ROUND((fldProductTax / 100) * fldProductPrice + fldProductPrice, 2) AS fldProductPriceWithTax,fldProductTax,fldProductPrice,fldBrandName,fldProductImage  FROM tblproducts
             WHERE fldProduct_ID = <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_varchar">;
         </cfquery>
-        
         <cfreturn { "product": selectProduct}>
     </cffunction>
 
@@ -141,7 +140,7 @@
 
     <cffunction name="getRandomProducts" access="remote" returnFormat="JSON">
         <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
-            SELECT fldProduct_ID,fldProductName ,fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
+            SELECT fldProduct_ID,fldProductName ,ROUND((fldProductTax / 100) * fldProductPrice + fldProductPrice, 2) AS fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
             WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
             ORDER BY RAND()
             LIMIT 4;
@@ -152,7 +151,7 @@
     <cffunction name="getCart" access="remote" returnFormat="JSON">
         <cfargument name="userId" type="string">
         <cfquery name="selectCartItems" datasource="sqlDatabase" result="cartItems">
-            SELECT p.fldActive,p.fldProduct_ID, p.fldProductName, p.fldProductPrice, p.fldBrandName, p.fldProductImage, p.fldProductDescription, c.fldQuantity
+            SELECT p.fldActive,p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS totalCost,p.fldProductPrice,p.fldProductTax, p.fldBrandName, p.fldProductImage, p.fldProductDescription, c.fldQuantity
             FROM tblproducts p INNER JOIN tblcart c ON p.fldProduct_ID = c.fldProductID
             WHERE c.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar"> 
             AND c.fldUserID = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_varchar">
@@ -163,7 +162,7 @@
     <cffunction name="getCartPrice" access="remote" returnFormat="JSON">
         <cfargument name="userId" type="string">
         <cfquery name="selectCartAmount" datasource="sqlDatabase" result="cartamount">
-            SELECT SUM(p.fldProductPrice * c.fldQuantity) as sum
+            SELECT SUM(ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) * c.fldQuantity) as sum
             FROM tblproducts p
             INNER JOIN tblcart c ON p.fldProduct_ID = c.fldProductID
             WHERE c.fldUserID = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_varchar">
@@ -186,7 +185,7 @@
     <cffunction name="searchProduct" access="remote" returnFormat="JSON">
         <cfargument name='productName' type="any">
         <cfquery name="searchProduct" datasource="sqlDatabase" result="cartamount">
-            SELECT fldProduct_ID,fldProductName ,fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
+            SELECT fldProduct_ID,fldProductName ,ROUND((fldProductTax / 100) * fldProductPrice + fldProductPrice, 2) AS fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
             WHERE fldProductName LIKE <cfqueryparam value="%#arguments.productName#%" cfsqltype="cf_sql_varchar">
             AND fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">;
         </cfquery>
@@ -198,7 +197,7 @@
         <cfargument  name="sort" type="string">
         <cfif sort EQ 'asc'>
             <cfquery name="searchProduct" datasource="sqlDatabase" result="cartamount">
-                SELECT fldProduct_ID,fldProductName ,fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
+                SELECT fldProduct_ID,fldProductName ,ROUND((fldProductTax / 100) * fldProductPrice + fldProductPrice, 2) AS fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
                 WHERE fldProductName LIKE <cfqueryparam value="%#arguments.productName#%" cfsqltype="cf_sql_varchar">
                 AND fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
                 ORDER BY fldProductPrice ASC;
@@ -206,7 +205,7 @@
 
             <cfelse>
                 <cfquery name="searchProduct" datasource="sqlDatabase" result="cartamount">
-                    SELECT fldProduct_ID,fldProductName ,fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
+                    SELECT fldProduct_ID,fldProductName ,ROUND((fldProductTax / 100) * fldProductPrice + fldProductPrice, 2) AS fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
                     WHERE fldProductName LIKE <cfqueryparam value="%#arguments.productName#%" cfsqltype="cf_sql_varchar">
                     AND fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
                     ORDER BY fldProductPrice DESC;
@@ -247,14 +246,14 @@
     <cffunction name="getorderHistory" access="remote" returnFormat="JSON">
         <cfquery name="getOrderHistory" datasource="sqlDatabase">
             SELECT o.fldOrder_ID,  o.fldShippingAddress, o.fldOrderDate, op.fldProduct AS fldProduct_ID,op.fldProductQuantity, 
-                   SUM(op.fldProductPrice * op.fldProductQuantity) AS totalOrderCost, p.fldProductName, p.fldBrandName, p.fldProductImage,
+                   SUM(ROUND((op.fldProductTax / 100) * op.fldProductPrice + op.fldProductPrice, 2) * op.fldProductQuantity) AS totalOrderCost,op.fldProductPrice,op.fldProductTax, p.fldProductName, p.fldBrandName, p.fldProductImage,
                    a.fldFullname,a.fldPhone,a.fldPincode,a.fldState,a.fldCity,a.fldBuildingName,a.fldArea
             FROM tblorder o
             INNER JOIN tblorderproducts op ON o.fldOrder_ID = op.fldOrderID
             INNER JOIN tblproducts p ON op.fldProduct = p.fldProduct_ID
             INNER JOIN tblsavedaddress a ON o.fldShippingAddress = a.fldAddress_ID
             WHERE o.fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_varchar">
-            GROUP BY o.fldOrder_ID, o.fldShippingAddress, o.fldOrderDate, op.fldProduct, op.fldProductQuantity, p.fldProductName, p.fldBrandName, p.fldProductImage
+            GROUP BY o.fldOrder_ID, o.fldShippingAddress, o.fldOrderDate, op.fldProduct, op.fldProductQuantity, p.fldProductName, p.fldBrandName, p.fldProductImage, a.fldFullname,a.fldPhone,a.fldPincode,a.fldState,a.fldCity,a.fldBuildingName,a.fldArea,op.fldProductPrice,op.fldProductTax
         </cfquery>
         
         <cfset orderStruct = {}>
@@ -280,7 +279,9 @@
                 phone = FLDPHONE,
                 pincode = FLDPINCODE,
                 state = FLDSTATE,
-                cost = TOTALORDERCOST
+                cost = FLDPRODUCTPRICE,
+                tax = FLDPRODUCTTAX,
+                totalCost:TOTALORDERCOST
             }>
         
             <cfset ArrayAppend(orderStruct[orderID], product)>
@@ -291,7 +292,7 @@
     <cffunction name="getorderTotalCost" access="remote" returnFormat="JSON">
         <cfargument name="orderId" type="any">
         <cfquery name="getorderTotalCost" datasource="sqlDatabase" result="Products">
-            SELECT sum(fldProductPrice * fldProductQuantity) as totalCost FROM tblorderproducts
+            SELECT sum(ROUND((fldProductTax / 100) * fldProductPrice + fldProductPrice, 2) * fldProductQuantity) as totalCost FROM tblorderproducts
             WHERE fldOrderStatus = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
             AND fldOrderID  = <cfqueryparam value="#arguments.orderId#" cfsqltype="cf_sql_varchar">;
         </cfquery>
@@ -302,14 +303,14 @@
         <cfargument name="orderId" type="any">
         <cfquery name="getItemsInOrderID" datasource="sqlDatabase">
             SELECT o.fldShippingAddress, o.fldOrderDate, op.fldProduct AS fldProduct_ID,op.fldProductQuantity, 
-                   SUM(op.fldProductPrice * op.fldProductQuantity) AS totalOrderCost, p.fldProductName, p.fldBrandName, p.fldProductImage,
+                   SUM(ROUND((op.fldProductTax / 100) * op.fldProductPrice + op.fldProductPrice, 2) * op.fldProductQuantity) AS totalOrderCost, p.fldProductName, p.fldBrandName, p.fldProductImage,op.fldProductPrice,op.fldProductTax,
                    a.fldFullname,a.fldPhone,a.fldPincode,a.fldState,a.fldCity,a.fldBuildingName,a.fldArea
             FROM tblorder o
             INNER JOIN tblorderproducts op ON o.fldOrder_ID = op.fldOrderID
             INNER JOIN tblproducts p ON op.fldProduct = p.fldProduct_ID
             INNER JOIN tblsavedaddress a ON o.fldShippingAddress = a.fldAddress_ID
             WHERE o.fldOrder_ID = <cfqueryparam value="#arguments.orderId#" cfsqltype="cf_sql_varchar">
-            GROUP BY o.fldOrder_ID, o.fldShippingAddress, o.fldOrderDate, op.fldProduct, op.fldProductQuantity, p.fldProductName, p.fldBrandName, p.fldProductImage
+            GROUP BY o.fldOrder_ID, o.fldShippingAddress, o.fldOrderDate, op.fldProduct, op.fldProductQuantity, p.fldProductName, p.fldBrandName, p.fldProductImage, op.fldProductPrice, op.fldProductTax
         </cfquery>
         <cfreturn { "result": getItemsInOrderID }>
     </cffunction>

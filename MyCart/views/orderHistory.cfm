@@ -1,7 +1,7 @@
 <cfoutput>
    <cfparam name="url.orderid" default="">
    <cfif session.isLog>
-   <cfset local.orderHistory = application.getlistObj.getOrderHistory()>
+      <cfset local.orderHistory = application.getlistObj.getOrderHistory()>
       <!DOCTYPE html>
       <html lang="en">
          <head>
@@ -49,15 +49,19 @@
                            <div class="card-body">
                               <cfloop array="#local.orderHistory.result[orderID]#" index="product">
                                  <div class="row mb-3">
-                                    <div class="col-2">
+                                    <div class="col-2 align-content-center">
                                        <img src="../assets/productImage/#product.productImage#"
                                           class="img-fluid" height="100" alt="#product.productName#">
                                     </div>
-                                    <div class="col-9">
+                                    <div class="col-5">
                                        <p><strong>#product.productName#</strong></p>
                                        <p><strong>Brand:</strong> #product.productBrand#</p>
                                        <p><strong>Quantity:</strong> #product.productQuantity#</p>
-                                       <p>Price: <strong class="price-tag">&##8377;#product.cost#</strong></p>
+                                    </div>
+                                    <div class="col-5">
+                                       <p class="mb-0">Actual Price: <span class="form-text text-success">&##8377;#product.COST#</span></p>
+                                       <p>Tax : #product.TAX#%</p>
+                                       <p class="mb-0">Total Price: <strong class="form-text price-tag ">&##8377;#product.TOTALCOST#</strong></p>
                                     </div>
                                  </div>
                               </cfloop>

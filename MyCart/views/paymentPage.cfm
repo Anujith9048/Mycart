@@ -14,7 +14,7 @@
         </head>
         <body>
            <cfinclude  template="navbar.cfm">
-           <div class="row justify-content-center">
+           <div class="row justify-content-center mt-4">
               <div class="col-5">
                  <div class="row bg-primary align-content-center">
                     <p class="text-light fw-bold mb-0 p-3">ORDER SUMMARY</p>
@@ -32,87 +32,93 @@
                           </div>
                        </td>
                     </tr>
-                    <cfif structKeyExists(url, "proid")>
-                    <cfset local.productslist = local.getlistObj.getSingleProduct(url.proid)>
-                    <cfset local.product = local.productslist.product>
-                    <tr>
-                       <td class="align-items-center">
-                          <div class="col-12">
-                             <p class="text-primary h6 form-text">Product</p>
-                             <div class="d-flex col-12">
-                                <div class="col-3 align-content-center">
-                                   <img src="../assets/productImage/#local.product.FLDPRODUCTIMAGE#" width="80" alt="">
-                                </div>
-                                <div class="col-6">
-                                   <p class="h6 p-0 m-0  productnameMin">#local.product.FLDPRODUCTNAME#</p>
-                                   <p class="form-text p-0 mb-1  productnameMin">#local.product.FLDBRANDNAME#</p>
-                                   <p class="h6 form-text price-tag fw-bold " id="productprice"  price="#local.product.FLDPRODUCTPRICE#">&##8377;#local.product.FLDPRODUCTPRICE#</p>
-                                </div>
-                                <div class="col-3 align-content-center">
-                                   <div class="d-flex gap-2">
-                                      <div class="btn rounded-circle btn-outline-dark py-0 fw-bold quantityControlPayment px-0" data-type="decrease" id="decrease">-</div>
-                                      <div class="cartQuantity border border-1 w-25 text-center rounded" id="productQuantity">1</div>
-                                      <div class="btn rounded-circle btn-outline-dark py-0 fw-bold quantityControlPayment px-0" data-type="increase" >+</div>
-                                   </div>
-                                </div>
-                             </div>
-                          </div>
-                       </td>
-                    </tr>
-                    <cfelse>
-                    <cfif url.order EQ 'cart'>
-                       <cfset local.cartList = local.getlistObj.getCart(session.userId)>
-                       <div class="row d-flex pb-5">
-                          <div class="cart-wrapper col-12 ">
-                             <cfloop query="local.cartList.cartItems">
-                                <div class="col-12 mt-5 px-2  d-flex justify-content-center">
-                                   <div class="col-4 d-flex justify-content-center ">
-                                      <img src="../assets/productImage/#FLDPRODUCTIMAGE#" height="100" alt="" class=" float-start">
-                                   </div>
-                                   <div class="col-5">
-                                      <h6  class="fw-bold  productname">
-                                      #FLDPRODUCTNAME#</h4>
-                                      <p class="form-text p-0 productname">#FLDBRANDNAME#</p>
-                                      <p class="form-text p-0 productname">#FLDPRODUCTDESCRIPTION#</p>
-                                      <div class="btn-items d-flex gap-2">
-                                      </div>
-                                   </div>
-                                   <div class="col-3 ms-3">
-                                      <p class="price-tag fw-bolder fs-4 mb-0">&##8377;#FLDPRODUCTPRICE#</p>
-                                      <cfif FLDACTIVE EQ 0>
-                                         <p class="text-danger p-0 m-0">Out Of Stock</p>
-                                         <cfelse>
-                                         <p class="text-danger p-0 m-0"></p>
-                                      </cfif>
-                                      <p class="mb-1 mt-2 form-text">Quantity</p>
-                                      <div class="d-flex gap-2">
-                                         <div class="cartQuantity border border-1 w-25 text-center rounded">#FLDQUANTITY#</div>
-                                      </div>
-                                   </div>
-                                </div>
-                             </cfloop>
-                          </div>
-                          <div class="col-12 mt-5   border border-1 rounded px-4 py-4">
-                             <h5 class="">Price Details</h5>
-                             <div class="d-flex justify-content-between">
-                                <p>Total Price</p>
-                                <cfset local.totalPrice = local.getlistObj.getCartPrice(session.userId)>
-                                <p class="fw-bold price-tag">&##8377;#local.totalPrice.price.SUM#</p>
-                             </div>
-                          </div>
-                       </div>
+                  <cfif structKeyExists(url, "proid")>
+                     <cfset local.productslist = local.getlistObj.getSingleProduct(url.proid)>
+                     <cfset local.product = local.productslist.product>
+                     <tr>
+                        <td class="align-items-center">
+                           <div class="col-12">
+                              <p class="text-primary h6 form-text">Product</p>
+                              <div class="d-flex col-12">
+                                 <div class="col-3 align-content-center">
+                                    <img src="../assets/productImage/#local.product.FLDPRODUCTIMAGE#" width="80" alt="">
+                                 </div>
+                                 <div class="col-6">
+                                    <p class="h6 p-0 m-0  productnameMin">#local.product.FLDPRODUCTNAME#</p>
+                                    <p class="form-text p-0 mb-1  productnameMin">#local.product.FLDBRANDNAME#</p>
+                                    <div class="tax-details">
+                                       <p class="form-text m-0" id="productprice"  price="#local.product.fldProductPriceWithTax#"><strong>Actual Price: </strong>&##8377;#local.product.fldProductPrice#</p>
+                                       <p class="form-text m-0" id="productprice"  price="#local.product.fldProductPriceWithTax#"><strong>Tax: </strong>#local.product.fldProductTax#%</p>
+                                    </div>
+                                    <div class="justify-content-between pe-5">
+                                       <p class="h6 form-text m-0" id="productprice"  price="#local.product.fldProductPriceWithTax#"><strong>Payable amount: </strong></p>
+                                       <strong class="h4 form-text price-tag fw-bold">&##8377;#local.product.fldProductPriceWithTax#</strong>
+                                    </div>
+                                 </div>
+                                 <div class="col-3 align-content-center">
+                                    <div class="d-flex gap-2">
+                                       <div class="btn rounded-circle btn-outline-dark py-0 fw-bold quantityControlPayment px-0" data-type="decrease" id="decrease">-</div>
+                                       <div class="cartQuantity border border-1 w-25 text-center rounded" id="productQuantity">1</div>
+                                       <div class="btn rounded-circle btn-outline-dark py-0 fw-bold quantityControlPayment px-0" data-type="increase" >+</div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </td>
+                     </tr>
+                     <cfelse>
+                     <cfif url.order EQ 'cart'>
+                        <cfset local.cartList = local.getlistObj.getCart(session.userId)>
+                        <div class="row d-flex pb-5">
+                           <div class="cart-wrapper col-12 ">
+                              <cfloop query="local.cartList.cartItems">
+                                 <div class="col-12 mt-5 px-2  d-flex justify-content-center">
+                                    <div class="col-4 d-flex justify-content-center align-items-center">
+                                       <img src="../assets/productImage/#FLDPRODUCTIMAGE#" height="100" alt="" class=" float-start">
+                                    </div>
+                                    <div class="col-5">
+                                       <h6  class="fw-bold  productname">
+                                       #FLDPRODUCTNAME#</h4>
+                                       <p class="form-text p-0 productname">#FLDBRANDNAME#</p>
+                                       <p class="mb-1 mt-2 form-text">Quantity</p>
+                                       <div class="d-flex gap-2">
+                                          <div class="cartQuantity border border-1 w-25 text-center rounded">#FLDQUANTITY#</div>
+                                       </div>
+                                    </div>
+                                    <div class="col-3 ms-3">
+                                       <p class="price-tag fw-bolder fs-4 mb-0">&##8377;#TOTALCOST#</p>
+                                       <p class="form-text p-0 m-0">Actual Amount: <span class="text-success">&##8377;#FLDPRODUCTPRICE#</span></p>
+                                       <p class="form-text p-0 productname m-0">Tax: <span class="text-success">#FLDPRODUCTTAX#%</span></p>
+                                       <cfif FLDACTIVE EQ 0>
+                                          <p class="text-danger p-0 m-0">Out Of Stock</p>
+                                          <cfelse>
+                                          <p class="text-danger p-0 m-0"></p>
+                                       </cfif>
+                                    </div>
+                                 </div>
+                              </cfloop>
+                           </div>
+                           <div class="col-12 mt-5   border border-1 rounded px-4 py-4">
+                              <h5 class="">Price Details</h5>
+                              <div class="d-flex justify-content-between">
+                                 <p>Total Price</p>
+                                 <cfset local.totalPrice = local.getlistObj.getCartPrice(session.userId)>
+                                 <p class="fw-bold price-tag">&##8377;#local.totalPrice.price.SUM#</p>
+                              </div>
+                           </div>
+                        </div>
                     </cfif>
-  </cfif>
-  <tr>
-  <td class="align-items-center">
-  <div class="col-12 ">
-  <button class="btn btn-outline-primary float-end me-4" data-bs-toggle="modal" data-bs-target="##cardModal">Place Order</button>
-  </div>
-  </td>
-  </tr>
-  </table>
-  </div>
-  </div>
+                  </cfif>
+                  <tr>
+                     <td class="align-items-center">
+                        <div class="col-12 ">
+                           <button class="btn btn-outline-primary float-end me-4" data-bs-toggle="modal" data-bs-target="##cardModal">Place Order</button>
+                        </div>
+                     </td>
+                  </tr>
+               </table>
+            </div>
+         </div>
   <!--- Modal --->
   <div class=" shadow-lg modal fade" id="cardModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">

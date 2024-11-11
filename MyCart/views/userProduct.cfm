@@ -31,7 +31,8 @@
               <h4 class="fw-bold pt-4">#local.product.FLDPRODUCTNAME#</h4>
               <p class="form-text p-0">#local.product.FLDBRANDNAME#</p>
               <p class="fs-5"><span class="fw-bold form-text"> <u>Description:</u> </span>#local.product.FLDPRODUCTDESCRIPTION#</p>
-              <p class="price-tag fw-bolder fs-4">&##8377;#local.product.FLDPRODUCTPRICE#</p>
+              <p class="price-tag fw-bolder fs-4 m-0">&##8377;#local.product.FLDPRODUCTPRICE#</p>
+              <p class="form-text">Tax: #local.product.FLDPRODUCTTAX#%</p>
               <div class="btn-items d-flex gap-2">
                  <a href="##" class="btn btn-outline btn-outline1" id="buyNow" pro-id="#url.proid#"  data-bs-toggle="modal" data-bs-target="##addressModal">Buy Now</a>
                  <a href="##" class="btn btn-outline2" id="addToCart" pro-id="#url.proid#">Add to Cart</a>

@@ -1,5 +1,6 @@
 <cfhtmltopdf destination="#ExpandPath('../assets/pdf/order-invoice.pdf')#" overwrite="true">
-    <cfset local.orderHistory = application.getlistObj.getItemsInOrderID(url.orderid)>
+    <cfset local.getlistObj = createObject("component", "models.getList")>
+    <cfset local.orderHistory = local.getlistObj.getItemsInOrderID(url.orderid)>
     <!DOCTYPE html>
     <html lang="en">
         <head>
@@ -36,6 +37,8 @@
                                     <th>Brand</th>
                                     <th>Quantity</th>
                                     <th>Price</th>
+                                    <th>Tax</th>
+                                    <th>Total Cost</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -44,6 +47,8 @@
                                         <td>#FLDPRODUCTNAME#</td>
                                         <td>#FLDBRANDNAME#</td>
                                         <td>#FLDPRODUCTQUANTITY#</td>
+                                        <td>&##8377;#FLDPRODUCTPRICE#</td>
+                                        <td>#FLDPRODUCTTAX#%</td>
                                         <td>&##8377;#totalOrderCost#</td>
                                     </tr>
                                 </cfloop>
@@ -54,7 +59,7 @@
                         <cfset local.totalcost = local.getlistObj.getorderTotalCost(orderID)>
                         <p><strong>Total Cost:</strong> &##8377;#local.totalcost.result.totalcost#</p>
                         <div class="mt-4">
-                            <h5>Shipping Address</h5>
+                            <h5 class="m-0">Shipping Address</h5>
                             <p>#local.orderHistory.result.FLDBUILDINGNAME# #local.orderHistory.result.FLDAREA#, 
                                #local.orderHistory.result.FLDCITY#, #local.orderHistory.result.FLDSTATE# #local.orderHistory.result.FLDPINCODE#</p>
                             <p><strong>Contact:</strong> #local.orderHistory.result.FLDFULLNAME# - #local.orderHistory.result.FLDPHONE#</p>
