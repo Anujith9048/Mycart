@@ -19,5 +19,4 @@
     </cffunction>
 
     <!--- Error handling --->
-    
 </cfcomponent>

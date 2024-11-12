@@ -1,5 +1,6 @@
 <cfoutput>
-  <cfset local.productslist = application.getlistObj.getSingleProduct(url.proid)>
+   <cfset local.getlistObj=createObject("component", "models.getList")>
+  <cfset local.productslist = local.getlistObj.getSingleProduct(url.proid)>
   <cfset local.product = local.productslist.product>
   <!DOCTYPE html>
   <html lang="en">
@@ -17,7 +18,7 @@
         <cfinclude  template="bottomNav.cfm">
         <div class="row mt-5 px-4 justify-content-center">
            <div class="col-md-6 col-12 justify-content-center d-flex">
-              <img src="../assets/productImage/#local.product.FLDPRODUCTIMAGE#" height="400" alt="" class="float-end">
+              <img src="../assets/productImage/#listToArray(local.productslist.product.FLDIMAGENAMES)[1]#" height="400" alt="" class="float-end">
            </div>
            <div class="col-md-6 col-12 pe-4">
               <div class="path d-flex align-items-center">

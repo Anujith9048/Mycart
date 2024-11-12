@@ -67,10 +67,9 @@ component {
         }
     }
 
-    remote any function addProduct(categoryName, subCategoryName, productName, productDescription, productBrand, productPrice, productImage,productTax) returnFormat="JSON" {
+    remote any function addProduct(categoryName, subCategoryName, productName, productDescription, productBrand, productPrice, productImages,productTax) returnFormat="JSON" {
         local.objSave = createObject("component", "models.savedetails");
-
-        if (trim(len(categoryName)) EQ 0 OR trim(len(subCategoryName)) EQ 0 OR trim(len(productName)) EQ 0 OR trim(len(productDescription)) EQ 0 OR trim(len(productPrice)) EQ 0 OR trim(len(productImage)) EQ 0 OR trim(len(productTax)) EQ 0) {
+        if (trim(len(categoryName)) EQ 0 OR trim(len(subCategoryName)) EQ 0 OR trim(len(productName)) EQ 0 OR trim(len(productDescription)) EQ 0 OR trim(len(productPrice)) EQ 0 OR trim(len(productTax)) EQ 0) {
             local.error = 'Please fill all the fields';
             return {"result": false, "msg": local.error};
         } else {
@@ -79,11 +78,11 @@ component {
 
             local.getCategoryID = local.objSave.getCategoryID(categoryName = categoryName);
             local.categoryID = local.getCategoryID.result.FLDCATEGORY_ID;
-
             local.validSubcategory = local.objSave.validSubcategory(categoryId = local.categoryID, subid = local.subCategoryID);
             if (len(local.categoryID) NEQ 0) {
                 if (len(local.subCategoryID) NEQ 0) {
-                    local.addProduct = local.objSave.addProduct(productName = productName, subcategoryID = local.subCategoryID, productDescription = productDescription, productBrand = productBrand, productPrice = productPrice, productImage = productImage, productTax = productTax);
+                    local.addProduct = local.objSave.addProduct(productName = productName, subcategoryID = local.subCategoryID, productDescription = productDescription, productBrand = productBrand, productPrice = productPrice,
+                    productImages = productImages, productTax = productTax);
                     if (local.addProduct.result) {
                         return {"result": true, "msg": "Added Product #productName#"};
                     }
@@ -112,7 +111,8 @@ component {
 
                 if (len(local.categoryID) NEQ 0) {
                     if (len(local.subCategoryID) NEQ 0) {
-                        local.editProduct = local.objSave.editProduct(productName = productName, subcategoryID = local.subCategoryID, productDescription = productDescription, productBrand = productBrand, productPrice = productPrice, productImage = productImage, proId = proId);
+                        local.imageArray = listToArray(productImage)
+                        local.editProduct = local.objSave.editProduct(productName = productName, subcategoryID = local.subCategoryID, productDescription = productDescription, productBrand = productBrand, productPrice = productPrice, productImage = local.imageArray, proId = proId);
                         if (local.editProduct.result) {
                             return {"result": true, "msg": "Edited Product #productName#"};
                         }

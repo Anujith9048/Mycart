@@ -183,60 +183,44 @@ $(document).ready(function() {
             // Submit Product
             else if(type ==='product' || type === 'editProduct'){
                 var productImage = $("#productImage")[0].files[0];
-                if(type ==='product'){
-                    var subid=$(this).attr("sub-id");
-                    var categoryName = jQuery.trim($("#categoriesName").val());
-                    var subCategoryName = jQuery.trim($("#subCategoriesName").val());
-                    var productName = jQuery.trim($("#productName").val());
-                    var productBrand = jQuery.trim($("#productBrand").val());
-                    var productDescription = jQuery.trim($("#productDescription").val());
-                    var productPrice = jQuery.trim($("#productPrice").val());
-                    var productTax = jQuery.trim($("#productTax").val());
-                    
-
+                var subid = $(this).attr("sub-id");
+                if(type === 'product') {
                     var formData = new FormData();
-                    formData.append("categoryName", categoryName);
-                    formData.append("subCategoryName", subCategoryName);
-                    formData.append("productName",productName);
-                    formData.append("productDescription", productDescription);
-                    formData.append("productBrand", productBrand);
-                    formData.append("productPrice", productPrice);
-                    formData.append("productImage", $("#productImage")[0].files[0]);
-                    formData.append("productTax", productTax);
+                    formData.append("categoryName", $("#categoriesName").val());
+                    formData.append("subCategoryName", $("#subCategoriesName").val());
+                    formData.append("subCategoryID", subid);
+                    formData.append("productName", $("#productName").val());
+                    formData.append("productDescription", $("#productDescription").val());
+                    formData.append("productBrand", $("#productBrand").val());
+                    formData.append("productPrice", $("#productPrice").val());
+                    formData.append("productTax", $("#productTax").val());
+
+                    var files = $("#productImage")[0].files;
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append("productImages", files[i]);
+                    }
 
                     $.ajax({
-                        url: '../controllers/savedetails.cfc?method=addProduct',
-                        method: 'post',
+                        url: '../models/savedetails.cfc?method=addProduct',
+                        method: 'POST',
                         data: formData,
-                        dataType: 'JSON',
                         processData: false, 
                         contentType: false,
                         success: function(response) {
                             console.log(response);
-                            if(response.result === true){
-                                $("#subCategoriesName").removeClass('is-invalid');
-                                $("#errorSubcategory").text('');
-
-                                $("#categoriesName").removeClass('is-invalid');
-                                $("#errorCategory").text('');
-                                window.location.href=`productList.cfm?subid=${subid}`;
-                            }
-                            else if(response.result ==='NoSubCategory'){
-                                $("#subCategoriesName").addClass('is-invalid');
-                                $("#errorSubcategory").text(response.msg);
-                            }
-                            else if(response.result ==='NoCategory'){
-                                $("#categoriesName").addClass('is-invalid');
-                                $("#errorCategory").text(response.msg);
+                            if (response.result === true) {
+                                window.location.href = `productList.cfm?subid=${subid}`;
+                            } else {
+                                console.log(response.msg);
                             }
                         },
                         error: function(xhr, status, error) {
                             console.log("AJAX error: " + status + ", " + error);
-                            console.log("Full response:", xhr.responseText);
                         }
-
                     });
+
                 }
+                
                 else{
                     if(productImage){
                         var condition ='withImage';
@@ -249,6 +233,7 @@ $(document).ready(function() {
                         var productDescription = jQuery.trim($("#productDescription").val());
                         var productPrice = jQuery.trim($("#productPrice").val());
                         var productTax = jQuery.trim($("#productTax").val());
+                        let files = document.getElementById("productImage").files;
 
                         var formData = new FormData();
                         formData.append("categoryName", categoryName);
@@ -257,10 +242,13 @@ $(document).ready(function() {
                         formData.append("productDescription", productDescription);
                         formData.append("productBrand", productBrand);
                         formData.append("productPrice", productPrice);
-                        formData.append("productImage", $("#productImage")[0].files[0]);
                         formData.append("condition", condition);
                         formData.append("proId", proId);
                         formData.append("productTax", productTax);
+                        
+                        for (let i = 0; i < files.length; i++) {
+                            formData.append("ProductImage", files[i]);
+                        }
 
 
                         $.ajax({

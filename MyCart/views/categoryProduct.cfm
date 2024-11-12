@@ -17,29 +17,35 @@
         <cfinclude  template="navbar.cfm">
         <!---   CategoryList   --->
         <cfinclude  template="bottomNav.cfm">
+
         <cfloop query="local.subcatgories">
-           <cfset local.productsList = local.getlistObj.getProducts(FLDSUBCATEGORY_ID,8)>
-           <div class="container-fluid px-4 mt-5 mb-1">
-              <div class="row d-flex">
-                 <a href='userProductList.cfm?subid=#FLDSUBCATEGORY_ID#' title="View more on #FLDSUBCATEGORYNAME#" class="fw-bold h4 text-decoration-none subcategory-label">#FLDSUBCATEGORYNAME#</a>
-              </div>
-              <div class="row ">
-                 <cfloop query="local.productslist.products">
-                    <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
-                       <div class="card" style="width: 19rem; height: 24rem;">
-                          <img src="../assets/productImage/#FLDPRODUCTIMAGE#" class="card-img-top p-2 " height="250" alt="...">
-                          <div class="card-body">
-                             <h5 class="card-title productname ">#FLDPRODUCTNAME#</h5>
-                             <p class="card-text productname ">#FLDPRODUCTDESCRIPTION#</p>
-                             <p class="card-text fw-bold price-tag ">&##8377;#FLDPRODUCTPRICE#</p>
-                          </div>
-                       </div>
-                    </a>
+         <cfset local.productsList = local.getlistObj.getProducts(FLDSUBCATEGORY_ID, 8)>
+     
+         <div class="container-fluid px-4 mt-5 mb-1">
+             <div class="row d-flex">
+                 <a href="userProductList.cfm?subid=#FLDSUBCATEGORY_ID#" title="View more on #FLDSUBCATEGORYNAME#" class="fw-bold h4 text-decoration-none subcategory-label">
+                     #FLDSUBCATEGORYNAME#
+                 </a>
+             </div>
+             <div class="row">
+                 <cfloop query="local.productsList.products">
+                     <cfset local.image = listToArray(FLDIMAGENAMES)[1]>
+     
+                     <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
+                         <div class="card" style="width: 19rem; height: 24rem;">
+                             <img src="../assets/productImage/#local.image#" class="card-img-top p-2" height="250" alt="...">
+                             <div class="card-body">
+                                 <h5 class="card-title productname">#FLDPRODUCTNAME#</h5>
+                                 <p class="card-text productname">#FLDPRODUCTDESCRIPTION#</p>
+                                 <p class="card-text fw-bold price-tag">&##8377;#FLDPRODUCTPRICE#</p>
+                             </div>
+                         </div>
+                     </a>
                  </cfloop>
-              </div>
-           </div>
-           </div>
-        </cfloop>
+             </div>
+         </div>
+     </cfloop>
+     
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
         <script src="../assets/script/jquery.js"></script>

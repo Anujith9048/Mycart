@@ -84,11 +84,13 @@
                  </cfif>
               </div>
            </div>
+
            <div class="row item-row">
               <cfloop query="local.productslist.products">
+               <cfset local.image = listToArray(FLDIMAGENAMES)[1]>
                  <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
                     <div class="card" style="width: 18rem; height: 24rem;">
-                       <img src="../assets/productImage/#FLDPRODUCTIMAGE#" class="card-img-top p-2 " height="250" alt="...">
+                       <img src="../assets/productImage/#local.image#" class="card-img-top p-2 " height="250" alt="...">
                        <div class="card-body">
                           <h5 class="card-title productname ">#FLDPRODUCTNAME#</h5>
                           <p class="card-text productname ">#FLDPRODUCTDESCRIPTION#</p>
@@ -98,6 +100,7 @@
                  </a>
               </cfloop>
            </div>
+
         </div>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>

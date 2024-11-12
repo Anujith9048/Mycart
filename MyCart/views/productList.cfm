@@ -42,8 +42,10 @@
                    </div>
                    <ul class="list-group d-grid gap-3 mt-3" id="subcategory-list">
                       <div class="row">
-                         <cfset local.productList = application.getlistObj.getProducts(subid=url.subid)>
+                        <cfset local.getlistObj = createObject("component", "models.getList")>
+                         <cfset local.productList = local.getlistObj.getProducts(subid=url.subid)>
                          <cfloop query="#local.productList.products#" >
+                         <cfset local.images = listToArray(local.productList.products.FLDIMAGENAMES)>
                             <div class="col-6 mb-2">
                                <li class="px-5 list-group-item rounded-pill border broder-1 list-desi p-0 d-flex justify-content-between" title="#FLDPRODUCTDESCRIPTION#">
                                   <div class="col-5 overflow-hidden">
@@ -52,7 +54,7 @@
                                      <div class="fw-bold price-tag fs-4">&##8377;#FLDPRODUCTPRICE#</div>
                                   </div>
                                   <div class="col-3 align-content-center">
-                                     <img src="../assets/productImage/#FLDPRODUCTIMAGE#" class="rounded-circle " width="60" height="60" alt="">
+                                     <img src="../assets/productImage/#local.images[1]#" class="rounded-circle " width="60" height="60" alt="">
                                   </div>
                                   <div class="col-3 align-content-center">
                                      <div class="float-end">
@@ -137,7 +139,7 @@
                                   <tr class="product-rows">
                                      <td>
                                         <label for="" class="form-text fw-bold color-address">Product Image*</label>
-                                        <input type="file" class="form-control" id="productImage">
+                                        <input type="file" name="images" class="form-control" id="productImage" multiple>
                                         <p id="errorProductImage" class="text-danger"></p>
                                      </td>
                                   </tr>

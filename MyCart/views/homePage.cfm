@@ -31,11 +31,13 @@
          <div class="random-product-list px-4 mt-3">
             <h4 class="fw-bold py-2">Random Products</h4>
             <div class="row d-flex">
-               <cfset local.randomlist = application.getlistObj.getRandomProducts()>
+               <cfset local.getlistObj=createObject("component", "models.getList")>
+               <cfset local.randomlist = local.getlistObj.getRandomProducts()>
+               <cfset local.image = listToArray(local.randomlist.products.FLDIMAGENAMES)[1]>
                <cfloop query="local.randomlist.products">
                   <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
                      <div class="card">
-                        <img src="../assets/productImage/#FLDPRODUCTIMAGE#" class="card-img-top p-2 " height="250" alt="...">
+                        <img src="../assets/productImage/#local.image#" class="card-img-top p-2 " height="250" alt="...">
                         <div class="card-body">
                            <h5 class="card-title productname ">#FLDPRODUCTNAME#</h5>
                            <p class="card-text productname ">#FLDPRODUCTDESCRIPTION#</p>

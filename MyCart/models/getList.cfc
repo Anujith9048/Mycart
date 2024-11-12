@@ -53,23 +53,33 @@
     </cffunction>
 
     <cffunction name="getProducts" access="remote" returnFormat="JSON">
-        <cfargument name="subid" type="string">
-        <cfargument name="limit" type="string">
+        <cfargument name="subid" type="string" required="true">
+        <cfargument name="limit" type="string" default="8">
         <cfif structKeyExists(arguments, "limit")>
-            <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
-                SELECT fldProduct_ID,fldProductName ,ROUND((fldProductTax / 100) *fldProductPrice +fldProductPrice, 2) AS fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
-                WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
-                AND fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_varchar">
-                ORDER BY RAND()
-                LIMIT 8;
-            </cfquery>
 
-            <cfelse>
-                <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
-                    SELECT fldProduct_ID,fldProductName ,ROUND((fldProductTax / 100) *fldProductPrice +fldProductPrice, 2) AS fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
-                    WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
-                    AND fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_varchar">;
-                </cfquery>
+        <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
+            SELECT p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice, p.fldBrandName, GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription 
+            FROM tblproducts p 
+            INNER JOIN tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
+            WHERE  p.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar"> 
+            AND pi.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+            AND p.fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_varchar">
+            GROUP BY p.fldProduct_ID, p.fldProductName, p.fldProductTax, p.fldProductPrice, p.fldBrandName, p.fldProductDescription
+            ORDER BY RAND()
+            LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="cf_sql_integer">;
+        </cfquery>
+        <cfelse>
+            <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
+                SELECT p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice,
+                    p.fldBrandName, GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription 
+                FROM tblproducts p INNER JOIN  tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
+                WHERE p.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar"> 
+                AND pi.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+                AND pi.fldproduct_id = p.fldProduct_ID
+                AND p.fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_varchar">
+                GROUP BY p.fldProduct_ID, p.fldProductName, p.fldProductTax, p.fldProductPrice, p.fldBrandName, p.fldProductDescription;
+            </cfquery>
+            
         </cfif>
         <cfreturn { "products": selectProducts }>
     </cffunction>
@@ -122,8 +132,12 @@
     <cffunction name="getSingleProduct" access="remote" returnFormat="JSON">
         <cfargument name="proId" type="any">
         <cfquery name="selectProduct" datasource="sqlDatabase">
-            SELECT fldProductName,fldProductDescription,ROUND((fldProductTax / 100) * fldProductPrice + fldProductPrice, 2) AS fldProductPriceWithTax,fldProductTax,fldProductPrice,fldBrandName,fldProductImage  FROM tblproducts
-            WHERE fldProduct_ID = <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_varchar">;
+           SELECT p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice, p.fldBrandName, GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription ,p.fldProductTax
+            FROM tblproducts p 
+            INNER JOIN tblproductimages pi 
+            ON p.fldProduct_ID = pi.fldproduct_id
+            WHERE p.fldProduct_ID = <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_varchar">
+            AND pi.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">;
         </cfquery>
         <cfreturn { "product": selectProduct}>
     </cffunction>
@@ -140,13 +154,18 @@
 
     <cffunction name="getRandomProducts" access="remote" returnFormat="JSON">
         <cfquery name="selectProducts" datasource="sqlDatabase" result="Products">
-            SELECT fldProduct_ID,fldProductName ,ROUND((fldProductTax / 100) * fldProductPrice + fldProductPrice, 2) AS fldProductPrice,fldBrandName,fldProductImage,fldProductDescription FROM tblproducts
-            WHERE fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+            SELECT p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice, p.fldBrandName,GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription 
+            FROM  tblproducts p
+            INNER JOIN  tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
+            WHERE p.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+            AND pi.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+            GROUP BY p.fldProduct_ID 
             ORDER BY RAND()
             LIMIT 4;
         </cfquery>
         <cfreturn { "products": selectProducts }>
     </cffunction>
+    
 
     <cffunction name="getCart" access="remote" returnFormat="JSON">
         <cfargument name="userId" type="string">
