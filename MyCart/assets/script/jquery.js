@@ -196,6 +196,7 @@ $(document).ready(function() {
                     formData.append("productTax", $("#productTax").val());
 
                     var files = $("#productImage")[0].files;
+                      
                     for (var i = 0; i < files.length; i++) {
                         formData.append("productImages", files[i]);
                     }
@@ -529,6 +530,7 @@ $(document).ready(function() {
                 var categoryList = response.subcategory.DATA[0];
                 var category = categoryList[0];
                 var subcategory = categoryList[1];
+                console.log(product);
                 
                 if (response) {
                     $("#modalSubmit").attr("data-type", 'editProduct');
@@ -536,11 +538,11 @@ $(document).ready(function() {
                     $("#exampleModalLabel").text("Edit Product");
                     $("#categoriesName").val(category);
                     $("#productName").val(product[0]);
-                    $("#productBrand").val(product[3]);
+                    $("#productBrand").val(product[4]);
                     $("#productDescription").val(product[1]);
-                    $("#productPrice").val(product[2]);
+                    $("#productPrice").val(product[3]);
                     $("#subCategoriesName").val(subcategory);
-                    $("#productTax").val(product[5]);
+                    $("#productTax").val(product[6]);
                     $("#productModal").modal('show');
                 }
             },
@@ -931,10 +933,88 @@ $("#orderSearch").off('click').on('click', function(event) {
 
 
 
+$(document).on('click', '#imageThumbnail', function(event) {
+    event.preventDefault();
+    var proId=$(this).attr("data-id");
+
+    
+    $.ajax({
+        url: '../models/getList.cfc?method=getProductImages',
+        method: 'post',
+        data: {proId},
+        dataType: 'JSON',
+        success: function(response) {
+
+            var imageList = response;
+            
+            var content = `
+                <div id="carouselExampleIndicators" class="carousel carousel-dark slide col-12" data-bs-ride="carousel">
+                    <div class="carousel-indicators mb-0">
+            `;
+            for (var i = 0; i < response.length; i++) {
+                content += `
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="${i}"
+                        class="${i === 0 ? 'active' : ''} bg-dark" aria-label="Slide ${i + 1}"></button>
+                `;
+            }
+            content += `
+                    </div>
+                    <div class="carousel-inner carousel-style">
+            `;
+            var i=0
+            for (images of response) {
+                i=i+1
+                
+                content += `
+                    <div class="carousel-item ${i === 1 ? 'active' : ''}">
+                        <button class="btn btn-outline-danger mb-2 deleteProductimage" style="margin-left:210px;" data-id="${images.FLDIMAGEID}">Delete</button>
+                        <img src="../assets/productImage/${images.FLDIMAGENAME}" alt="" style="max-width:100%; height:auto; display:block; margin:auto;">
+
+                    </div>
+                `;
+            }
+            content += `
+                    </div>
+                    <button class="carousel-control-prev px-0" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon bg-dark me-auto py-5 px-3 rounded-pill" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next px-0" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                        <span class="carousel-control-next-icon bg-dark ms-auto py-5 px-3 rounded-pill" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            `;
+            $("#imagemodalBody").html(content);
+            $("#imageModal").modal('show');
+        },
+        
+        
+        error: function(status, error) {
+            console.log("AJAX error: " + status + ", " + error);
+        }
+    });
+    
+});
 
 
-
-
+$(document).on('click', '.deleteProductimage', function(event) {
+    var imageid=$(this).attr("data-id");
+    $.ajax({
+        url: '../models/savedetails.cfc?method=deleteProductimage',
+        method: 'post',
+        data: {imageid},
+        dataType: 'JSON',
+        success: function(response) {
+            if (response.result) {
+                location.reload()
+            }
+        },
+        error: function(status, error) {
+            console.log("AJAX error: " + status + ", " + error);
+        }
+    });
+});
 
 
 

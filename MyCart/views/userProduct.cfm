@@ -1,4 +1,4 @@
-<cfoutput>
+
    <cfset local.getlistObj=createObject("component", "models.getList")>
   <cfset local.productslist = local.getlistObj.getSingleProduct(url.proid)>
   <cfset local.product = local.productslist.product>
@@ -17,10 +17,42 @@
         <cfinclude  template="navbar.cfm">
         <cfinclude  template="bottomNav.cfm">
         <div class="row mt-5 px-4 justify-content-center">
-           <div class="col-md-6 col-12 justify-content-center d-flex">
-              <img src="../assets/productImage/#listToArray(local.productslist.product.FLDIMAGENAMES)[1]#" height="400" alt="" class="float-end">
-           </div>
-           <div class="col-md-6 col-12 pe-4">
+         <cfset local.imageArray = listToArray(local.productslist.product.FLDIMAGENAMES)>
+
+         <div id="carouselExampleIndicators" class="carousel carousel-dark slide col-5" data-bs-ride="carousel">
+             <div class="carousel-indicators mb-0">
+                 <cfoutput>
+                     <cfloop from="1" to="#arrayLen(local.imageArray)#" index="i">
+                         <button type="button" data-bs-target="##carouselExampleIndicators" data-bs-slide-to="#i - 1#" 
+                                 class="#i EQ 1 ? 'active' : ''# bg-dark" aria-label="Slide #i#"></button>
+                     </cfloop>
+                 </cfoutput>
+             </div>
+         
+             <cfoutput>
+                 <div class="carousel-inner carousel-style">
+                     <cfloop from="1" to="#arrayLen(local.imageArray)#" index="image">
+                         <div class="carousel-item #image EQ 1 ? 'active' : ''#">
+                             <img class="d-block mx-auto" src="../assets/productImage/#local.imageArray[image]#" alt="">
+                         </div>
+                     </cfloop>
+                 </div>
+             </cfoutput>
+         
+             <button class="carousel-control-prev px-0" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                 <span class="carousel-control-prev-icon bg-dark me-auto py-5 px-3 rounded-pill" aria-hidden="true"></span>
+                 <span class="visually-hidden">Previous</span>
+             </button>
+             <button class="carousel-control-next px-0" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                 <span class="carousel-control-next-icon bg-dark ms-auto py-5 px-3 rounded-pill" aria-hidden="true"></span>
+                 <span class="visually-hidden">Next</span>
+             </button>
+         </div>
+         
+        
+
+          <cfoutput>
+           <div class="col-md-6 col-12 pe-4 ps-5">
               <div class="path d-flex align-items-center">
                  <cfset local.path = local.getlistObj.getpath(url.proid)>
                  <a href="categoryProduct.cfm?cateid=#local.path.path.FLDCATEGORYID#" class="link-secondary" id="FLDCATEGORYID"> #local.path.path.FLDCATEGORY_NAME# </a> 
@@ -79,6 +111,6 @@
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
         <script src="../assets/script/jquery.js"></script>
      </body>
+         </cfoutput>
      <cfinclude  template="footer.cfm">
   </html>
-</cfoutput>

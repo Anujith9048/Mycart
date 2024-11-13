@@ -35,13 +35,14 @@
                   <cfif structKeyExists(url, "proid")>
                      <cfset local.productslist = local.getlistObj.getSingleProduct(url.proid)>
                      <cfset local.product = local.productslist.product>
+                     <cfset local.image = listToArray(local.product.FLDIMAGENAMES)[1]>
                      <tr>
                         <td class="align-items-center">
                            <div class="col-12">
                               <p class="text-primary h6 form-text">Product</p>
                               <div class="d-flex col-12">
                                  <div class="col-3 align-content-center">
-                                    <img src="../assets/productImage/#local.product.FLDPRODUCTIMAGE#" width="80" alt="">
+                                    <img src="../assets/productImage/#local.image#" width="80" alt="">
                                  </div>
                                  <div class="col-6">
                                     <p class="h6 p-0 m-0  productnameMin">#local.product.FLDPRODUCTNAME#</p>
@@ -67,6 +68,7 @@
                         </td>
                      </tr>
                      <cfelse>
+
                      <cfif url.order EQ 'cart'>
                         <cfset local.cartList = local.getlistObj.getCart(session.userId)>
                         <div class="row d-flex pb-5">
@@ -74,7 +76,7 @@
                               <cfloop query="local.cartList.cartItems">
                                  <div class="col-12 mt-5 px-2  d-flex justify-content-center">
                                     <div class="col-4 d-flex justify-content-center align-items-center">
-                                       <img src="../assets/productImage/#FLDPRODUCTIMAGE#" height="100" alt="" class=" float-start">
+                                       <img src="../assets/productImage/#listToArray(FLDIMAGENAME)[1]#" height="100" alt="" class=" float-start">
                                     </div>
                                     <div class="col-5">
                                        <h6  class="fw-bold  productname">

@@ -1,7 +1,8 @@
 <cfoutput>
    <cfparam name="url.orderid" default="">
    <cfif session.isLog>
-      <cfset local.orderHistory = application.getlistObj.getOrderHistory()>
+      <cfset local.getlistObj = createObject("component", "models.getList")>
+      <cfset local.orderHistory = local.getlistObj.getOrderHistory()>
       <!DOCTYPE html>
       <html lang="en">
          <head>

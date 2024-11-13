@@ -54,7 +54,7 @@
                                      <div class="fw-bold price-tag fs-4">&##8377;#FLDPRODUCTPRICE#</div>
                                   </div>
                                   <div class="col-3 align-content-center">
-                                     <img src="../assets/productImage/#local.images[1]#" class="rounded-circle " width="60" height="60" alt="">
+                                     <img src="../assets/productImage/#local.images[1]#" class="rounded-circle " width="60" height="60" alt="" id="imageThumbnail" style="cursor:pointer" data-id="#FLDPRODUCT_ID#">
                                   </div>
                                   <div class="col-3 align-content-center">
                                      <div class="float-end">
@@ -185,7 +185,20 @@
                    </div>
                 </div>
              </div>
-             <!-- Place these at the bottom of the body -->
+
+             <!--- Image Modal --->
+             <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+               <div class="modal-dialog modal-dialog-centered">    
+                 <div class="modal-content">
+                   <div class="modal-body" id="imagemodalBody">
+                     
+                   </div>
+                   <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                   </div>
+                 </div>
+               </div>
+             </div>
              <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
              <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
              <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>

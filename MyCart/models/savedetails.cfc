@@ -205,10 +205,6 @@
     <cfargument name="productTax" type="any" default=1>
     <cfset local.currentDate = dateFormat(now(), "yyyy-mm-dd")>
 
-    <cfif NOT isArray(arguments.ProductImages)>
-        <cfset local.ProductImages = listToArray(arguments.ProductImages)>
-    </cfif>
-
     <cfquery name="addCategoryList" datasource="sqlDatabase" result="addResult">
         INSERT INTO tblproducts (fldSubcategoryID, fldProductName, fldProductDescription, fldProductPrice, fldCreatedBy, fldCreatedDate, fldBrandName, fldProductTax)
         VALUES (
@@ -222,34 +218,25 @@
             <cfqueryparam value="#arguments.productTax#" cfsqltype="cf_sql_varchar">
         );
     </cfquery>
-
     <cfset local.productID = addResult.generatedKey>
 
-    <cfloop array="#local.ProductImages#" index="file">
-      <cfdump var="#file#"abort>
-        <cftry>
-            <cffile action="upload"
-                    filefield="file"
-                    destination="#expandPath('../assets/productImage/')#"
-                    accept="image/*"
-                    nameconflict="makeUnique">
-                    
-            <cfset local.uploadedFile = cffile.serverFile>
+        <cffile action="uploadall"
+                filefield="ProductImages"
+                destination="#expandPath('../assets/productImage/')#"
+                accept="image/*"
+                nameconflict="makeUnique">
+        <cfset local.uploadedFiles = cffile.UPLOADALLRESULTS>
 
-            <cfquery name="insertImages" datasource="sqlDatabase">
-                INSERT INTO tblproductimages (fldProductID, fldImagePath)
-                VALUES (
-                    <cfqueryparam value="#local.productID#" cfsqltype="cf_sql_integer">,
-                    <cfqueryparam value="#local.uploadedFile#" cfsqltype="cf_sql_varchar">
-                )
-            </cfquery>
-
-            <cfcatch>
-                <cfset local.errorMessage = "Error uploading file: " & cfcatch.message>
-                <cfoutput>#local.errorMessage#</cfoutput>
-            </cfcatch>
-        </cftry>
-    </cfloop>
+        <cfloop array="#local.uploadedFiles#" index="files">
+          <cfquery name="insertImages" datasource="sqlDatabase">
+              INSERT INTO tblproductimages (fldproduct_id, fldimagename)
+              VALUES (
+                  <cfqueryparam value="#local.productID#" cfsqltype="cf_sql_integer">,
+                  <cfqueryparam value="#files.SERVERFILE#" cfsqltype="cf_sql_varchar">
+              )
+          </cfquery>
+        </cfloop>
+        <cfabort>
 
     <cfreturn {"result": true, "msg": "Product and images uploaded successfully."}>
 </cffunction>
@@ -282,34 +269,42 @@
         WHERE fldProduct_ID = <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_varchar">;
     </cfquery>
 
-    <cfquery name="deleteOldImages" datasource="sqlDatabase">
-        DELETE FROM tblproductimages
-        WHERE fldProduct_ID = <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_varchar">;
-    </cfquery>
+    <!--- <cfquery name="deleteOldImages" datasource="sqlDatabase">
+       UPDATE tblproductimages
+       set fldActive=<cfqueryparam value="0" cfsqltype="cf_sql_bit">
+       WHERE fldproduct_id=<cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_integer">;
+    </cfquery> --->
 
-    <cfloop array="#arguments.ProductImage#" index="filePath">
-        <cfset local.imageName = listLast(filePath, '\')>
-        <cffile action="upload"
-            source="#filePath#"
-            destination="#expandPath('../assets/productImage/')##local.imageName#"
-            nameconflict="makeUnique">
-        <cfset local.uploadedFile = cffile.serverFile>
+        <cffile action="uploadall"
+                filefield="ProductImages"
+                destination="#expandPath('../assets/productImage/')#"
+                accept="image/*"
+                nameconflict="makeUnique">
+        <cfset local.uploadedFiles = cffile.UPLOADALLRESULTS>
 
-        <cfquery name="insertImages" datasource="sqlDatabase">
-            INSERT INTO tblproductimages (fldimagename, fldaddedby, fldproduct_id, fldaddedDate, fldActive)
-            VALUES (
-                <cfqueryparam value="#local.uploadedFile#" cfsqltype="cf_sql_varchar">,
+        <cfloop array="#local.uploadedFiles#" index="files">
+          <cfquery name="insertImages" datasource="sqlDatabase">
+              INSERT INTO  tblproductimages (fldimagename,fldEdittedBy,fldEdittedDate,fldproduct_id)
+              VALUES(
+                <cfqueryparam value="#files.SERVERFILE#" cfsqltype="cf_sql_varchar">,
                 <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">,
-                <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_integer">,
                 <cfqueryparam value="#CreateODBCDate(local.currentDate)#" cfsqltype="cf_sql_date">,
-                <cfqueryparam value="1" cfsqltype="cf_sql_bit">
-            );
-        </cfquery>
-    </cfloop>
+                <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_integer">
+              );
+          </cfquery>
+        </cfloop>
     <cfreturn {"result": true}>
-</cffunction>
+  </cffunction>
 
-
+  <cffunction name="deleteProductimage" access="remote" returnformat="JSON">
+    <cfargument name="imageid" type="any">
+    <cfquery name="deleteOldImages" datasource="sqlDatabase">
+      UPDATE tblproductimages
+      set fldActive=<cfqueryparam value="0" cfsqltype="cf_sql_bit">
+      WHERE fldimageID=<cfqueryparam value="#arguments.imageid#" cfsqltype="cf_sql_integer">;
+   </cfquery>
+   <cfreturn {"result": true}>
+  </cffunction>
 
   <!--- Edit Product WithOut image --->
   <cffunction name="editProductWithOutImage" access="remote" returnformat="JSON">
@@ -487,14 +482,20 @@
         );
       </cfquery>
 
+      <cfquery name="getTax" datasource="sqlDatabase" result="productTax">
+        SELECT fldProductTax FROM tblproducts
+        WHERE fldProduct_ID = <cfqueryparam value="#proid#" cfsqltype="cf_sql_varchar">;
+      </cfquery>
+      
       <cfquery name="addAddress" datasource="sqlDatabase" result="orderResult">
-        INSERT INTO tblorderproducts (fldOrderID,fldProduct,fldProductQuantity,fldOrderDate,fldProductPrice)
+        INSERT INTO tblorderproducts (fldOrderID,fldProduct,fldProductQuantity,fldOrderDate,fldProductPrice,fldProductTax)
         VALUES(
             <cfqueryparam value="#local.id#"  cfsqltype="cf_sql_varchar">,
             <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_varchar">,
             <cfqueryparam value="#arguments.quantity#"  cfsqltype="cf_sql_varchar">,
             <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_varchar">,
-            <cfqueryparam value="#arguments.price#"  cfsqltype="cf_sql_varchar">
+            <cfqueryparam value="#arguments.price#"  cfsqltype="cf_sql_varchar">,
+            <cfqueryparam value="#getTax.fldProductTax#"  cfsqltype="cf_sql_varchar">
         );
       </cfquery>
       <cfset local.productslist=application.getlistObj.getSingleProduct(arguments.proid)>

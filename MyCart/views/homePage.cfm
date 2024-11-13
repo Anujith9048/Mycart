@@ -31,23 +31,26 @@
          <div class="random-product-list px-4 mt-3">
             <h4 class="fw-bold py-2">Random Products</h4>
             <div class="row d-flex">
-               <cfset local.getlistObj=createObject("component", "models.getList")>
-               <cfset local.randomlist = local.getlistObj.getRandomProducts()>
-               <cfset local.image = listToArray(local.randomlist.products.FLDIMAGENAMES)[1]>
-               <cfloop query="local.randomlist.products">
-                  <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
-                     <div class="card">
-                        <img src="../assets/productImage/#local.image#" class="card-img-top p-2 " height="250" alt="...">
-                        <div class="card-body">
-                           <h5 class="card-title productname ">#FLDPRODUCTNAME#</h5>
-                           <p class="card-text productname ">#FLDPRODUCTDESCRIPTION#</p>
-                           <p class="card-text fw-bold price-tag ">&##8377;#FLDPRODUCTPRICE#</p>
+                <cfset local.getlistObj=createObject("component", "models.getList")>
+                <cfset local.randomlist = local.getlistObj.getRandomProducts()>
+        
+                <cfloop query="local.randomlist.products">
+                    <cfset local.image = listToArray(FLDIMAGENAMES)[1]>
+                    <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
+                        <div class="card">
+                            <img src="../assets/productImage/#local.image#" class="card-img-top p-2" alt="Product Image">
+                            <div class="card-body">
+                                <h5 class="card-title productname">#FLDPRODUCTNAME#</h5>
+                                <p class="card-text productname">#FLDPRODUCTDESCRIPTION#</p>
+                                <p class="card-text fw-bold price-tag">&##8377;#FLDPRODUCTPRICE#</p>
+                            </div>
                         </div>
-                     </div>
-                  </a>
-               </cfloop>
+                    </a>
+                </cfloop>
             </div>
-         </div>
+        </div>
+        
+
          <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
          <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
          <script src="../assets/script/jquery.js"></script>

@@ -1,6 +1,7 @@
 <cfoutput>
   <cfif session.isLog>
-  <cfset local.cartList = application.getlistObj.getCart(session.userId)>
+   <cfset local.getlistObj = createObject("component", "models.getList")>
+  <cfset local.cartList = local.getlistObj.getCart(session.userId)>
      <!DOCTYPE html>
      <html lang="en">
         <head>
@@ -21,7 +22,7 @@
                     <cfloop query="local.cartList.cartItems">
                        <div class="col-12 mt-5 px-2  d-flex justify-content-center">
                           <div class="col-4 d-flex justify-content-center ">
-                             <img src="../assets/productImage/#FLDPRODUCTIMAGE#" height="150" alt="" class=" float-start">
+                             <img src="../assets/productImage/#listToArray(FLDIMAGENAME)[1]#" height="150" alt="" class=" float-start">
                           </div>
                           <div class="col-3">
                              <h4 class="fw-bold  productname">#FLDPRODUCTNAME#</h4>
