@@ -209,10 +209,8 @@ $(document).ready(function() {
                         contentType: false,
                         success: function(response) {
                             console.log(response);
-                            if (response.result === true) {
+                            if (response.result) {
                                 window.location.href = `productList.cfm?subid=${subid}`;
-                            } else {
-                                console.log(response.msg);
                             }
                         },
                         error: function(xhr, status, error) {

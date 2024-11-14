@@ -27,7 +27,7 @@
                     </div>
                  </div>
                  <div class="col-12 p-3 mt-2 shadow">
-                    <p class="text-primary h6 form-text">Profile Informations</p>
+                    <p class="text-success h6 form-text">Profile Informations</p>
                     <table class="w-100 mb-4 table table-hover">
                        <cfloop query="local.userAddress.data">
                           <tr class="border border-1 w-100 ">

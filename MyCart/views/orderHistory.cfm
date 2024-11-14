@@ -22,7 +22,7 @@
             <cfinclude template="navbar.cfm">
             <div class="row justify-content-center mt-4">
                <div class="col-7 p-0">
-                  <div class="bg-primary align-items-center d-flex justify-content-between mb-3 rounded-pill">
+                  <div class="bg-success align-items-center d-flex justify-content-between mb-3 rounded-pill">
                      <a href="orderHistory.cfm"
                         class="text-light fw-bold mb-0 p-3 col-3 text-decor-none ms-4">ORDER HISTORY</a>
                      <div class="input-group me-4 w-50">
@@ -36,7 +36,7 @@
                   <cfloop collection="#local.orderHistory.result#" item="orderID">
                      <cfif len(trim(url.orderid)) eq 0 OR orderID eq url.orderid>
                         <div class="card mb-3 bg-light">
-                           <div class="card-header bg-success text-white align-items-center d-flex">
+                           <div class="card-header  bg-success-subtle text-dark align-items-center d-flex">
                               <p class="m-0 col-6">Order id: #orderID#</p>
                               <div class="align-items-center col-6 d-flex">
                                  <a href="orderpdf.cfm?orderid=#orderID#" class="ms-auto"
@@ -55,9 +55,9 @@
                                           class="img-fluid" height="100" alt="#product.productName#">
                                     </div>
                                     <div class="col-5">
-                                       <p><strong>#product.productName#</strong></p>
-                                       <p><strong>Brand:</strong> #product.productBrand#</p>
-                                       <p><strong>Quantity:</strong> #product.productQuantity#</p>
+                                       <a href="userProduct.cfm?proid=#product.PRODUCTID#" class="text-decor-none text-success"><strong>#product.productName#</strong></a>
+                                       <p class="form-text">Brand: #product.productBrand#</p>
+                                       <p class="form-text">Quantity: #product.productQuantity#</p>
                                     </div>
                                     <div class="col-5">
                                        <p class="mb-0">Actual Price: <span class="form-text text-success">&##8377;#product.COST#</span></p>

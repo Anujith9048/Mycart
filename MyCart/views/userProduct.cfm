@@ -53,7 +53,7 @@
 
           <cfoutput>
            <div class="col-md-6 col-12 pe-4 ps-5">
-              <div class="path d-flex align-items-center">
+              <div class="path d-flex align-items-center col-6 pathname">
                  <cfset local.path = local.getlistObj.getpath(url.proid)>
                  <a href="categoryProduct.cfm?cateid=#local.path.path.FLDCATEGORYID#" class="link-secondary" id="FLDCATEGORYID"> #local.path.path.FLDCATEGORY_NAME# </a> 
                  <img src="../assets/images/right.png" width="20" height="20" alt="">
@@ -61,10 +61,10 @@
                  <img src="../assets/images/right.png" width="20" height="20" alt=""> 
                  <a class="text-secondary"> #local.product.FLDPRODUCTNAME#</a>
               </div>
-              <h4 class="fw-bold pt-4">#local.product.FLDPRODUCTNAME#</h4>
+              <h4 class="fw-bold pt-2 text-success mb-0">#local.product.FLDPRODUCTNAME#</h4>
               <p class="form-text p-0">#local.product.FLDBRANDNAME#</p>
               <p class="fs-5"><span class="fw-bold form-text"> <u>Description:</u> </span>#local.product.FLDPRODUCTDESCRIPTION#</p>
-              <p class="price-tag fw-bolder fs-4 m-0">&##8377;#local.product.FLDPRODUCTPRICE#</p>
+              <p class="price-tag fw-bolder fs-4 m-0">&##8377;#local.product.FLDPRODUCTPRICEWITHTAX#</p>
               <p class="form-text">Tax: #local.product.FLDPRODUCTTAX#%</p>
               <div class="btn-items d-flex gap-2">
                  <a href="##" class="btn btn-outline btn-outline1" id="buyNow" pro-id="#url.proid#"  data-bs-toggle="modal" data-bs-target="##addressModal">Buy Now</a>
@@ -81,7 +81,7 @@
                  </div>
                  <div class="modal-body">
                     <cfset local.userAddress = local.getlistObj.getUserAddress()>
-                    <p class="text-primary h6 form-text">Saved Addresses</p>
+                    <p class="text-success h6 form-text">Saved Addresses</p>
                     <table class="w-100 mb-4 table table-hover">
                        <cfloop query="local.userAddress.data">
                           <tr class="border border-1 w-100 ">
@@ -100,9 +100,9 @@
                     </table>
                  </div>
                  <div class="modal-footer">
-                    <a href="userProfile.cfm" class="float-start  ">Add Address</a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="selectAddress" proid="#url.proid#">Payment Details</button>
+                    <a href="userProfile.cfm" class="float-start  btn btn-primary">Add Address</a>
+                    <button type="button" class="btn btn-success" id="selectAddress" proid="#url.proid#">Payment Details</button>
                  </div>
               </div>
            </div>

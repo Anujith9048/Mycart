@@ -16,14 +16,14 @@
            <cfinclude  template="navbar.cfm">
            <div class="row justify-content-center mt-4">
               <div class="col-5">
-                 <div class="row bg-primary align-content-center">
+                 <div class="row bg-success align-content-center">
                     <p class="text-light fw-bold mb-0 p-3">ORDER SUMMARY</p>
                  </div>
                  <table class="w-100 mb-4 table">
                     <tr>
                        <td class="">
                           <div class="form-check ps-0">
-                             <p class="text-primary h6 form-text">Selected Addresses</p>
+                             <p class="text-success h6 form-text">Selected Addresses</p>
                              <label class="form-check-label" for="flexRadioDefault1">
                                 <p class="form-text text-dark h6">#local.selectedAddress.result.fldfullname# <span class="ms-3">#local.selectedAddress.result.fldphone#</span></p>
                                 <p class="form-text text-dark mb-0">#local.selectedAddress.result.fldbuildingname# , #local.selectedAddress.result.fldcity# , #local.selectedAddress.result.fldarea# , #local.selectedAddress.result.fldstate#</p>
@@ -39,7 +39,7 @@
                      <tr>
                         <td class="align-items-center">
                            <div class="col-12">
-                              <p class="text-primary h6 form-text">Product</p>
+                              <p class="text-success h6 form-text">Product</p>
                               <div class="d-flex col-12">
                                  <div class="col-3 align-content-center">
                                     <img src="../assets/productImage/#local.image#" width="80" alt="">
@@ -114,7 +114,7 @@
                   <tr>
                      <td class="align-items-center">
                         <div class="col-12 ">
-                           <button class="btn btn-outline-primary float-end me-4" data-bs-toggle="modal" data-bs-target="##cardModal">Place Order</button>
+                           <button class="btn btn-outline-success float-end me-4" data-bs-toggle="modal" data-bs-target="##cardModal">Place Order</button>
                         </div>
                      </td>
                   </tr>
@@ -144,9 +144,9 @@
   <div class="modal-footer">
   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
   <cfif structKeyExists(url, "proid")>
-  <button type="button" class="btn btn-primary px-5" id="pay" address-id="#url.addressid#" proid="#url.proid#">Pay</button>
+  <button type="button" class="btn btn-success px-5" id="pay" address-id="#url.addressid#" proid="#url.proid#">Pay</button>
   <cfelse>
-  <button type="button" class="btn btn-primary px-5" id="pay" address-id="#url.addressid#" proid="cart">Pay</button>
+  <button type="button" class="btn btn-success px-5" id="pay" address-id="#url.addressid#" proid="cart">Pay</button>
   </cfif>
   </div>
   </div>

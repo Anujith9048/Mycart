@@ -20,9 +20,9 @@
             <li class="nav-item dropdown mx-2">
                <cfif session.islog>
                   <cfset local.count = local.getlistObj.getCartCount()>
-                  <a href="cartPage.cfm" type="button" class="nav-link btn btn-light position-relative">
+                  <a href="cartPage.cfm" type="button" class=" btn bg-success-subtle btn-light position-relative">
                   Cart
-                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
                   #local.count.count.count#
                   <span class="visually-hidden">Items in cart</span>
                   </span>

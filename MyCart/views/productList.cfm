@@ -54,7 +54,7 @@
                                      <div class="fw-bold price-tag fs-4">&##8377;#FLDPRODUCTPRICE#</div>
                                   </div>
                                   <div class="col-3 align-content-center">
-                                     <img src="../assets/productImage/#local.images[1]#" class="rounded-circle " width="60" height="60" alt="" id="imageThumbnail" style="cursor:pointer" data-id="#FLDPRODUCT_ID#">
+                                     <img src="../assets/productImage/#local.images[1]#" class="rounded-circle adminProductimage" width="60" height="60" alt="" id="imageThumbnail" style="cursor:pointer" data-id="#FLDPRODUCT_ID#">
                                   </div>
                                   <div class="col-3 align-content-center">
                                      <div class="float-end">

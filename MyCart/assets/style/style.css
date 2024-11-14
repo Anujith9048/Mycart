@@ -1,7 +1,7 @@
 body{
     background-color: rgb(253, 255, 251) !important;
     overflow-x: hidden;
-    min-height: 90vh;
+    min-height: 80vh;
 }
 .main-color{
     background-image:url(../images/output.jpg);
@@ -29,7 +29,7 @@ body{
 }
 
 .btn-outline{
-    border: 1px solid #49be02;
+    border: 1px solid #198754;
     border-radius: .4rem;
     color: rgb(0, 0, 0) !important;
     position: relative;
@@ -37,7 +37,7 @@ body{
     
 }
 .btn-outline:hover{
-    border: 1px solid #49be02;
+    border: 1px solid #198754;
     color: white !important;
 }
 .btn-outline1::before {
@@ -46,7 +46,7 @@ body{
     left: 0;
     width: 0%;
     height: 100%;
-    background: #49be02;
+    background: #198754;
     z-index: -1;
     transition: 0.8s;
     border-radius: 0 10px 10px 0 ;
@@ -57,7 +57,7 @@ body{
     right: 0px;
     width: 0%;
     height: 100%;
-    background: #4abe028f;
+    background: #19875463;
     z-index: -1;
     transition: 0.8s;
     border-radius:  10px 0 0 10px ;
@@ -110,8 +110,19 @@ body{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.pathname{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.pathname:hover{
+    overflow:visible;
+}
 .bottom-space{
     box-shadow: 1px 1px 1px white !important;
+}
+.adminProductimage:hover{
+    filter: drop-shadow(1px 1px 3px rgb(0, 0, 0));
 }
 
 /* User Home */
@@ -119,7 +130,7 @@ body{
     height: 30vh;
 }
 .btn-outline2{
-    border: 1px solid #00c5e0;
+    border: 1px solid #0d6efd;
     border-radius: .4rem;
     color: rgb(0, 0, 0) !important;
     position: relative;
@@ -134,7 +145,7 @@ body{
 }
 
 .btn-outline2:hover{
-    border: 1px solid #00c5e0;
+    border: 1px solid #0d6efd;
     color: white !important;
 }
 .btn-outline3:hover{
@@ -149,7 +160,7 @@ body{
     left: 0;
     width: 0%;
     height: 100%;
-    background: #00c5e0;
+    background: #0d6efd;
     z-index: -1;
     transition: 0.8s;
     border-radius: 0 10px 10px 0 ;
@@ -171,8 +182,8 @@ body{
     right: 0px;
     width: 0%;
     height: 100%;
-    background: #00c6e06b;
-    z-index: -1;
+    background: #0d6dfd41;
+    z-index: -1; 
     transition: 0.8s;
     border-radius:  10px 0 0 10px ;
 }
@@ -257,3 +268,27 @@ body{
     height: 250px;            
     object-fit: contain;        
 }
+/* Ensure the body does not scroll */
+.body-cart {
+    overflow: hidden;
+ }
+ 
+ .row-cart {
+    height: 100vh;
+ }
+ 
+ 
+ .cart-wrapper {
+    overflow-y: auto;
+    max-height: 80vh; /* Adjust for desired scrollable height */
+    padding-right: 15px; 
+    padding-bottom: 150px;
+ }
+ 
+ /* Sticky Price Details section */
+ .sticky-price-details {
+    position: sticky;
+    top: 20px; /* Adjust as needed */
+ }
+ 
+ 

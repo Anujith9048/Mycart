@@ -204,7 +204,7 @@
     <cfargument name="ProductImages" type="any"> 
     <cfargument name="productTax" type="any" default=1>
     <cfset local.currentDate = dateFormat(now(), "yyyy-mm-dd")>
-
+    
     <cfquery name="addCategoryList" datasource="sqlDatabase" result="addResult">
         INSERT INTO tblproducts (fldSubcategoryID, fldProductName, fldProductDescription, fldProductPrice, fldCreatedBy, fldCreatedDate, fldBrandName, fldProductTax)
         VALUES (
@@ -236,9 +236,9 @@
               )
           </cfquery>
         </cfloop>
-        <cfabort>
+        
 
-    <cfreturn {"result": true, "msg": "Product and images uploaded successfully."}>
+    <cfreturn {"result": true}>
 </cffunction>
 
 
@@ -370,13 +370,12 @@
       </cfquery>
     
       <cfif checkResult.recordCount>
-        <cfquery name="addQuantity" datasource="sqlDatabase" result="editResult">
+        <cfquery datasource="sqlDatabase">
           UPDATE tblcart
-          SET
-            fldQuantity =  fldQuantity + 1
-            WHERE fldProductID =  <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_varchar">;
+          SET fldQuantity =  fldQuantity + 1
+          WHERE fldProductID =  <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_varchar">;
         </cfquery>
-            <cfreturn {"result":false}>
+            <cfreturn {"result":false,'status':"edit"}>
         <cfelse>
           <cfquery name="addCart" datasource="sqlDatabase" result="addResult">
             INSERT INTO tblcart (fldUserID,fldCartDate,fldProductID)
@@ -416,16 +415,16 @@
           <cfquery name="addQuantity" datasource="sqlDatabase" result="editResult">
             UPDATE tblcart
             SET
-              fldQuantity =  fldQuantity + 1
-              WHERE fldProductID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_varchar">;
+            fldQuantity =  fldQuantity + 1
+            WHERE fldProductID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_varchar">;
           </cfquery>
 
-          <cfelse>
+        <cfelse>
           <cfquery name="addQuantity" datasource="sqlDatabase" result="editResult">
             UPDATE tblcart
             SET
-              fldQuantity =  fldQuantity - 1
-              WHERE fldProductID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_varchar">;
+            fldQuantity =  fldQuantity - 1
+            WHERE fldProductID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_varchar">;
           </cfquery>
         </cfif>
       <cfreturn {"result":true}>
@@ -462,8 +461,6 @@
 
   <!---  Order Product  --->
   <cffunction name="orderProduct" access="remote" returnformat="JSON">
-      <cfargument name="cardnumber" type="any" >
-      <cfargument name="cvv" type="any" >
       <cfargument name="addressId" type="any" >
       <cfargument name="proid" type="any" >
       <cfargument name="quantity" type="any" >
@@ -560,6 +557,7 @@
 
       <cfset local.userDetails = application.getlistObj.getUserDetails()>
       <cfset local.address = application.getlistObj.getselectedAddress(arguments.addressId)>
+
       <cfmail from="mycart@gmail.com"
         subject="Your Booking is Confirmed!"  
         to="#local.userDetails.data.fldemail#"
@@ -631,11 +629,18 @@
 
     <cfset local.whereClause = arrayLen(local.conditions) ? arrayToList(local.conditions, " OR ") : "">
     <cfquery name="filteredProducts" datasource="sqlDatabase">
-        SELECT fldProduct_ID, fldProductName, fldProductDescription, fldProductPrice, fldProductImage
-        FROM tblproducts
-        WHERE fldSubcategoryID = <cfqueryparam value="#arguments.subid#"  cfsqltype="cf_sql_varchar"> AND
-        (#whereClause#)
+        SELECT p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) *p.fldProductPrice +p.fldProductPrice, 2) AS fldProductPrice, p.fldBrandName,
+          GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription 
+          FROM tblproducts p
+          INNER JOIN  tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
+          WHERE p.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+          AND p.fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_integer">
+          AND pi.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+          AND pi.fldproduct_id = p.fldProduct_ID
+          (#whereClause#)
+          GROUP BY p.fldProduct_ID
     </cfquery>
+    <cfdump var="#filteredProducts#"abort>
     <cfreturn serializeJSON(filteredProducts)>
   </cffunction>
 </cfcomponent>
