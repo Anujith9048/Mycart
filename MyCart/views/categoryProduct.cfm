@@ -19,7 +19,7 @@
         <cfinclude  template="bottomNav.cfm">
 
         <cfloop query="local.subcatgories">
-         <cfset local.productsList = local.getlistObj.getProducts(FLDSUBCATEGORY_ID, 8)>
+         <cfset local.productsList = application.getlistObj.getProducts(FLDSUBCATEGORY_ID, 8)>
      
          <div class="container-fluid px-4 mt-5 mb-1">
              <div class="row d-flex">

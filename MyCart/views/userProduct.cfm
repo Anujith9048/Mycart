@@ -1,6 +1,4 @@
-
-   <cfset local.getlistObj=createObject("component", "models.getList")>
-  <cfset local.productslist = local.getlistObj.getSingleProduct(url.proid)>
+  <cfset local.productslist = application.getlistObj.getSingleProduct(url.proid)>
   <cfset local.product = local.productslist.product>
   <!DOCTYPE html>
   <html lang="en">
@@ -54,7 +52,7 @@
           <cfoutput>
            <div class="col-md-6 col-12 pe-4 ps-5">
               <div class="path d-flex align-items-center col-6 pathname">
-                 <cfset local.path = local.getlistObj.getpath(url.proid)>
+                 <cfset local.path = application.getlistObj.getpath(url.proid)>
                  <a href="categoryProduct.cfm?cateid=#local.path.path.FLDCATEGORYID#" class="link-secondary" id="FLDCATEGORYID"> #local.path.path.FLDCATEGORY_NAME# </a> 
                  <img src="../assets/images/right.png" width="20" height="20" alt="">
                  <a href="userProductList.cfm?subid=#local.path.path.FLDSUBCATEGORYID#" class="link-secondary" id="FLDSUBCATEGORYID"> #local.path.path.FLDSUBCATEGORYNAME#  </a>
@@ -80,7 +78,7 @@
                     <h5 class="modal-title color-address create-title w-100 text-center py-2 rounded-pill" id="exampleModalLabel">Select Address</h5>
                  </div>
                  <div class="modal-body">
-                    <cfset local.userAddress = local.getlistObj.getUserAddress()>
+                    <cfset local.userAddress = application.getlistObj.getUserAddress()>
                     <p class="text-success h6 form-text">Saved Addresses</p>
                     <table class="w-100 mb-4 table table-hover">
                        <cfloop query="local.userAddress.data">

@@ -1,4 +1,3 @@
-<cfset local.getlistObj = createObject("component", "models.getlist")>
 <cfoutput>
    <nav class="navbar navbar-expand-lg px-4 py-3 justify-content-between position-sticky top-0 bg-light shadow">
       <div class="container-fluid">
@@ -19,7 +18,7 @@
             </a>
             <li class="nav-item dropdown mx-2">
                <cfif session.islog>
-                  <cfset local.count = local.getlistObj.getCartCount()>
+                  <cfset local.count = application.getlistObj.getCartCount()>
                   <a href="cartPage.cfm" type="button" class=" btn bg-success-subtle btn-light position-relative">
                   Cart
                   <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">

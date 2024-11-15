@@ -1,7 +1,6 @@
 <cfoutput>
   <cfif session.isLog>
-   <cfset local.getlistObj = createObject("component", "models.getList")>
-  <cfset local.cartList = local.getlistObj.getCart(session.userId)>
+  <cfset local.cartList = application.getlistObj.getCart(session.userId)>
      <!DOCTYPE html>
      <html lang="en">
         <head>
@@ -67,7 +66,7 @@
                      </cfloop>
                      <div class="d-flex justify-content-between">
                         <p>Total Price</p>
-                        <cfset local.totalPrice = local.getlistObj.getCartPrice(session.userId)>
+                        <cfset local.totalPrice = application.getlistObj.getCartPrice(session.userId)>
                         <p class="fw-bold price-tag">&##8377;#local.totalPrice.price.SUM#</p>
                      </div>
                   </div>
@@ -91,7 +90,7 @@
                        <h5 class="modal-title color-address create-title w-100 text-center py-2 rounded-pill" id="exampleModalLabel">Select Address</h5>
                     </div>
                     <div class="modal-body">
-                       <cfset local.userAddress = local.getlistObj.getUserAddress()>
+                       <cfset local.userAddress = application.getlistObj.getUserAddress()>
                        <p class="text-primary h6 form-text">Saved Addresses</p>
                        <table class="w-100 mb-4 table table-hover">
                           <cfloop query="local.userAddress.data">
@@ -124,6 +123,6 @@
         </body>
      </html>
      <cfelse>
-     <cflocation  url="userloginPage.cfm">
+     <cflocation  url="userloginPage.cfm" addtoken="no">
   </cfif>
 </cfoutput>

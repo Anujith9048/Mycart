@@ -1,6 +1,5 @@
 <cfhtmltopdf destination="#ExpandPath('../assets/pdf/order-invoice.pdf')#" overwrite="true">
-    <cfset local.getlistObj = createObject("component", "models.getList")>
-    <cfset local.orderHistory = local.getlistObj.getItemsInOrderID(url.orderid)>
+    <cfset local.orderHistory = application.getlistObj.getItemsInOrderID(url.orderid)>
     <!DOCTYPE html>
     <html lang="en">
         <head>
@@ -25,6 +24,9 @@
                 <div class="card mb-3">
                     <div class="text-center">
                         <p>ORDER INVOICE</p>
+                        <p class="float-end m-0">Ordered In:
+                        #dateFormat(local.orderHistory.result.FLDORDERDATE, 'mmm dd, yyyy')#
+                        #timeFormat(local.orderHistory.result.FLDORDERDATE, 'hh:mm tt')#</p>
                     </div>
                     <div class="card-header bg-success text-white align-items-center d-flex rounded-pill">
                         <p class="m-0 col-12">Order ID: #orderID#</p>
@@ -56,7 +58,7 @@
                         </table>
                     </div>
                     <div class="card-footer text-muted">
-                        <cfset local.totalcost = local.getlistObj.getorderTotalCost(orderID)>
+                        <cfset local.totalcost = application.getlistObj.getorderTotalCost(orderID)>
                         <p><strong>Total Cost:</strong> &##8377;#local.totalcost.result.totalcost#</p>
                         <div class="mt-4">
                             <h5 class="m-0">Shipping Address</h5>

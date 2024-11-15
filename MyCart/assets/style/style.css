@@ -268,7 +268,6 @@ body{
     height: 250px;            
     object-fit: contain;        
 }
-/* Ensure the body does not scroll */
 .body-cart {
     overflow: hidden;
  }
@@ -280,15 +279,30 @@ body{
  
  .cart-wrapper {
     overflow-y: auto;
-    max-height: 80vh; /* Adjust for desired scrollable height */
+    max-height: 80vh; 
     padding-right: 15px; 
-    padding-bottom: 150px;
  }
  
- /* Sticky Price Details section */
  .sticky-price-details {
     position: sticky;
-    top: 20px; /* Adjust as needed */
+    top: 20px; 
  }
  
  
+
+ /* --------- */
+
+ ::-webkit-scrollbar{
+    width: 10px;
+ }
+ ::-webkit-scrollbar-track{
+    background: #ffffff;
+    border-radius: 15px;
+ }
+ ::-webkit-scrollbar-thumb:hover{
+    background: linear-gradient(white,#1e9e62);
+ }
+ ::-webkit-scrollbar-thumb{
+    background: linear-gradient(white,#198754);
+    border-radius: 15px;
+ }

@@ -42,8 +42,7 @@
                    </div>
                    <ul class="list-group d-grid gap-3 mt-3" id="subcategory-list">
                       <div class="row">
-                        <cfset local.getlistObj = createObject("component", "models.getList")>
-                         <cfset local.productList = local.getlistObj.getProducts(subid=url.subid)>
+                         <cfset local.productList = application.getlistObj.getProducts(subid=url.subid)>
                          <cfloop query="#local.productList.products#" >
                          <cfset local.images = listToArray(local.productList.products.FLDIMAGENAMES)>
                             <div class="col-6 mb-2">

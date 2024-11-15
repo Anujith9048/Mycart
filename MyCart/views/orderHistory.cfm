@@ -1,8 +1,7 @@
 <cfoutput>
    <cfparam name="url.orderid" default="">
    <cfif session.isLog>
-      <cfset local.getlistObj = createObject("component", "models.getList")>
-      <cfset local.orderHistory = local.getlistObj.getOrderHistory()>
+      <cfset local.orderHistory = application.getlistObj.getOrderHistory()>
       <!DOCTYPE html>
       <html lang="en">
          <head>
@@ -42,9 +41,9 @@
                                  <a href="orderpdf.cfm?orderid=#orderID#" class="ms-auto"
                                     title="Download invoice" order-id="#orderID#"><img
                                        src="../assets/images/pdf.png" height="40" alt=""></a>
-                                 <p class="float-end m-0">Order Date:
-                                    #dateFormat(local.orderHistory.result[orderID][1].orderDate, 'mmm dd,
-                                    yyyy')#</p>
+                                 <p class="float-end m-0">Ordered In:
+                                    #dateFormat(local.orderHistory.result[orderID][1].orderDate, 'mmm dd, yyyy')#
+                                    #timeFormat(local.orderHistory.result[orderID][1].orderDate, 'hh:mm tt')#</p>
                               </div>
                            </div>
                            <div class="card-body">
@@ -68,7 +67,7 @@
                               </cfloop>
                            </div>
                            <div class="card-footer text-muted d-flex w-100">
-                              <cfset local.totalcost=local.getlistObj.getorderTotalCost(orderID)>
+                              <cfset local.totalcost=application.getlistObj.getorderTotalCost(orderID)>
                                  <p class="align-content-center">Total Cost <strong
                                        class="price-tag">&##8377;#local.totalcost.result.totalcost#</strong>
                                  </p>
@@ -91,7 +90,7 @@
 
       </html>
       <cfinclude template="footer.cfm">
-         <cfelse>
-            <cflocation url="userloginPage.cfm">
+   <cfelse>
+      <cflocation url="userloginPage.cfm">
    </cfif>
 </cfoutput>

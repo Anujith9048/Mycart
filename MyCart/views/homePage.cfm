@@ -31,8 +31,7 @@
          <div class="random-product-list px-4 mt-3">
             <h4 class="fw-bold py-2">Random Products</h4>
             <div class="row d-flex">
-                <cfset local.getlistObj=createObject("component", "models.getList")>
-                <cfset local.randomlist = local.getlistObj.getRandomProducts()>
+                <cfset local.randomlist = application.getlistObj.getRandomProducts()>
         
                 <cfloop query="local.randomlist.products">
                     <cfset local.image = listToArray(FLDIMAGENAMES)[1]>

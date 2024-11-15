@@ -1,7 +1,6 @@
 <cfoutput>
-  <cfset local.getlistObj = createObject("component", "models.getlist")>
-  <cfset local.userDetails = local.getlistObj.getUserDetails()>
-  <cfset local.userAddress = local.getlistObj.getUserAddress()>
+  <cfset local.userDetails = application.getlistObj.getUserDetails()>
+  <cfset local.userAddress = application.getlistObj.getUserAddress()>
   <cfif session.isLog>
      <!DOCTYPE html>
      <html lang="en">

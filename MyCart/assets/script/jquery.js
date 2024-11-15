@@ -862,11 +862,14 @@ $("#pay").off('click').on('click', function(event) {
         $.ajax({
             url: '../models/savedetails.cfc?method=orderProduct',
             method: 'post',
-            data: {cardnumber,cvv,addressId,proid,quantity,price},
+            data: {cardnumber,cvv,addressId,proid,quantity},
             dataType: 'JSON',
             success: function(response) {
                 if (response.result) {
                     window.location.href="paysuccess.cfm"
+                }
+                else{
+                    alert(response.msg)
                 }
             },
             error: function(status, error) {

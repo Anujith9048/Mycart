@@ -33,7 +33,7 @@
                        </td>
                     </tr>
                   <cfif structKeyExists(url, "proid")>
-                     <cfset local.productslist = local.getlistObj.getSingleProduct(url.proid)>
+                     <cfset local.productslist = application.getlistObj.getSingleProduct(url.proid)>
                      <cfset local.product = local.productslist.product>
                      <cfset local.image = listToArray(local.product.FLDIMAGENAMES)[1]>
                      <tr>
@@ -70,7 +70,7 @@
                      <cfelse>
 
                      <cfif url.order EQ 'cart'>
-                        <cfset local.cartList = local.getlistObj.getCart(session.userId)>
+                        <cfset local.cartList = application.getlistObj.getCart(session.userId)>
                         <div class="row d-flex pb-5">
                            <div class="cart-wrapper col-12 ">
                               <cfloop query="local.cartList.cartItems">
@@ -104,7 +104,7 @@
                               <h5 class="">Price Details</h5>
                               <div class="d-flex justify-content-between">
                                  <p>Total Price</p>
-                                 <cfset local.totalPrice = local.getlistObj.getCartPrice(session.userId)>
+                                 <cfset local.totalPrice = application.getlistObj.getCartPrice(session.userId)>
                                  <p class="fw-bold price-tag">&##8377;#local.totalPrice.price.SUM#</p>
                               </div>
                            </div>
@@ -159,6 +159,6 @@
   <cfinclude  template="footer.cfm">
   </html>
   <cfelse>
-  <cflocation  url="userloginPage.cfm">
+  <cflocation  url="userloginPage.cfm" addtoken="no">
   </cfif>
 </cfoutput>
