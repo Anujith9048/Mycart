@@ -12,6 +12,7 @@
 
     <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/style/style.css">
+    <link rel="icon" type="image/x-icon" href="../assets/images/logo-img.png">
 </head>
 <body>
   <cfinclude  template="navbar.cfm">

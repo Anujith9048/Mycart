@@ -55,42 +55,35 @@
     <cffunction name="getProducts" access="remote" returnFormat="JSON">
         <cfargument name="subid" type="numeric" required="true">
         <cfargument name="limit" type="numeric" default="8">
-        <cfif structKeyExists(arguments, "limit")>
-
-        <cfquery name="local.selectProducts" datasource="sqlDatabase" result="Products">
-            SELECT p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice, p.fldBrandName, GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription 
+    
+        <cfquery name="local.selectProducts" datasource="sqlDatabase">
+            SELECT p.fldProduct_ID, p.fldProductName, 
+                   ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice, 
+                   p.fldBrandName, GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription, p.fldProductThumbnail AS fldProductThumbnail
             FROM tblproducts p 
             INNER JOIN tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
-            WHERE  p.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer"> 
-            AND pi.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-            AND p.fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_integer">
-            GROUP BY p.fldProduct_ID, p.fldProductName, p.fldProductTax, p.fldProductPrice, p.fldBrandName, p.fldProductDescription
-            ORDER BY RAND()
-            LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="cf_sql_integer">;
+            WHERE p.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer"> 
+              AND pi.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+              AND p.fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_integer">
+            GROUP BY p.fldProduct_ID, p.fldProductName, p.fldProductTax, 
+                     p.fldProductPrice, p.fldBrandName, p.fldProductDescription,p.fldProductThumbnail
+            <cfif structKeyExists(arguments, "limit")>
+                ORDER BY RAND()
+                LIMIT <cfqueryparam value="#arguments.limit#" cfsqltype="cf_sql_integer">
+            <cfelse>
+                ORDER BY p.fldProductPrice ASC
+            </cfif>
         </cfquery>
-        <cfelse>
-            <cfquery name="local.selectProducts" datasource="sqlDatabase" result="Products">
-                SELECT p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice,
-                p.fldBrandName, GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription 
-                FROM tblproducts p 
-                INNER JOIN  tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
-                WHERE p.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer"> 
-                AND pi.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-                AND pi.fldproduct_id = p.fldProduct_ID
-                AND p.fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_integer">
-                GROUP BY p.fldProduct_ID, p.fldProductName, p.fldProductTax, p.fldProductPrice, p.fldBrandName, p.fldProductDescription;
-            </cfquery>
-            
-        </cfif>
+    
         <cfreturn { "products": local.selectProducts }>
     </cffunction>
+    
 
     <cffunction name="getProductsSorted" access="remote" returnFormat="JSON">
         <cfargument name="subid" type="numeric">
         <cfargument name="sort" type="numeric">
-        
         <cfquery name="local.selectProducts" datasource="sqlDatabase">
-            SELECT p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) *p.fldProductPrice +p.fldProductPrice, 2) AS fldProductPrice, p.fldBrandName,
+            SELECT p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) *p.fldProductPrice +p.fldProductPrice, 2) AS fldProductPrice, p.fldBrandName, p.fldProductThumbnail,
             GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription 
             FROM tblproducts p
             INNER JOIN  tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
@@ -112,7 +105,7 @@
         <cfargument name="subId" type="numeric">
         <cfargument name="proId" type="numeric">
         <cfquery name="local.selectProduct" datasource="sqlDatabase">
-            SELECT fldProductName,fldProductDescription,ROUND((fldProductTax / 100) *fldProductPrice +fldProductPrice, 2) AS ProductPrice,fldProductPrice,fldBrandName,fldProductImage,fldProductTax  FROM tblproducts
+            SELECT fldProductName,fldProductDescription,ROUND((fldProductTax / 100) *fldProductPrice +fldProductPrice, 2) AS ProductPrice,fldProductPrice,fldBrandName,fldProductThumbnail,fldProductTax  FROM tblproducts
             WHERE fldSubcategoryID = <cfqueryparam value="#arguments.subId#" cfsqltype="cf_sql_integer">
             AND fldProduct_ID = <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_integer">;
         </cfquery>
@@ -131,7 +124,7 @@
     <cffunction name="getSingleProduct" access="remote" returnFormat="JSON">
         <cfargument name="proId" type="numeric">
         <cfquery name="local.selectProduct" datasource="sqlDatabase">
-           SELECT p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPriceWithTax, p.fldBrandName, GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription ,p.fldProductTax ,p.fldProductPrice
+           SELECT p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPriceWithTax, p.fldBrandName, GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription ,p.fldProductTax ,p.fldProductPrice ,p.fldProductThumbnail
             FROM tblproducts p 
             INNER JOIN tblproductimages pi 
             ON p.fldProduct_ID = pi.fldproduct_id
@@ -140,7 +133,6 @@
         </cfquery>
         <cfreturn { "product": local.selectProduct}>
     </cffunction>
-
 
     <cffunction name="getProductImages" access="remote" returnFormat="JSON">
         <cfargument name="proID" type="any" required="true">
@@ -173,10 +165,9 @@
         <cfreturn { "category": local.selectCategory, "name": local.name}>
     </cffunction>
 
-
     <cffunction name="getRandomProducts" access="remote" returnFormat="JSON">
         <cfquery name="local.selectProducts" datasource="sqlDatabase">
-            SELECT p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice, p.fldBrandName,GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription 
+            SELECT p.fldProduct_ID, p.fldProductName, ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice, p.fldBrandName,GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription ,p.fldProductThumbnail
             FROM  tblproducts p
             INNER JOIN  tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
             WHERE p.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
@@ -189,12 +180,11 @@
         <cfreturn { "products": local.selectProducts }>
     </cffunction>
     
-
     <cffunction name="getCart" access="remote" returnFormat="JSON">
         <cfargument name="userId" type="numeric">
         <cfquery name="local.selectCartItems" datasource="sqlDatabase">
             SELECT p.fldActive, p.fldProduct_ID, p.fldProductName,
-                   ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) * c.fldQuantity AS totalCost,
+                   ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) * c.fldQuantity AS totalCost,p.fldProductThumbnail,
                    p.fldProductPrice, p.fldProductTax, p.fldBrandName,
                    GROUP_CONCAT(pi.fldimagename) AS fldimagename, p.fldProductDescription, c.fldQuantity
             FROM tblproducts p 
@@ -235,7 +225,7 @@
     <cffunction name="searchProduct" access="remote" returnFormat="JSON">
         <cfargument name='productName' type="any">
         <cfquery name="local.searchProduct" datasource="sqlDatabase">
-            SELECT p.fldProduct_ID, p.fldProductName ,ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice, p.fldBrandName,
+            SELECT p.fldProduct_ID, p.fldProductName ,ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice, p.fldBrandName,p.fldProductThumbnail,
                 GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription 
                 FROM tblproducts p
                 INNER JOIN  tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
@@ -253,7 +243,7 @@
         <cfargument  name="sort" type="string">
 
             <cfquery name="local.searchProduct" datasource="sqlDatabase" result="cartamount">
-                SELECT p.fldProduct_ID, p.fldProductName ,ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice, p.fldBrandName,
+                SELECT p.fldProduct_ID, p.fldProductName ,ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice, p.fldBrandName,p.fldProductThumbnail,
                 GROUP_CONCAT(pi.fldimagename) AS fldImageNames, p.fldProductDescription 
                 FROM tblproducts p
                 INNER JOIN  tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
@@ -302,17 +292,16 @@
 
     <cffunction name="getorderHistory" access="remote" returnFormat="JSON">
         <cfquery name="local.getOrderHistory" datasource="sqlDatabase">
-            SELECT o.fldOrder_ID,  o.fldShippingAddress, o.fldOrderDate, op.fldProduct AS fldProduct_ID,op.fldProductQuantity, 
-                   ROUND((op.fldProductTax / 100) * op.fldProductPrice + op.fldProductPrice, 2) * op.fldProductQuantity AS totalOrderCost,op.fldProductPrice,op.fldProductTax, p.fldProductName,p.fldProduct_ID, p.fldBrandName, GROUP_CONCAT(pi.fldimagename) AS fldImageNames,
-                   a.fldFullname,a.fldPhone,a.fldPincode,a.fldState,a.fldCity,a.fldBuildingName,a.fldArea
+            SELECT o.fldOrder_ID, o.fldShippingAddress,  o.fldOrderDate,  op.fldProduct AS fldProduct_ID, op.fldProductQuantity,  p.fldProductThumbnail, ROUND((op.fldProductTax / 100) * op.fldProductPrice + op.fldProductPrice, 2) * op.fldProductQuantity AS totalOrderCost, op.fldProductPrice, op.fldProductTax,   p.fldProductName, p.fldProduct_ID,  p.fldBrandName, a.fldFullname, a.fldPhone, a.fldPincode ,a.fldState, a.fldCity, a.fldBuildingName, a.fldArea
             FROM tblorder o
             INNER JOIN tblorderproducts op ON o.fldOrder_ID = op.fldOrderID
             INNER JOIN tblproducts p ON op.fldProduct = p.fldProduct_ID
             INNER JOIN tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
             INNER JOIN tblsavedaddress a ON o.fldShippingAddress = a.fldAddress_ID
             WHERE o.fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">
-            AND pi.fldproduct_id = p.fldProduct_ID
-            GROUP BY o.fldOrder_ID, o.fldShippingAddress, o.fldOrderDate, op.fldProduct, op.fldProductQuantity, p.fldProductName, p.fldBrandName, a.fldFullname,a.fldPhone,a.fldPincode,a.fldState,a.fldCity,a.fldBuildingName,a.fldArea,op.fldProductPrice,op.fldProductTax,p.fldProduct_ID
+            GROUP BY o.fldOrder_ID, o.fldShippingAddress, o.fldOrderDate, op.fldProduct, p.fldProductThumbnail, op.fldProductQuantity, p.fldProductName, 
+                     p.fldBrandName, a.fldFullname,a.fldPhone, a.fldPincode, a.fldState, a.fldCity, a.fldBuildingName, a.fldArea, op.fldProductPrice, op.fldProductTax, p.fldProduct_ID
+            ORDER BY o.fldOrderDate DESC
         </cfquery>
         
         <cfset orderStruct = {}>
@@ -324,7 +313,7 @@
             </cfif>
         
             <cfset local.product = {
-                productImage =listToArray(fldImageNames)[1],
+                productImage =fldProductThumbnail,
                 productID = fldProduct_ID,
                 productName = fldProductName,
                 productQuantity = FLDPRODUCTQUANTITY,

@@ -16,6 +16,7 @@
                crossorigin="anonymous"></script>
             <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
             <link rel="stylesheet" href="../assets/style/style.css">
+            <link rel="icon" type="image/x-icon" href="../assets/images/logo-img.png">
          </head>
          <body>
             <cfinclude template="navbar.cfm">
@@ -91,6 +92,6 @@
       </html>
       <cfinclude template="footer.cfm">
    <cfelse>
-      <cflocation url="userloginPage.cfm">
+      <cflocation url="userloginPage.cfm" addtoken="no">
    </cfif>
 </cfoutput>

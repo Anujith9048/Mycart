@@ -11,6 +11,7 @@
            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
            <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
            <link rel="stylesheet" href="../assets/style/style.css">
+           <link rel="icon" type="image/x-icon" href="../assets/images/logo-img.png">
         </head>
         <body class="body-cart">
            <cfinclude  template="navbar.cfm">
@@ -21,7 +22,7 @@
                   <cfloop query="local.cartList.cartItems">
                      <div class="col-12 mt-5 px-2  d-flex justify-content-center">
                         <div class="col-4 d-flex justify-content-center ">
-                           <img src="../assets/productImage/#listToArray(FLDIMAGENAME)[1]#" height="150" alt="" class=" float-start">
+                           <img src="../assets/productImage/#fldProductThumbnail#" height="150" class=" float-start" alt="#FLDPRODUCTNAME#">
                         </div>
                         <div class="col-3">
                            <h4 class="fw-bold  productname">#FLDPRODUCTNAME#</h4>
@@ -60,7 +61,7 @@
                      <h5 class="">Price Details</h5>
                      <cfloop query="local.cartList.cartItems">
                         <div class="d-flex justify-content-between">
-                           <p>#FLDPRODUCTNAME#</p>
+                           <p class="productnameMax">#FLDPRODUCTNAME#</p>
                            <p class="text-success">&##8377;#TOTALCOST#</p>
                         </div>
                      </cfloop>

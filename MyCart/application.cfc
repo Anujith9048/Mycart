@@ -46,7 +46,7 @@
             Detail: #arguments.exception.detail#
             
         </cfmail>        
-        <cflocation  url="errorpage.cfm">
+        <cflocation  url="errorpage.cfm" addtoken="no">
         <cfabort>
     </cffunction>
 </cfcomponent>

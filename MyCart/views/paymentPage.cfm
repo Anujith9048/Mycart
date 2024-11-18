@@ -11,6 +11,7 @@
            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
            <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
            <link rel="stylesheet" href="../assets/style/style.css">
+           <link rel="icon" type="image/x-icon" href="../assets/images/logo-img.png">
         </head>
         <body>
            <cfinclude  template="navbar.cfm">
@@ -35,7 +36,7 @@
                   <cfif structKeyExists(url, "proid")>
                      <cfset local.productslist = application.getlistObj.getSingleProduct(url.proid)>
                      <cfset local.product = local.productslist.product>
-                     <cfset local.image = listToArray(local.product.FLDIMAGENAMES)[1]>
+                     <cfset local.image = local.product.FLDPRODUCTTHUMBNAIL>
                      <tr>
                         <td class="align-items-center">
                            <div class="col-12">
@@ -123,34 +124,34 @@
          </div>
   <!--- Modal --->
   <div class=" shadow-lg modal fade" id="cardModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-  <div class="modal-content border-0 rounded">
-  <div class="modal-header create-bg">
-  <h5 class="modal-title color-address create-title w-100 text-center py-2 rounded-pill" id="exampleModalLabel">Select Address</h5>
-  </div>
-  <div class="modal-body justify-content-center d-flex">
-  <div class="col-10 border border-1 rounded">
-  <div class="col-12 m-0 border-bottom border-1 p-2 text-center fw-bold">Card Details</div>
-  <div class="col-12 d-flex p-3 justify-content-between">
-  <p class="form-text">Card Number</p>
-  <input type="text" name="" id="cardnumber" class="form-control w-50" placeholder="000-000-000-00" maxlength="11">
-  </div>
-  <div class="col-12 d-flex p-3 justify-content-between">
-  <p class="form-text">CVV</p>
-  <input type="text" name="" id="cvv" class="form-control w-50" placeholder="000" maxlength="3">
-  </div>
-  </div>
-  </div>
-  <div class="modal-footer">
-  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-  <cfif structKeyExists(url, "proid")>
-  <button type="button" class="btn btn-success px-5" id="pay" address-id="#url.addressid#" proid="#url.proid#">Pay</button>
-  <cfelse>
-  <button type="button" class="btn btn-success px-5" id="pay" address-id="#url.addressid#" proid="cart">Pay</button>
-  </cfif>
-  </div>
-  </div>
-  </div>
+   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 rounded">
+         <div class="modal-header create-bg">
+            <h5 class="modal-title color-address create-title w-100 text-center py-2 rounded-pill" id="exampleModalLabel">Select Address</h5>
+         </div>
+         <div class="modal-body justify-content-center d-flex">
+            <div class="col-10 border border-1 rounded">
+               <div class="col-12 m-0 border-bottom border-1 p-2 text-center fw-bold">Card Details</div>
+               <div class="col-12 d-flex p-3 justify-content-between">
+                  <p class="form-text">Card Number</p>
+                  <input type="text" name="" id="cardnumber" class="form-control w-50" placeholder="000-000-000-00" maxlength="11">
+               </div>
+               <div class="col-12 d-flex p-3 justify-content-between">
+               <p class="form-text">CVV</p>
+               <input type="text" name="" id="cvv" class="form-control w-50" placeholder="000" maxlength="3">
+            </div>
+         </div>
+      </div>
+      <div class="modal-footer">
+         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+         <cfif structKeyExists(url, "proid")>
+            <button type="button" class="btn btn-success px-5" id="pay" address-id="#url.addressid#" proid="#url.proid#">Pay</button>
+            <cfelse>
+            <button type="button" class="btn btn-success px-5" id="pay" address-id="#url.addressid#" proid="cart">Pay</button>
+         </cfif>
+      </div>
+      </div>
+   </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>

@@ -373,7 +373,7 @@ $(document).ready(function() {
         });
         
     });
-    
+
     // Delete Categories
     $(document).on('click', '.deleteItem', function(event) {
         event.preventDefault();
@@ -426,7 +426,7 @@ $(document).ready(function() {
         });
     });
 
-    
+
     // Edit SubCategories
     $(document).on('click', '.editSubcategory', function(event) {
         event.preventDefault();
@@ -604,18 +604,16 @@ $(document).ready(function() {
         } else {
           $("#subCategoriesName").html(`<option value="" selected></option>`);
         }
-      });
-
-
-
-      $("#closeProduct").off('click').on('click', function(event) {
-        location.reload();
+    });
+    
+    $("#closeProduct").off('click').on('click', function(event) {
+  location.reload();
     });
 
 
     // -------------User View------------------------
 
-    
+
     $("#addToCart").off('click').on('click', function(event) {
         event.preventDefault();
         var proid = $(this).attr("pro-id");
@@ -630,10 +628,8 @@ $(document).ready(function() {
                     window.location.href="cartPage.cfm";
                 }
                 else if(response.result === "login"){
-                    window.location.href="userloginPage.cfm";
-                }
-                else{
-                    window.location.href="cartPage.cfm";
+                    // window.location.href="userloginPage.cfm";
+                    $('#logModal').modal('show');
                 }
             },
             error: function(status, error) {
@@ -641,8 +637,6 @@ $(document).ready(function() {
             }
         });
     });
-
-
     // Login User
     $("#submitLogin").off('click').on('click', function(event) {
         event.preventDefault();
@@ -677,7 +671,6 @@ $(document).ready(function() {
             });
         }
     });
-
      // Logout
      $("#Userlogout").off('click').on('click', function() {
         $.ajax({
@@ -686,7 +679,7 @@ $(document).ready(function() {
             dataType: 'JSON',
             success: function(response) {
                 if (response) {
-                    window.location.href="userloginPage.cfm";
+                    location.reload();
                 }
             },
             error: function(status, error) {
@@ -714,15 +707,15 @@ $(document).ready(function() {
         });
     });
 
-// Search Item
+    // Search Item
     $("#searchItem").off('click').on('click', function(event) {
         event.preventDefault();
         var productName = $("#productName").val();
         window.location.href=`userProductList.cfm?search=${productName}`;
     });
 
- // Cart Quantity
- $(".quantityControl").off('click').on('click', function(event) {
+     // Cart Quantity
+    $(".quantityControl").off('click').on('click', function(event) {
     event.preventDefault();
     var id = $(this).attr("pro-id");
     var type =$(this).attr("data-type");
@@ -741,10 +734,10 @@ $(document).ready(function() {
             console.log("AJAX error: " + status + ", " + error);
         }
     });
-});
+    });
 
-// Sort Items
-$(".sort").off('click').on('click', function(event) {
+    // Sort Items
+    $(".sort").off('click').on('click', function(event) {
     event.preventDefault();
     var type =$(this).attr("type");
     var data =$(this).attr("data-id");
@@ -755,10 +748,10 @@ $(".sort").off('click').on('click', function(event) {
     else if(mode==="sub"){
         window.location.href = `userProductList.cfm?subid=${data}&sort=${type}`;
     }
-});
+    });
 
-// Submit Address
-$("#submitAddress").off('click').on('click', function(event) {
+    // Submit Address
+    $("#submitAddress").off('click').on('click', function(event) {
     event.preventDefault();
     var validate = validateAddress();
     if(validate){
@@ -784,10 +777,10 @@ $("#submitAddress").off('click').on('click', function(event) {
             }
         });
     }
-});
+    });
 
-// selectAddress
-$("#selectAddress").off('click').on('click', function(event) {
+    // selectAddress
+    $("#selectAddress").off('click').on('click', function(event) {
     
     event.preventDefault();
     var addressId = $('input[name="addressRadio"]:checked').val();
@@ -798,9 +791,9 @@ $("#selectAddress").off('click').on('click', function(event) {
     else{
         window.location.href=`paymentPage.cfm?addressid=${addressId}&proid=${proid}`
     }
-});
+    });
 
-$(".quantityControlPayment").off('click').on('click', function(event) {event.preventDefault();
+    $(".quantityControlPayment").off('click').on('click', function(event) {event.preventDefault();
     var type = $(this).attr('data-type');
     var quantity = parseInt($("#productQuantity").text(), 10); 
     
@@ -815,10 +808,10 @@ $(".quantityControlPayment").off('click').on('click', function(event) {event.pre
     
     $("#productQuantity").text(quantity);
     
-});
+    });
 
-// PAY
-$("#pay").off('click').on('click', function(event) {
+    // PAY
+    $("#pay").off('click').on('click', function(event) {
     var cardnumber =  jQuery.trim($('#cardnumber').val());
     var cvv =  jQuery.trim($('#cvv').val());
     var result = true;
@@ -878,10 +871,9 @@ $("#pay").off('click').on('click', function(event) {
         });
     }
     }
-});
+    });
 
-
-$("#submitFilter").off('click').on('click', function(event) {
+    $("#submitFilter").off('click').on('click', function(event) {
     event.preventDefault();
     var checkedValues = $(".form-check-input:checked").map(function() {
         return $(this).val();
@@ -924,17 +916,15 @@ $("#submitFilter").off('click').on('click', function(event) {
             console.error("AJAX error: " + status + ", " + error);
         }
     });
-});
+    });
 
-$("#orderSearch").off('click').on('click', function(event) {
+    $("#orderSearch").off('click').on('click', function(event) {
     event.preventDefault();
     var orderid = $("#orderidInput").val();
     window.location.href=`orderHistory.cfm?orderid=${orderid}`
-});
+    });
 
-
-
-$(document).on('click', '#imageThumbnail', function(event) {
+    $(document).on('click', '#imageThumbnail', function(event) {
     event.preventDefault();
     var proId=$(this).attr("data-id");
 
@@ -945,8 +935,6 @@ $(document).on('click', '#imageThumbnail', function(event) {
         data: {proId},
         dataType: 'JSON',
         success: function(response) {
-
-            var imageList = response;
             
             var content = `
                 <div id="carouselExampleIndicators" class="carousel carousel-dark slide col-12" data-bs-ride="carousel">
@@ -968,7 +956,9 @@ $(document).on('click', '#imageThumbnail', function(event) {
                 
                 content += `
                     <div class="carousel-item ${i === 1 ? 'active' : ''}">
-                        <button class="btn btn-outline-danger mb-2 deleteProductimage" style="margin-left:210px;" data-id="${images.FLDIMAGEID}">Delete</button>
+                        <div class="d-flex justify-content-center gap-3">
+                            <button class="btn btn-outline-danger mb-2 deleteProductimage"  data-id="${images.FLDIMAGEID}">Delete</button>
+                            <button class="btn btn-outline-success mb-2 thumbnailimage"  data-id="${images.FLDIMAGEID}" pro-id="${proId}">Set as Thumbnail</button></div>
                         <img src="../assets/productImage/${images.FLDIMAGENAME}" alt="" style="max-width:100%; height:auto; display:block; margin:auto;">
 
                     </div>
@@ -996,10 +986,9 @@ $(document).on('click', '#imageThumbnail', function(event) {
         }
     });
     
-});
+    });
 
-
-$(document).on('click', '.deleteProductimage', function(event) {
+    $(document).on('click', '.deleteProductimage', function(event) {
     var imageid=$(this).attr("data-id");
     $.ajax({
         url: '../models/savedetails.cfc?method=deleteProductimage',
@@ -1015,13 +1004,77 @@ $(document).on('click', '.deleteProductimage', function(event) {
             console.log("AJAX error: " + status + ", " + error);
         }
     });
-});
+    });
+
+    $(document).on('click', '.thumbnailimage', function(event) {
+    var imageid=$(this).attr("data-id");
+    var productId=$(this).attr("pro-id");
+    $.ajax({
+        url: '../models/savedetails.cfc?method=setThumbnailImage',
+        method: 'post',
+        data: {imageid,productId},
+        dataType: 'JSON',
+        success: function(response) {
+            if (response.result) {
+                location.reload()
+            }
+        },
+        error: function(status, error) {
+            console.log("AJAX error: " + status + ", " + error);
+        }
+    });
+    });
+
+    $("#loginOnBuy").off('click').on('click', function(event) {
+        event.preventDefault();
+        $("#loginModal").attr("data-type",'buy');
+        $('#logModal').modal('show');
+    });
+
+    $("#loginModal").off('click').on('click', function(event) {
+        event.preventDefault();
+        var proid = $(this).attr("data-id");
+        var mode = $(this).attr("data-type");
+
+        var isValid = validateForm();
+        if (isValid) {
+            var username = jQuery.trim($('#InputUname').val());
+            var email = jQuery.trim($('#InputEmail').val());
+            var password = jQuery.trim($('#InputPassword').val());
+            
+            $.ajax({
+                url: '../controllers/loginUser.cfc?method=checkLogin',
+                method: 'post',
+                data: { username, email, password, mode, proid},
+                dataType: 'JSON',
+                success: function(response) {
+                    
+                    if (response.result === true) {
+                        $("#InputEmail,#InputUname,#InputPassword,#roleOptions").removeClass("is-invalid");
+                        $("#InputEmail,#InputUname,#InputPassword,#roleOptions").addClass("is-valid");
+                        $("#passwordHelp").text('');
+                        window.location.href=`cartPage.cfm`;
+                    }else if (response.result === 'buy') {
+                        location.reload();
+                    }else{
+                        $("#InputEmail,#InputUname,#InputPassword,#roleOptions").addClass("is-invalid");
+                        $("#InputEmail,#InputUname,#InputPassword,#roleOptions").removeClass("is-valid");
+                        $("#passwordHelp").addClass("text-danger");
+                        $("#passwordHelp").removeClass("text-success");
+                        $("#passwordHelp").text("login faild");
+                    }
+                },
+                error: function(status, error) {
+                    console.log("AJAX Error: " + xhr.responseText);
+                    console.log("Status: " + status + ", Error: " + error);
+                }
+            });
+        }
+    });
 
 
-
-
-//---------Validate---------- 
-function validateForm(){ 
+    //---------Validate---------- 
+    function validateForm(){ 
         var username = jQuery.trim($('#InputUname').val());
         var email = jQuery.trim($('#InputEmail').val());
         var password = jQuery.trim($('#InputPassword').val());
@@ -1067,256 +1120,256 @@ function validateForm(){
             result = false;
         }
         return result;
+        };
+
+    function validateModal(type){
+        if(type === 'category' || type === 'editCategory'){
+            var categoryName = jQuery.trim($("#categoriesName").val());
+            if(categoryName.length){
+                $("#categoriesName").removeClass("is-invalid");
+                $("#categoriesName").addClass("is-valid");
+                $("#errorCategory").text("");
+                return true;
+            }
+            else{
+                $("#categoriesName").addClass("is-invalid");
+                $("#categoriesName").removeClass("is-valid");
+                $("#errorCategory").text("Enter Category name");
+                return false;
+            }
+        }
+        else if(type ==='subcategory' || type ==='editSubcategory'){
+            var categoryName = jQuery.trim($("#categoriesName").val());
+            var subCategoryName = jQuery.trim($("#subCategoriesName").val());
+            var result = true;
+            if(categoryName.length){
+                $("#categoriesName").removeClass("is-invalid");
+                $("#categoriesName").addClass("is-valid");
+                $("#errorCategory").text("");
+            }
+            else{
+                $("#categoriesName").addClass("is-invalid");
+                $("#categoriesName").removeClass("is-valid");
+                $("#errorCategory").text("Enter Category name");
+                result = false;
+            }
+
+            if(subCategoryName.length){
+                $("#subCategoriesName").removeClass("is-invalid");
+                $("#subCategoriesName").addClass("is-valid");
+                $("#errorSubcategory").text("");
+            }
+            else{
+                $("#subCategoriesName").addClass("is-invalid");
+                $("#subCategoriesName").removeClass("is-valid");
+                $("#errorSubcategory").text("Enter SubCategory name");
+                result = false;
+            }
+            return result;
+
+        }
+        else if(type ==='product'|| type ==='editProduct'){
+            var categoryName = jQuery.trim($("#categoriesName").val());
+            var subCategoryName = jQuery.trim($("#subCategoriesName").val());
+
+            var productName = jQuery.trim($("#productName").val());
+            var productDescription = jQuery.trim($("#productDescription").val());
+            var productPrice = jQuery.trim($("#productPrice").val());
+            var productTax = jQuery.trim($("#productTax").val());
+            var productBrand = jQuery.trim($("#productBrand").val());
+            var result = true;
+            if(categoryName.length){
+                $("#categoriesName").removeClass("is-invalid");
+                $("#categoriesName").addClass("is-valid");
+                $("#errorCategory").text("");
+            }
+            else{
+                $("#categoriesName").addClass("is-invalid");
+                $("#categoriesName").removeClass("is-valid");
+                $("#errorCategory").text("Enter Category name");
+                result = false;
+            }
+
+            if(subCategoryName.length){
+                $("#subCategoriesName").removeClass("is-invalid");
+                $("#subCategoriesName").addClass("is-valid");
+                $("#errorSubcategory").text("");
+            }
+            else{
+                $("#subCategoriesName").addClass("is-invalid");
+                $("#subCategoriesName").removeClass("is-valid");
+                $("#errorSubcategory").text("Enter SubCategory name");
+                result = false;
+            }
+
+            if(productName.length){
+                $("#productName").removeClass("is-invalid");
+                $("#productName").addClass("is-valid");
+                $("#errorProductName").text("");
+            }
+            else{
+                $("#productName").addClass("is-invalid");
+                $("#productName").removeClass("is-valid");
+                $("#errorProductName").text("Enter Product name");
+                result = false;
+            }
+
+            if(productBrand.length){
+                $("#productBrand").removeClass("is-invalid");
+                $("#productBrand").addClass("is-valid");
+                $("#errorProductBrand").text("");
+            }
+            else{
+                $("#productBrand").addClass("is-invalid");
+                $("#productBrand").removeClass("is-valid");
+                $("#errorProductBrand").text("Enter Brand name");
+                result = false;
+            }
+
+            if(productDescription.length){
+                $("#productDescription").removeClass("is-invalid");
+                $("#productDescription").addClass("is-valid");
+                $("#errorProductDesc").text("");
+            }
+            else{
+                $("#productDescription").addClass("is-invalid");
+                $("#productDescription").removeClass("is-valid");
+                $("#errorProductDesc").text("Enter Product Description");
+                result = false;
+            }
+
+            if(productPrice.length){
+                $("#productPrice").removeClass("is-invalid");
+                $("#productPrice").addClass("is-valid");
+                $("#errorProductPrice").text("");
+            }
+            else{
+                $("#productPrice").addClass("is-invalid");
+                $("#productPrice").removeClass("is-valid");
+                $("#errorProductPrice").text("Enter Product Price");
+                result = false;
+            }
+
+            if(productTax.length){
+                $("#productTax").removeClass("is-invalid");
+                $("#productTax").addClass("is-valid");
+                $("#errorProductTax").text("");
+            }
+            else{
+                $("#productTax").addClass("is-invalid");
+                $("#productTax").removeClass("is-valid");
+                $("#errorProductTax").text("Enter Tax Percentage");
+                result = false;
+            }
+            return result;
+        }
+    }
+
+    function validateAddress(){ 
+        var name = jQuery.trim($('#name').val());
+        var phone = jQuery.trim($('#phone').val());
+        var pincode = jQuery.trim($('#pincode').val());
+        var state = jQuery.trim($('#state').val());
+        var city = jQuery.trim($('#city').val());
+        var building = jQuery.trim($('#building').val());
+        var area = jQuery.trim($('#area').val());
+        var result = true;
+        if(name.length){
+            $("#name").removeClass("is-invalid");
+            $("#name").addClass("is-valid");
+            $("#errorName").text("");
+
+        }
+        else{
+            $("#name").addClass("is-invalid");
+            $("#name").removeClass("is-valid");
+            $("#errorName").text("Enter Full Name");
+            $("#errorName").addClass("text-danger");
+            result = false;
+        }
+
+        let phonePattern = /^(?:\+91)?[0-9]{10}$/; 
+        if(phone.length && phonePattern.test(phone)){
+            $("#phone").removeClass("is-invalid");
+            $("#phone").addClass("is-valid");
+            $("#errorPhone").text("");
+        } else {
+            $("#phone").addClass("is-invalid");
+            $("#phone").removeClass("is-valid");
+            $("#errorPhone").text("Enter a valid Phone Number");
+            $("#errorPhone").addClass("text-danger");
+            result = false;
+        }
+
+        if(pincode.length){
+            $("#pincode").removeClass("is-invalid");
+            $("#pincode").addClass("is-valid");
+            $("#errorPincode").text("");
+        }
+        else{
+            $("#pincode").addClass("is-invalid");
+            $("#pincode").removeClass("is-valid");
+            $("#errorPincode").text("Enter Pincode");
+            $("#errorPincode").addClass("text-danger");
+            $("#errorPincode").removeClass("text-success");
+            result = false;
+        }
+
+        if(state.length){
+            $("#state").removeClass("is-invalid");
+            $("#state").addClass("is-valid");
+            $("#errorState").text("");
+        }
+        else{
+            $("#state").addClass("is-invalid");
+            $("#state").removeClass("is-valid");
+            $("#errorState").text("Enter State");
+            $("#errorState").addClass("text-danger");
+            $("#errorState").removeClass("text-success");
+            result = false;
+        }
+
+        if(city.length){
+            $("#city").removeClass("is-invalid");
+            $("#city").addClass("is-valid");
+            $("#errorCity").text("");
+        }
+        else{
+            $("#city").addClass("is-invalid");
+            $("#city").removeClass("is-valid");
+            $("#errorCity").text("Enter City");
+            $("#errorCity").addClass("text-danger");
+            $("#errorCity").removeClass("text-success");
+            result = false;
+        }
+
+        if(building.length){
+            $("#building").removeClass("is-invalid");
+            $("#building").addClass("is-valid");
+            $("#errorBuilding").text("");
+        }
+        else{
+            $("#building").addClass("is-invalid");
+            $("#building").removeClass("is-valid");
+            $("#errorBuilding").text("Enter Building");
+            $("#errorBuilding").addClass("text-danger");
+            $("#errorBuilding").removeClass("text-success");
+            result = false;
+        }
+
+        if(area.length){
+            $("#area").removeClass("is-invalid");
+            $("#area").addClass("is-valid");
+            $("#errorArea").text("");
+        }
+        else{
+            $("#area").addClass("is-invalid");
+            $("#area").removeClass("is-valid");
+            $("#errorArea").text("Enter Area");
+            $("#errorArea").addClass("text-danger");
+            $("#errorArea").removeClass("text-success");
+            result = false;
+        }
+        return result;
     };
 });
-
-function validateModal(type){
-    if(type === 'category' || type === 'editCategory'){
-        var categoryName = jQuery.trim($("#categoriesName").val());
-        if(categoryName.length){
-            $("#categoriesName").removeClass("is-invalid");
-            $("#categoriesName").addClass("is-valid");
-            $("#errorCategory").text("");
-            return true;
-        }
-        else{
-            $("#categoriesName").addClass("is-invalid");
-            $("#categoriesName").removeClass("is-valid");
-            $("#errorCategory").text("Enter Category name");
-            return false;
-        }
-    }
-    else if(type ==='subcategory' || type ==='editSubcategory'){
-        var categoryName = jQuery.trim($("#categoriesName").val());
-        var subCategoryName = jQuery.trim($("#subCategoriesName").val());
-        var result = true;
-        if(categoryName.length){
-            $("#categoriesName").removeClass("is-invalid");
-            $("#categoriesName").addClass("is-valid");
-            $("#errorCategory").text("");
-        }
-        else{
-            $("#categoriesName").addClass("is-invalid");
-            $("#categoriesName").removeClass("is-valid");
-            $("#errorCategory").text("Enter Category name");
-            result = false;
-        }
-        
-        if(subCategoryName.length){
-            $("#subCategoriesName").removeClass("is-invalid");
-            $("#subCategoriesName").addClass("is-valid");
-            $("#errorSubcategory").text("");
-        }
-        else{
-            $("#subCategoriesName").addClass("is-invalid");
-            $("#subCategoriesName").removeClass("is-valid");
-            $("#errorSubcategory").text("Enter SubCategory name");
-            result = false;
-        }
-        return result;
-        
-    }
-    else if(type ==='product'|| type ==='editProduct'){
-        var categoryName = jQuery.trim($("#categoriesName").val());
-        var subCategoryName = jQuery.trim($("#subCategoriesName").val());
-
-        var productName = jQuery.trim($("#productName").val());
-        var productDescription = jQuery.trim($("#productDescription").val());
-        var productPrice = jQuery.trim($("#productPrice").val());
-        var productTax = jQuery.trim($("#productTax").val());
-        var productBrand = jQuery.trim($("#productBrand").val());
-        var result = true;
-        if(categoryName.length){
-            $("#categoriesName").removeClass("is-invalid");
-            $("#categoriesName").addClass("is-valid");
-            $("#errorCategory").text("");
-        }
-        else{
-            $("#categoriesName").addClass("is-invalid");
-            $("#categoriesName").removeClass("is-valid");
-            $("#errorCategory").text("Enter Category name");
-            result = false;
-        }
-        
-        if(subCategoryName.length){
-            $("#subCategoriesName").removeClass("is-invalid");
-            $("#subCategoriesName").addClass("is-valid");
-            $("#errorSubcategory").text("");
-        }
-        else{
-            $("#subCategoriesName").addClass("is-invalid");
-            $("#subCategoriesName").removeClass("is-valid");
-            $("#errorSubcategory").text("Enter SubCategory name");
-            result = false;
-        }
-        
-        if(productName.length){
-            $("#productName").removeClass("is-invalid");
-            $("#productName").addClass("is-valid");
-            $("#errorProductName").text("");
-        }
-        else{
-            $("#productName").addClass("is-invalid");
-            $("#productName").removeClass("is-valid");
-            $("#errorProductName").text("Enter Product name");
-            result = false;
-        }
-        
-        if(productBrand.length){
-            $("#productBrand").removeClass("is-invalid");
-            $("#productBrand").addClass("is-valid");
-            $("#errorProductBrand").text("");
-        }
-        else{
-            $("#productBrand").addClass("is-invalid");
-            $("#productBrand").removeClass("is-valid");
-            $("#errorProductBrand").text("Enter Brand name");
-            result = false;
-        }
-        
-        if(productDescription.length){
-            $("#productDescription").removeClass("is-invalid");
-            $("#productDescription").addClass("is-valid");
-            $("#errorProductDesc").text("");
-        }
-        else{
-            $("#productDescription").addClass("is-invalid");
-            $("#productDescription").removeClass("is-valid");
-            $("#errorProductDesc").text("Enter Product Description");
-            result = false;
-        }
-        
-        if(productPrice.length){
-            $("#productPrice").removeClass("is-invalid");
-            $("#productPrice").addClass("is-valid");
-            $("#errorProductPrice").text("");
-        }
-        else{
-            $("#productPrice").addClass("is-invalid");
-            $("#productPrice").removeClass("is-valid");
-            $("#errorProductPrice").text("Enter Product Price");
-            result = false;
-        }
-        
-        if(productTax.length){
-            $("#productTax").removeClass("is-invalid");
-            $("#productTax").addClass("is-valid");
-            $("#errorProductTax").text("");
-        }
-        else{
-            $("#productTax").addClass("is-invalid");
-            $("#productTax").removeClass("is-valid");
-            $("#errorProductTax").text("Enter Tax Percentage");
-            result = false;
-        }
-        return result;
-    }
-}
-
-function validateAddress(){ 
-    var name = jQuery.trim($('#name').val());
-    var phone = jQuery.trim($('#phone').val());
-    var pincode = jQuery.trim($('#pincode').val());
-    var state = jQuery.trim($('#state').val());
-    var city = jQuery.trim($('#city').val());
-    var building = jQuery.trim($('#building').val());
-    var area = jQuery.trim($('#area').val());
-    var result = true;
-    if(name.length){
-        $("#name").removeClass("is-invalid");
-        $("#name").addClass("is-valid");
-        $("#errorName").text("");
-        
-    }
-    else{
-        $("#name").addClass("is-invalid");
-        $("#name").removeClass("is-valid");
-        $("#errorName").text("Enter Full Name");
-        $("#errorName").addClass("text-danger");
-        result = false;
-    }
-
-    let phonePattern = /^(?:\+91)?[0-9]{10}$/; 
-    if(phone.length && phonePattern.test(phone)){
-        $("#phone").removeClass("is-invalid");
-        $("#phone").addClass("is-valid");
-        $("#errorPhone").text("");
-    } else {
-        $("#phone").addClass("is-invalid");
-        $("#phone").removeClass("is-valid");
-        $("#errorPhone").text("Enter a valid Phone Number");
-        $("#errorPhone").addClass("text-danger");
-        result = false;
-    }
-
-    if(pincode.length){
-        $("#pincode").removeClass("is-invalid");
-        $("#pincode").addClass("is-valid");
-        $("#errorPincode").text("");
-    }
-    else{
-        $("#pincode").addClass("is-invalid");
-        $("#pincode").removeClass("is-valid");
-        $("#errorPincode").text("Enter Pincode");
-        $("#errorPincode").addClass("text-danger");
-        $("#errorPincode").removeClass("text-success");
-        result = false;
-    }
-
-    if(state.length){
-        $("#state").removeClass("is-invalid");
-        $("#state").addClass("is-valid");
-        $("#errorState").text("");
-    }
-    else{
-        $("#state").addClass("is-invalid");
-        $("#state").removeClass("is-valid");
-        $("#errorState").text("Enter State");
-        $("#errorState").addClass("text-danger");
-        $("#errorState").removeClass("text-success");
-        result = false;
-    }
-
-    if(city.length){
-        $("#city").removeClass("is-invalid");
-        $("#city").addClass("is-valid");
-        $("#errorCity").text("");
-    }
-    else{
-        $("#city").addClass("is-invalid");
-        $("#city").removeClass("is-valid");
-        $("#errorCity").text("Enter City");
-        $("#errorCity").addClass("text-danger");
-        $("#errorCity").removeClass("text-success");
-        result = false;
-    }
-
-    if(building.length){
-        $("#building").removeClass("is-invalid");
-        $("#building").addClass("is-valid");
-        $("#errorBuilding").text("");
-    }
-    else{
-        $("#building").addClass("is-invalid");
-        $("#building").removeClass("is-valid");
-        $("#errorBuilding").text("Enter Building");
-        $("#errorBuilding").addClass("text-danger");
-        $("#errorBuilding").removeClass("text-success");
-        result = false;
-    }
-
-    if(area.length){
-        $("#area").removeClass("is-invalid");
-        $("#area").addClass("is-valid");
-        $("#errorArea").text("");
-    }
-    else{
-        $("#area").addClass("is-invalid");
-        $("#area").removeClass("is-valid");
-        $("#errorArea").text("Enter Area");
-        $("#errorArea").addClass("text-danger");
-        $("#errorArea").removeClass("text-success");
-        result = false;
-    }
-    return result;
-};

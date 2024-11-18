@@ -110,6 +110,12 @@ body{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.productnameMax{
+    white-space: nowrap; 
+    width: 60% !important; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .pathname{
     white-space: nowrap;
     overflow: hidden;
@@ -258,10 +264,10 @@ body{
   }
   .carousel-style img {
     width: auto;         
-        max-width: 100%;     
-        height: 400px;      
-        object-fit: contain;
-        margin: auto;  
+    max-width: 100%;     
+    height: 400px;      
+    object-fit: contain;
+    margin: auto;  
 }
 .card-img-top {
     width: 100%;             

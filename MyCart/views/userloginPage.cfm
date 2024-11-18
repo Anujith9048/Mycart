@@ -16,7 +16,7 @@
      <body class="" >
         <nav class="navbar navbar-expand-lg px-4 row bg-light position-sticky top-0 w-100">
            <div class="col-6 ">
-              <a class="navbar-brand fs-2 fw-bold text-dark" href="#"><span class="main-color">My</span>Cart 
+              <a class="navbar-brand fs-2 fw-bold text-dark" href="homePage.cfm"><span class="main-color">My</span>Cart 
               <img src="../assets/images/logo-img.png" width="30" alt=""></a>
            </div>
            <div class="col-6 justify-content-end d-flex me-lg-4" id="navbarNavDropdown">

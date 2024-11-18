@@ -10,6 +10,7 @@
              <title>MyCart|Product</title>
              <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
              <link rel="stylesheet" href="../assets/style/style.css">
+             <link rel="icon" type="image/x-icon" href="../assets/images/logo-img.png">
           </head>
           <body>
              <nav class="navbar navbar-expand-lg px-4 row admin-nav">
@@ -44,7 +45,7 @@
                       <div class="row">
                          <cfset local.productList = application.getlistObj.getProducts(subid=url.subid)>
                          <cfloop query="#local.productList.products#" >
-                         <cfset local.images = listToArray(local.productList.products.FLDIMAGENAMES)>
+                         <cfset local.image = FLDPRODUCTTHUMBNAIL>
                             <div class="col-6 mb-2">
                                <li class="px-5 list-group-item rounded-pill border broder-1 list-desi p-0 d-flex justify-content-between" title="#FLDPRODUCTDESCRIPTION#">
                                   <div class="col-5 overflow-hidden">
@@ -53,7 +54,7 @@
                                      <div class="fw-bold price-tag fs-4">&##8377;#FLDPRODUCTPRICE#</div>
                                   </div>
                                   <div class="col-3 align-content-center">
-                                     <img src="../assets/productImage/#local.images[1]#" class="rounded-circle adminProductimage" width="60" height="60" alt="" id="imageThumbnail" style="cursor:pointer" data-id="#FLDPRODUCT_ID#">
+                                     <img src="../assets/productImage/#local.image#" class="rounded-circle adminProductimage" width="60" height="60" alt="" id="imageThumbnail" style="cursor:pointer" data-id="#FLDPRODUCT_ID#">
                                   </div>
                                   <div class="col-3 align-content-center">
                                      <div class="float-end">

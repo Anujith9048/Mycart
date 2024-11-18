@@ -10,6 +10,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
         <link rel="stylesheet" href="../assets/style/style.css">
+        <link rel="icon" type="image/x-icon" href="../assets/images/logo-img.png">
      </head>
      <body>
         <cfinclude  template="navbar.cfm">
@@ -87,10 +88,9 @@
 
            <div class="row item-row">
               <cfloop query="local.productslist.products">
-               <cfset local.image = listToArray(FLDIMAGENAMES)[1]>
                  <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
                     <div class="card" style="width: 18rem; height: 24rem;">
-                       <img src="../assets/productImage/#local.image#" class="card-img-top p-2 " height="250" alt="...">
+                       <img src="../assets/productImage/#FLDPRODUCTTHUMBNAIL#" class="card-img-top p-2 " height="250" alt="...">
                        <div class="card-body">
                           <h5 class="card-title productname ">#FLDPRODUCTNAME#</h5>
                           <p class="card-text productname ">#FLDPRODUCTDESCRIPTION#</p>
