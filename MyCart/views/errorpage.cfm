@@ -10,6 +10,7 @@
            <link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.4/components/error-404s/error-404-1/assets/css/error-404-1.css">
            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+           <title>MyCart | Error</title>
            <link rel="icon" type="image/x-icon" href="../assets/images/logo-img.png">
         </head>
         <body>

@@ -1,13 +1,13 @@
 <cfoutput>
-  <cfset local.userDetails = application.getlistObj.getUserDetails()>
-  <cfset local.userAddress = application.getlistObj.getUserAddress()>
   <cfif session.isLog>
+     <cfset local.userDetails = application.getlistObj.getUserDetails()>
+     <cfset local.userAddress = application.getlistObj.getUserAddress()>
      <!DOCTYPE html>
      <html lang="en">
         <head>
            <meta charset="UTF-8">
            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-           <title>MyCart|Profile</title>
+           <title>MyCart | Profile</title>
            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
            <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
@@ -110,12 +110,15 @@
                  </div>
               </div>
            </div>
+           
+
+
            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
            <script src="../assets/script/jquery.js"></script>
         </body>
      </html>
      <cfelse>
-     <cflocation  url="userloginPage.cfm">
+     <cflocation  url="userloginPage.cfm" addtoken="no">
   </cfif>
 </cfoutput>

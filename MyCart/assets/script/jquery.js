@@ -879,11 +879,13 @@ $(document).ready(function() {
         return $(this).val();
     }).get();
     var subid=$(this).attr("sub-id");
+    var min = $('#minValue').val();
+    var max = $('#maxValue').val();
 
     $.ajax({
         url: '../models/savedetails.cfc?method=filterSort',
         method: 'post',
-        data: {checkedValues: JSON.stringify(checkedValues),subid},
+        data: {checkedValues: JSON.stringify(checkedValues),subid,min,max},
         dataType: 'json',
         success: function(response) {
             

@@ -5,7 +5,7 @@
      <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MyCart|#local.subcategory#</title>
+        <title>MyCart | <cfoutput>#local.subcategory#</cfoutput></title>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
@@ -77,9 +77,25 @@
                            </a>
                         </li>
                         <li>
-                           <a class="w-100 btn btn-light border border-1" id="submitFilter" sub-id="#url.subid#" href="##">
-                           Submit
-                           </a>
+                           <div class="form-check px-3">
+                              <input class="form-control" type="text" placeholder="Min" id="minValue">
+                           </div>
+                        </li>
+                        
+                        <li class="w-100 text-center">
+                           <p class="m-0">TO</p>
+                        </li>
+                        <li>
+                           <div class="form-check px-3">
+                              <input class="form-control" type="text" placeholder="Max" id="maxValue">
+                           </div>
+                        </li>
+                        <li>
+                           <div class="form-check px-3 pt-2">
+                              <a class="w-100 btn btn-outline-success" id="submitFilter" sub-id="#url.subid#" href="##">
+                              Submit
+                              </a>
+                           </div>
                         </li>
                      </ul>
                  </cfif>

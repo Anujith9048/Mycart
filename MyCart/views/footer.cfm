@@ -75,6 +75,7 @@
 
   <!-- Copyright Row -->
   <div class="col-12 text-center py-3 bg-dark text-white">
-    <p>© 2007-2024 Mycart.com - All Rights Reserved</p>
+    <p class="mb-0">© 2007-2024 Mycart.com - All Rights Reserved</p>
+    © 2024-2025 Maintained By - <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#search/anujith.s%40texhversantinfotech.com?compose=new">anujith.s@trchversantinfotech.com</a>
   </div>
 </div>
