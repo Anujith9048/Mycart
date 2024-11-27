@@ -1,12 +1,12 @@
 <cfoutput>
-   <nav class="navbar navbar-expand-lg px-4 py-3 justify-content-between position-sticky top-0 bg-light shadow">
+   <nav class="navbar navbar-expand-lg px-4 py-3 position-sticky top-0 bg-light shadow">
       <div class="container-fluid">
          <a class="navbar-brand fw-bold" href="homePage.cfm"><span class="main-color">My</span>Cart
          <img src="../assets/images/logo-img.png" width="30" alt=""></a>
       </div>
-      <div class="input-group">
-         <input type="text" class="form-control" placeholder="Search Product" id="productName">
-         <button class="btn btn-outline-secondary" type="button" id="searchItem">Search</button>
+      <div class="input-group ">
+         <input type="text" class="form-control border-success-subtle" placeholder="Search Product" id="productName">
+         <button class="btn btn-success border border-1 border-success" type="button" id="searchItem">Search</button>
       </div>
       <div class="collapse navbar-collapse d-flex me-4" id="navbarNavDropdown">
          <ul class="navbar-nav">
@@ -20,27 +20,21 @@
                <cfif session.islog>
                   <cfset local.count = application.getlistObj.getCartCount()>
                   <a href="cartPage.cfm" type="button" class="btn #local.count.count.count GT 0 ? 'bg-success-subtle' : 'bg-light'# btn-light position-relative">
-                  Cart
-                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
-                  #local.count.count.count#
-                  <span class="visually-hidden">Items in cart</span>
-                  </span>
+                     Cart
+                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                        #local.count.count.count#
+                        <span class="visually-hidden">Items in cart</span>
+                     </span>
                   </a>
                   <cfelse>
-                  <a href="cartPage.cfm" type="button" class="nav-link btn btn-light position-relative">
-                  Cart
-                  </a>
+                     <a href="cartPage.cfm" type="button" class="nav-link btn btn-light position-relative"> Cart </a>
                </cfif>
             </li>
             <li class="nav-item dropdown mx-2">
                <cfif session.isLog>
-                  <a class="nav-link btn btn-light" id="Userlogout" href="##">
-                  Logout
-                  </a>
-                  <cfelse>
-                  <a class="nav-link btn btn-light" href="../views/userloginPage.cfm">
-                  Login
-                  </a>
+                  <a class="nav-link btn btn-light" id="Userlogout" href="##"> Logout </a>
+               <cfelse>
+                  <a class="nav-link btn btn-light" href="../views/userloginPage.cfm"> Login </a>
                </cfif>
             </li>
          </ul>

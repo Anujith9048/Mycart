@@ -366,15 +366,15 @@
           AND fldUserID =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">;
         </cfquery>
             <cfreturn {"result":true}>
-        <cfelse>
-          <cfquery datasource="sqlDatabase">
-            INSERT INTO tblcart (fldUserID,fldProductID)
-            VALUES(
-              <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
-              <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_integer">
-            );
-          </cfquery>
-          <cfreturn {"result":true}>
+      <cfelse>
+        <cfquery datasource="sqlDatabase">
+          INSERT INTO tblcart (fldUserID,fldProductID)
+          VALUES(
+            <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
+            <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_integer">
+          );
+        </cfquery>
+        <cfreturn {"result":true}>
       </cfif>
     <cfelse>
     <cfreturn {"result":"login"}>
@@ -398,21 +398,51 @@
 
   <!---  addQuantity  --->
   <cffunction name="addQuantity" access="remote" returnformat="JSON">
-    <cfargument name="id" type="numeric" >
-    <cfargument name="type" type="string" >
-      <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
-      <cfquery datasource="sqlDatabase" >
+    <cfargument name="id" type="numeric" required="true">
+    <cfargument name="type" type="string" required="true">
+    
+    <cfset local.response = {}>
+
+    <cfquery datasource="sqlDatabase">
         UPDATE tblcart
-        SET fldQuantity =   
-          <cfif arguments.type EQ 'increase'>
-              fldQuantity + 1
-          <cfelse>
+        SET fldQuantity = 
+        <cfif arguments.type EQ 'increase'>
+          fldQuantity + 1
+        <cfelse>
             fldQuantity - 1
-          </cfif>
-        WHERE fldProductID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">
-        AND fldUserID = <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">;
-      </cfquery>
-      <cfreturn {"result":true}>
+        </cfif>
+        WHERE fldProductID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
+          AND fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">
+    </cfquery>
+
+    <cfquery name="local.priceDetails" datasource="sqlDatabase">
+        SELECT p.fldProductPrice, p.fldProductTax, c.fldQuantity, ROUND(((p.fldProductTax / 100) * p.fldProductPrice) + p.fldProductPrice, 2) * c.fldQuantity AS fldPriceWithTax
+        FROM tblproducts p
+        INNER JOIN tblcart c ON p.fldProduct_ID = c.fldProductID
+        WHERE p.fldProduct_ID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
+        AND c.fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">
+    </cfquery>
+
+    <cfset local.cartTotalCost = application.getlistObj.getCartDetails(session.userId)>
+    <cfif local.priceDetails.recordCount>
+        <cfset local.response = {
+            "result": true,
+            "priceDetails": {
+              "totalPrice":local.cartTotalCost.totalPrice,
+              "fldPrice": local.priceDetails.fldProductPrice,
+              "fldTaxPercentage": local.priceDetails.fldProductTax,
+              "fldPriceWithTax": local.priceDetails.fldPriceWithTax,
+              "quantity": local.priceDetails.fldQuantity
+            }
+        }>
+    <cfelse>
+        <cfset local.response = {
+            "result": false,
+            "message": "Failed to retrieve updated price details."
+        }>
+    </cfif>
+
+    <cfreturn local.response>
   </cffunction>
 
   <!---  addAddress  --->
@@ -452,19 +482,26 @@
     <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
       
     <cfif cardnumber EQ 11111111111 AND cvv EQ 123>
-      <cfset local.id = createuuid()>
-      <cfquery datasource="sqlDatabase">
-        INSERT INTO tblorder (fldOrder_ID,fldUserID,fldShippingAddress)
-        VALUES(
-          <cfqueryparam value="#local.id#"  cfsqltype="cf_sql_varchar">,
-          <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
-          <cfqueryparam value="#arguments.addressId#"  cfsqltype="cf_sql_integer">
-        );
+      <cfquery name="local.getTax" datasource="sqlDatabase">
+        SELECT fldProductTax, fldProductPrice FROM tblproducts
+        WHERE fldProduct_ID = <cfqueryparam value="#proid#" cfsqltype="cf_sql_integer">
       </cfquery>
 
-      <cfquery name="local.getTax" datasource="sqlDatabase">
-        SELECT fldProductTax ,fldProductPrice FROM tblproducts
-        WHERE fldProduct_ID = <cfqueryparam value="#proid#" cfsqltype="cf_sql_integer">;
+      <cfset local.productPriceWithTax = (local.getTax.fldProductTax / 100) * local.getTax.fldProductPrice + local.getTax.fldProductPrice>
+
+      <cfset local.totalProductPriceWithTax = local.productPriceWithTax * arguments.quantity>
+      <cfset local.totalTax = (local.getTax.fldProductTax / 100) * (local.getTax.fldProductPrice * arguments.quantity)>
+      
+      <cfset local.id = createuuid()>
+      <cfquery datasource="sqlDatabase">
+          INSERT INTO tblorder (fldOrder_ID, fldUserID, fldShippingAddress, fldTotalPrice, fldTaxAmount)
+          VALUES (
+              <cfqueryparam value="#local.id#" cfsqltype="cf_sql_varchar">,
+              <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">,
+              <cfqueryparam value="#arguments.addressId#" cfsqltype="cf_sql_integer">,
+              <cfqueryparam value="#local.totalProductPriceWithTax#" cfsqltype="cf_sql_float">,
+              <cfqueryparam value="#local.totalTax#" cfsqltype="cf_sql_float">
+          );
       </cfquery>
 
       <cfquery datasource="sqlDatabase">

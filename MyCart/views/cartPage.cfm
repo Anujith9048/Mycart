@@ -1,6 +1,7 @@
 <cfoutput>
   <cfif session.isLog>
-     <cfset local.cartList = application.getlistObj.getCart(session.userId)>
+     <cfset local.cartList = application.getlistObj.getCartDetails(session.userId)>
+
      <!DOCTYPE html>
      <html lang="en">
         <head>
@@ -18,70 +19,65 @@
            <cfinclude  template="bottomNav.cfm">
            <cfif local.cartList.cartitems.recordCount>
             <div class="row d-flex row-cart">
-               <div class="cart-wrapper col-8 overflow-scroll overflow-x-hidden" style="max-height: 90vh;">
+               <div class="cart-wrapper col-8 overflow-scroll overflow-x-hidden " style="max-height: 90vh;">
                   <cfloop query="local.cartList.cartItems">
-                     <div class="col-12 mt-5 px-2  d-flex justify-content-center">
-                        <div class="col-4 d-flex justify-content-center ">
-                           <img src="../assets/productImage/#fldProductThumbnail#" height="150" class=" float-start" alt="#FLDPRODUCTNAME#">
-                        </div>
-                        <div class="col-3">
-                           <h4 class="fw-bold  productname">#FLDPRODUCTNAME#</h4>
-                           <p class="form-text p-0 productname">#FLDBRANDNAME#</p>
-                           <p class="form-text p-0 productname">#FLDPRODUCTDESCRIPTION#</p>
-                           <div class="btn-items d-flex gap-2">
-                              <a href="##" class="btn btn-outline btn-outline3 removeCart" id="removeCart" pro-id="#FLDPRODUCT_ID#">Remove</a>
-                              <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="btn btn-outline2" id="productCheck" proid="#FLDPRODUCT_ID#">View</a>
-                           </div>
-                        </div>
-                        <div class="col-3 ms-3 text-end">
-                           <p class="price-tag fw-bolder fs-4 mb-0">&##8377;#TOTALCOST#</p>
-                           <p class="text-success fs-6 mb-0"><span class="fw-normal text-secondary">Actual price</span> &##8377;#FLDPRODUCTPRICE#</p>
-                           <p class="text-danger fs-6 mb-0"><span class="fw-normal text-secondary">Tax</span> #FLDPRODUCTTAX#%</p>
-                           <cfif FLDACTIVE EQ 0>
-                              <p class="text-danger p-0 m-0">Out Of Stock</p>
-                              <cfelse>
-                              <p class="text-danger p-0 m-0"></p>
-                           </cfif>
-                           <p class="mb-1 mt-2 form-text">Quantity</p>
-                           <div class="d-flex gap-2 justify-content-end">
-                              <cfif FLDQUANTITY GT 1>
-                                 <div class="btn rounded-circle btn-outline-dark py-0 fw-bold quantityControl px-0" data-type="decrease" pro-id="#FLDPRODUCT_ID#">-</div>
+                     <div class="col-12 mt-5 px-2 d-flex justify-content-center">
+                         <div class="col-4 d-flex justify-content-center">
+                             <img src="../assets/productImage/#local.cartList.cartItems.fldProductThumbnail#" height="150" class="float-start" alt="#local.cartList.cartItems.FLDPRODUCTNAME#">
+                         </div>
+                         <div class="col-3">
+                             <h4 class="fw-bold productname">#local.cartList.cartItems.FLDPRODUCTNAME#</h4>
+                             <p class="form-text productname">#local.cartList.cartItems.FLDBRANDNAME#</p>
+                             <p class="form-text productname">#local.cartList.cartItems.FLDPRODUCTDESCRIPTION#</p>
+                             <div class="btn-items d-flex gap-2">
+                                 <a href="##" class="btn btn-outline btn-outline3 removeCart" id="removeCart" pro-id="#local.cartList.cartItems.FLDPRODUCT_ID#">Remove</a>
+                                 <a href="userProduct.cfm?proid=#local.cartList.cartItems.FLDPRODUCT_ID#" class="btn btn-outline2" id="productCheck" pro-id="#local.cartList.cartItems.FLDPRODUCT_ID#">View</a>
+                             </div>
+                         </div>
+                         <div class="col-3 ms-3 text-end">
+                             <p class="price-tag fw-bolder fs-4 mb-0" id="totalcost">&##8377;#local.cartList.cartItems.TOTALCOST#</p>
+                             <p class="text-success fs-6 mb-0"><span class="fw-normal text-secondary">Actual price:</span> &##8377;#local.cartList.cartItems.FLDPRODUCTPRICE#</p>
+                             <p class="text-danger fs-6 mb-0"><span class="fw-normal text-secondary">Tax:</span> #local.cartList.cartItems.FLDPRODUCTTAX#%</p>
+                             <cfif local.cartList.cartItems.FLDACTIVE EQ 0>
+                                 <p class="text-danger">Out of Stock</p>
+                             </cfif>
+                             <p class="mb-1 mt-2 form-text">Quantity</p>
+                             <div class="d-flex gap-2 justify-content-end">
+                                 <cfif local.cartList.cartItems.FLDQUANTITY GT 1>
+                                     <div class="btn rounded-circle btn-outline-dark py-0 fw-bold quantityControl px-0" data-type="decrease" pro-id="#local.cartList.cartItems.FLDPRODUCT_ID#">-</div>
                                  <cfelse>
-                                 <div class="btn rounded-circle btn-outline-secondary py-0 fw-bold quantityControl px-0 disabled" data-type="decrease" pro-id="#FLDPRODUCT_ID#">-</div>
-                              </cfif>
-                              <div class="cartQuantity border border-1 w-25 text-center rounded">#FLDQUANTITY#</div>
-                              <div class="btn rounded-circle btn-outline-dark py-0 fw-bold quantityControl px-0" data-type="increase" pro-id="#FLDPRODUCT_ID#">+</div>
-                           </div>
-                        </div>
+                                     <div class="btn rounded-circle btn-outline-dark py-0 fw-bold quantityControl px-0 disabled" data-type="decrease" pro-id="#local.cartList.cartItems.FLDPRODUCT_ID#">-</div>
+                                 </cfif>
+                                 <div class="cartQuantity border w-25 text-center rounded">#local.cartList.cartItems.FLDQUANTITY#</div>
+                                 <div class="btn rounded-circle btn-outline-dark py-0 fw-bold quantityControl px-0" data-type="increase" pro-id="#local.cartList.cartItems.FLDPRODUCT_ID#">+</div>
+                             </div>
+                         </div>
                      </div>
-                  </cfloop>
+                 </cfloop>
+                 
                </div>
+               
                <div class="col-4 mt-5 sticky-price-details">
                   <div class="col-11 border border-1 rounded px-4 pt-4">
                      <h5 class="">Price Details</h5>
-                     <cfloop query="local.cartList.cartItems">
-                        <div class="d-flex justify-content-between">
-                           <p class="productnameMax">#FLDPRODUCTNAME#</p>
-                           <p class="text-success">&##8377;#TOTALCOST#</p>
-                        </div>
-                     </cfloop>
                      <div class="d-flex justify-content-between">
                         <p>Total Price</p>
-                        <cfset local.totalPrice = application.getlistObj.getCartPrice(session.userId)>
-                        <p class="fw-bold price-tag">&##8377;#local.totalPrice.price.SUM#</p>
+                        <p class="fw-bold price-tag" id="cartTotalPrice">&##8377;#local.cartList.totalPrice#</p>
                      </div>
                   </div>
-                  <a href="" class="btn btn-outline btn-outline1 col-11 mt-2" data-bs-toggle="modal" data-bs-target="##addressModal">Bought Together</a>
+                  <a href="" class="btn btn-outline btn-outline1 col-11 mt-2" data-bs-toggle="modal" data-bs-target="##addressModal">
+                     #local.cartList.cartitems.recordCount GT 1 ? "Bought Together" : "Buy Now"#
+                  </a>
                </div>
             </div>
             
-              <cfelse>
-              <div class="row justify-content-center">
-                 <div class="alert alert-danger w-50 mt-5" role="alert">
-                    <h2>OOPS!!</h2>
-                    <p>Your cart is empty. Please add items to proceed.</p>
-                 </div>
-              </div>
+            <cfelse>
+            <div class="row justify-content-center">
+               <div class="alert alert-danger w-50 mt-5" role="alert">
+                  <h2>OOPS!!</h2>
+                  <p>Your cart is empty. Please add items to proceed.</p>
+               </div>
+            </div>
            </cfif>
            <!--- Modal --->
            <div class=" shadow-lg modal fade" id="addressModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

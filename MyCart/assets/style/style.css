@@ -2,6 +2,7 @@ body{
     background-color: rgb(253, 255, 251) !important;
     overflow-x: hidden;
     min-height: 80vh;
+    font-family: "Source Sans Pro", sans-serif;
 }
 .main-color{
     background-image:url(../images/output.jpg);
@@ -287,6 +288,7 @@ body{
     overflow-y: auto;
     max-height: 80vh; 
     padding-right: 15px; 
+    padding-bottom: 100px;
  }
  
  .sticky-price-details {

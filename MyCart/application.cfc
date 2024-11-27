@@ -20,12 +20,12 @@
 
     <!--- Request start event --->
     <cffunction name="onRequestStart" returntype="void" access="public">
-        <cfif structKeyExists(url, "reload") AND url.reload EQ "1">
+        <cfif structKeyExists(url, "reload") AND url.reload EQ 1>
             <cfset onApplicationStart()>
         </cfif>
     </cffunction>
 
-    <!--- Error handling --->
+    <!--- Error handling ---> 
     <cffunction name="onError" returntype="void">
         <cfargument name="exception" required="true">
         <cfargument name="eventName" required="true">

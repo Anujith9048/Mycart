@@ -5,7 +5,7 @@
      <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MyCart | <cfoutput>#local.subcategory#</cfoutput></title>
+        <title>MyCart | <cfoutput>#title#</cfoutput></title>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
@@ -17,11 +17,11 @@
         <cfinclude  template="bottomNav.cfm">
         <div class="container-fluid px-4 mt-4">
            <div class="row d-flex">
-              <h4 class="fw-bold">#local.subcategory#</h4>
+              <h4 class="fw-bold">#title#</h4>
               <div class="d-flex gap-4 mb-2">
-                 <a href="" class="text-decoration-none sort" type="asc"  data-mode="#variable.mode#" data-id="#variable.data#">Price: Low to High</a>
-                 <a href="" class="text-decoration-none sort" type="desc" data-mode="#variable.mode#" data-id="#variable.data#">Price: High to Low</a>
                  <cfif structKeyExists(url, "subid")>
+                     <a href="" class="text-decoration-none sort" type="asc"  data-mode="#mode#" data-id="#url.subid#">Price: Low to High</a>
+                     <a href="" class="text-decoration-none sort" type="desc" data-mode="#mode#" data-id="#url.subid#">Price: High to Low</a>
                      <a href=""class="btn btn-light ms-auto float-end border border-1" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                      <img src="../assets/images/filter.png" class="mb-1 me-2" width="20" alt="">Filter
                      </a>
@@ -103,14 +103,14 @@
            </div>
 
            <div class="row item-row">
-              <cfloop query="local.productslist.products">
-                 <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
+              <cfloop query="productslist.products">
+                 <a href="userProduct.cfm?proid=#productslist.products.FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#productslist.products.FLDPRODUCT_ID#">
                     <div class="card" style="width: 18rem; height: 24rem;">
-                       <img src="../assets/productImage/#FLDPRODUCTTHUMBNAIL#" class="card-img-top p-2 " height="250" alt="...">
+                       <img src="../assets/productImage/#productslist.products.FLDPRODUCTTHUMBNAIL#" class="card-img-top p-2 " height="250" alt="...">
                        <div class="card-body">
-                          <h5 class="card-title productname ">#FLDPRODUCTNAME#</h5>
-                          <p class="card-text productname ">#FLDPRODUCTDESCRIPTION#</p>
-                          <p class="card-text fw-bold price-tag ">&##8377;#FLDPRODUCTPRICE#</p>
+                          <h5 class="card-title productname ">#productslist.products.FLDPRODUCTNAME#</h5>
+                          <p class="card-text productname ">#productslist.products.FLDPRODUCTDESCRIPTION#</p>
+                          <p class="card-text fw-bold price-tag ">&##8377;#productslist.products.FLDPRODUCTPRICE#</p>
                        </div>
                     </div>
                  </a>

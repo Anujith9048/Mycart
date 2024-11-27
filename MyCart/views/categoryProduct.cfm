@@ -20,32 +20,31 @@
         <cfinclude  template="bottomNav.cfm">
 
         <cfloop query="local.subcatgories">
-         <cfset local.productsList = application.getlistObj.getProducts(FLDSUBCATEGORY_ID, 8)>
+            <cfset local.productsList = application.getlistObj.getProducts(local.subcatgories.FLDSUBCATEGORY_ID, 8)>
+            <div class="container-fluid px-4 mt-5 mb-1">
+                <div class="row d-flex">
+                    <a href="userProductList.cfm?subid=#local.subcatgories.FLDSUBCATEGORY_ID#" title="View more on #local.subcatgories.FLDSUBCATEGORYNAME#" class="fw-bold h4 text-decoration-none subcategory-label">
+                        #local.subcatgories.FLDSUBCATEGORYNAME#
+                    </a>
+                </div>
+                <div class="row">
+                    <cfloop query="local.productsList.products">
+                        <cfset local.image = listToArray(local.productsList.products.FLDIMAGENAMES)[1]>
      
-         <div class="container-fluid px-4 mt-5 mb-1">
-             <div class="row d-flex">
-                 <a href="userProductList.cfm?subid=#FLDSUBCATEGORY_ID#" title="View more on #FLDSUBCATEGORYNAME#" class="fw-bold h4 text-decoration-none subcategory-label">
-                     #FLDSUBCATEGORYNAME#
-                 </a>
-             </div>
-             <div class="row">
-                 <cfloop query="local.productsList.products">
-                     <cfset local.image = listToArray(FLDIMAGENAMES)[1]>
-     
-                     <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
-                         <div class="card" style="width: 19rem; height: 24rem;">
-                             <img src="../assets/productImage/#local.image#" class="card-img-top p-2" height="250" alt="...">
-                             <div class="card-body">
-                                 <h5 class="card-title productname">#FLDPRODUCTNAME#</h5>
-                                 <p class="card-text productname">#FLDPRODUCTDESCRIPTION#</p>
-                                 <p class="card-text fw-bold price-tag">&##8377;#FLDPRODUCTPRICE#</p>
-                             </div>
-                         </div>
-                     </a>
-                 </cfloop>
-             </div>
-         </div>
-     </cfloop>
+                        <a href="userProduct.cfm?proid=#local.productsList.products.FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#local.productsList.products.FLDPRODUCT_ID#">
+                            <div class="card" style="width: 19rem; height: 24rem;">
+                                <img src="../assets/productImage/#local.image#" class="card-img-top p-2" height="250" alt="...">
+                                <div class="card-body">
+                                    <h5 class="card-title productname">#local.productsList.products.FLDPRODUCTNAME#</h5>
+                                    <p class="card-text productname">#local.productsList.products.FLDPRODUCTDESCRIPTION#</p>
+                                    <p class="card-text fw-bold price-tag">&##8377;#local.productsList.products.FLDPRODUCTPRICE#</p>
+                                </div>
+                            </div>
+                        </a>
+                    </cfloop>
+                </div>
+            </div>
+        </cfloop>
      
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>

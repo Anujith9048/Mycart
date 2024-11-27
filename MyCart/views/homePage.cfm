@@ -33,16 +33,15 @@
             <h4 class="fw-bold py-2">Random Products</h4>
             <div class="row d-flex">
                 <cfset local.randomlist = application.getlistObj.getRandomProducts()>
-        
                 <cfloop query="local.randomlist.products">
-                    <cfset local.image = FLDPRODUCTTHUMBNAIL>
-                    <a href="userProduct.cfm?proid=#FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#FLDPRODUCT_ID#">
+                    <cfset local.image = local.randomlist.products.FLDPRODUCTTHUMBNAIL>
+                    <a href="userProduct.cfm?proid=#local.randomlist.products.FLDPRODUCT_ID#" class="col-md-3 mt-3 text-decor-none" proid="#local.randomlist.products.FLDPRODUCT_ID#">
                         <div class="card">
                             <img src="../assets/productImage/#local.image#" class="card-img-top p-2" alt="Product Image">
                             <div class="card-body">
-                                <h5 class="card-title productname">#FLDPRODUCTNAME#</h5>
-                                <p class="card-text productname">#FLDPRODUCTDESCRIPTION#</p>
-                                <p class="card-text fw-bold price-tag">&##8377;#FLDPRODUCTPRICE#</p>
+                                <h5 class="card-title productname">#local.randomlist.products.FLDPRODUCTNAME#</h5>
+                                <p class="card-text productname">#local.randomlist.products.FLDPRODUCTDESCRIPTION#</p>
+                                <p class="card-text fw-bold price-tag">&##8377;#local.randomlist.products.FLDPRODUCTPRICE#</p>
                             </div>
                         </div>
                     </a>

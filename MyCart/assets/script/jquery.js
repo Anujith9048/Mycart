@@ -628,7 +628,6 @@ $(document).ready(function() {
                     window.location.href="cartPage.cfm";
                 }
                 else if(response.result === "login"){
-                    // window.location.href="userloginPage.cfm";
                     $('#logModal').modal('show');
                 }
             },
@@ -715,26 +714,42 @@ $(document).ready(function() {
     });
 
      // Cart Quantity
-    $(".quantityControl").off('click').on('click', function(event) {
-    event.preventDefault();
-    var id = $(this).attr("pro-id");
-    var type =$(this).attr("data-type");
+     $(".quantityControl").off("click").on("click", function (event) {
+        event.preventDefault();
+        
+        var id = $(this).attr("pro-id");
+        var type = $(this).attr("data-type");
+        var $quantityElement = $(this).closest(".d-flex").find(".cartQuantity");
+        var $totalCostElement = $(this).closest(".col-3").find("#totalcost");
+        var $decreaseButton = $(this).closest(".d-flex").find("[data-type='decrease']");
     
-    $.ajax({
-        url: '../models/savedetails.cfc?method=addQuantity',
-        method: 'post',
-        data: {id,type},
-        dataType: 'JSON',
-        success: function(response) {
-            if (response.result) {
-                window.location.href = "cartPage.cfm";
+        $.ajax({
+            url: "../models/savedetails.cfc?method=addQuantity",
+            method: "POST",
+            data: { id: id, type: type },
+            dataType: "JSON",
+            success: function (response) {
+                if (response.result) {
+                    
+                    $quantityElement.text(response.priceDetails.quantity);
+                    $totalCostElement.text("₹" + response.priceDetails.fldPriceWithTax.toFixed(2));
+                    $("#cartTotalPrice").text("₹" + response.priceDetails.totalPrice)
+
+                    if (response.priceDetails.quantity <= 1) {
+                        $decreaseButton.addClass("disabled");
+                    } else {
+                        $decreaseButton.removeClass("disabled");
+                    }
+                } else {
+                    console.error("Error: " + response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX error: " + status + ", " + error);
             }
-        },
-        error: function(status, error) {
-            console.log("AJAX error: " + status + ", " + error);
-        }
+        });
     });
-    });
+    
 
     // Sort Items
     $(".sort").off('click').on('click', function(event) {
@@ -937,12 +952,11 @@ $(document).ready(function() {
         data: {proId},
         dataType: 'JSON',
         success: function(response) {
-            
             var content = `
                 <div id="carouselExampleIndicators" class="carousel carousel-dark slide col-12" data-bs-ride="carousel">
                     <div class="carousel-indicators mb-0">
             `;
-            for (var i = 0; i < response.length; i++) {
+            for (var i = 0; i < response.IMAGES.length; i++) {
                 content += `
                     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="${i}"
                         class="${i === 0 ? 'active' : ''} bg-dark" aria-label="Slide ${i + 1}"></button>
@@ -953,31 +967,21 @@ $(document).ready(function() {
                     <div class="carousel-inner carousel-style">
             `;
             var i=0
-            for (images of response) {
-                i=i+1
+            for (images of response.IMAGES) {
                 
+                
+                i=i+1
                 content += `
                     <div class="carousel-item ${i === 1 ? 'active' : ''}">
-                        <div class="d-flex justify-content-center gap-3">
+                        <div class="d-flex justify-content-center gap-3 align-items-center">
                             <button class="btn btn-outline-danger mb-2 deleteProductimage"  data-id="${images.FLDIMAGEID}">Delete</button>
-                            <button class="btn btn-outline-success mb-2 thumbnailimage"  data-id="${images.FLDIMAGEID}" pro-id="${proId}">Set as Thumbnail</button></div>
+                            ${images.FLDIMAGENAME === response.THUMBNAIL ? '' :` <button class="btn btn-outline-success mb-2 thumbnailimage"  data-id="${images.FLDIMAGEID}" pro-id="${proId}">Set as Thumbnail</button>`}
+                            </div>
                         <img src="../assets/productImage/${images.FLDIMAGENAME}" alt="" style="max-width:100%; height:auto; display:block; margin:auto;">
 
                     </div>
                 `;
             }
-            content += `
-                    </div>
-                    <button class="carousel-control-prev px-0" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon bg-dark me-auto py-5 px-3 rounded-pill" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next px-0" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                        <span class="carousel-control-next-icon bg-dark ms-auto py-5 px-3 rounded-pill" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-            `;
             $("#imagemodalBody").html(content);
             $("#imageModal").modal('show');
         },

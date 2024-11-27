@@ -8,12 +8,8 @@
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>MyCart | Order History</title>
-            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-               integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-               crossorigin="anonymous"></script>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-               integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
-               crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
             <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
             <link rel="stylesheet" href="../assets/style/style.css">
             <link rel="icon" type="image/x-icon" href="../assets/images/logo-img.png">
@@ -26,11 +22,8 @@
                      <a href="orderHistory.cfm"
                         class="text-light fw-bold mb-0 p-3 col-3 text-decor-none ms-4">ORDER HISTORY</a>
                      <div class="input-group me-4 w-50">
-                        <input type="text" id="orderidInput" class="form-control rounded-pill"
-                           placeholder="Order Id" aria-label="Recipient's username"
-                           aria-describedby="button-addon2">
-                        <button class="btn btn-outline-light rounded-pill" id="orderSearch"
-                           type="button">Search</button>
+                        <input type="text" id="orderidInput" class="form-control rounded-pill" placeholder="Order Id" aria-label="Recipient's username" aria-describedby="button-addon2">
+                        <button class="btn btn-outline-light rounded-pill" id="orderSearch" type="button">Search</button>
                      </div>
                   </div>
                   <cfloop collection="#local.orderHistory.result#" item="orderID">
@@ -69,15 +62,12 @@
                            </div>
                            <div class="card-footer text-muted d-flex w-100">
                               <cfset local.totalcost=application.getlistObj.getorderTotalCost(orderID)>
-                                 <p class="align-content-center">Total Cost <strong
-                                       class="price-tag">&##8377;#local.totalcost.result.totalcost#</strong>
-                                 </p>
-                                 <div class="ms-auto text-end">
-                                    <p class="mb-0"><strong>Shipping Address:</strong></p>
-                                    <p>#product.building# #product.area#, #product.city#, #product.state#
-                                       #product.pincode#</p>
-                                    <p><strong>Contact:</strong> #product.name# - #product.phone#</p>
-                                 </div>
+                              <p class="align-content-center">Total Cost <strong class="price-tag">&##8377;#local.totalcost.result.totalcost#</strong></p>
+                              <div class="ms-auto text-end">
+                                 <p class="mb-0"><strong>Shipping Address:</strong></p>
+                                 <p>#product.building# #product.area#, #product.city#, #product.state# #product.pincode#</p>
+                                 <p><strong>Contact:</strong> #product.name# - #product.phone#</p>
+                              </div>
                            </div>
                         </div>
                      </cfif>
@@ -88,7 +78,6 @@
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
             <script src="../assets/script/jquery.js"></script>
          </body>
-
       </html>
       <cfinclude template="footer.cfm">
    <cfelse>
