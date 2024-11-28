@@ -63,8 +63,8 @@
             FROM tblproducts p
             INNER JOIN tblproductimages pi 
             ON p.fldProduct_ID = pi.fldproduct_id
-            WHERE p.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer"> 
-            AND pi.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+            WHERE p.fldActive = 1 
+            AND pi.fldActive = 1
             <cfif arguments.subid GT 0>
                 AND p.fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_integer">
             </cfif>
@@ -74,11 +74,13 @@
             </cfif>
             GROUP BY p.fldProduct_ID, p.fldProductName, p.fldProductTax, p.fldProductPrice, p.fldBrandName, p.fldProductDescription, p.fldProductThumbnail
             <cfif len(arguments.sort)>
+                ORDER BY p.fldProductPrice
                 <cfif arguments.sort EQ "asc">
-                    ORDER BY p.fldProductPrice ASC
+                    ASC
                 <cfelseif arguments.sort EQ "desc">
-                    ORDER BY p.fldProductPrice DESC
+                   DESC
                 </cfif>
+
             <cfelse>
                 ORDER BY RAND()
             </cfif>
@@ -191,8 +193,8 @@
             INNER JOIN tblcart c ON p.fldProduct_ID = c.fldProductID
             INNER JOIN tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
             WHERE 
-                c.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer"> 
-                AND pi.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer"> 
+                c.fldActive = 1 
+                AND pi.fldActive = 1 
                 AND c.fldUserID = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_integer">
             GROUP BY p.fldProduct_ID, c.fldQuantity
         </cfquery>
@@ -202,9 +204,8 @@
                 SUM(ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) * c.fldQuantity) AS totalPrice
             FROM tblproducts p
             INNER JOIN tblcart c ON p.fldProduct_ID = c.fldProductID
-            WHERE 
-                c.fldUserID = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_integer">
-                AND c.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+            WHERE c.fldUserID = <cfqueryparam value="#arguments.userId#" cfsqltype="cf_sql_integer">
+            AND c.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
         </cfquery>
     
         <cfreturn {
@@ -254,18 +255,39 @@
 
     <cffunction name="getorderHistory" access="remote" returnFormat="JSON">
         <cfquery name="local.getOrderHistory" datasource="sqlDatabase">
-            SELECT o.fldOrder_ID, o.fldShippingAddress,  o.fldOrderDate,  op.fldProduct AS fldProduct_ID, 
-            op.fldProductQuantity,  p.fldProductThumbnail, ROUND((op.fldProductTax / 100) * op.fldProductPrice + op.fldProductPrice, 2) * op.fldProductQuantity AS totalOrderCost, 
-            op.fldProductPrice, op.fldProductTax,   p.fldProductName, p.fldProduct_ID,  p.fldBrandName, a.fldFullname, a.fldPhone, a.fldPincode ,a.fldState, a.fldCity, a.fldBuildingName, a.fldArea
-            FROM tblorder o
-            INNER JOIN tblorderproducts op ON o.fldOrder_ID = op.fldOrderID
-            INNER JOIN tblproducts p ON op.fldProduct = p.fldProduct_ID
-            INNER JOIN tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
-            INNER JOIN tblsavedaddress a ON o.fldShippingAddress = a.fldAddress_ID
-            WHERE o.fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">
-            GROUP BY o.fldOrder_ID, o.fldShippingAddress, o.fldOrderDate, op.fldProduct, p.fldProductThumbnail, op.fldProductQuantity, p.fldProductName, 
-            p.fldBrandName, a.fldFullname,a.fldPhone, a.fldPincode, a.fldState, a.fldCity, a.fldBuildingName, a.fldArea, op.fldProductPrice, op.fldProductTax, p.fldProduct_ID
-            ORDER BY o.fldOrderDate DESC
+            SELECT 
+                o.fldOrder_ID, 
+                o.fldShippingAddress,  
+                o.fldOrderDate,  
+                op.fldProduct AS fldProduct_ID, 
+                op.fldProductQuantity,  
+                p.fldProductThumbnail, 
+                ROUND((op.fldProductTax / 100) * op.fldProductPrice + op.fldProductPrice, 2) * op.fldProductQuantity AS totalOrderCost, 
+                op.fldProductPrice, 
+                op.fldProductTax,   
+                p.fldProductName, 
+                p.fldProduct_ID,  
+                p.fldBrandName, 
+                a.fldFullname, 
+                a.fldPhone, 
+                a.fldPincode ,
+                a.fldState, 
+                a.fldCity, 
+                a.fldBuildingName, 
+                a.fldArea
+            FROM 
+                tblorder o
+                INNER JOIN tblorderproducts op ON o.fldOrder_ID = op.fldOrderID
+                INNER JOIN tblproducts p ON op.fldProduct = p.fldProduct_ID
+                INNER JOIN tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
+                INNER JOIN tblsavedaddress a ON o.fldShippingAddress = a.fldAddress_ID
+            WHERE 
+                o.fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">
+            GROUP BY 
+                o.fldOrder_ID, o.fldShippingAddress, o.fldOrderDate, op.fldProduct, p.fldProductThumbnail, op.fldProductQuantity, p.fldProductName, 
+                p.fldBrandName, a.fldFullname,a.fldPhone, a.fldPincode, a.fldState, a.fldCity, a.fldBuildingName, a.fldArea, op.fldProductPrice, op.fldProductTax, p.fldProduct_ID
+            ORDER BY 
+                o.fldOrderDate DESC
         </cfquery>
         
         <cfset orderStruct = {}>

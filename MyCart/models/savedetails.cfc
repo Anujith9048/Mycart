@@ -1,5 +1,4 @@
 <cfcomponent>
-
   <!--- Check category --->
   <cffunction name="checkCategory" access="remote" returnformat="JSON">
     <cfargument name="categoryName" type="string" >
@@ -31,8 +30,8 @@
     <cfquery datasource="sqlDatabase">
       UPDATE tblcategories
       SET fldCategory_name =  <cfqueryparam value="#arguments.categoryName#"  cfsqltype="cf_sql_varchar">,
-          fldEditedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
-          fldEditedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_timestamp">
+        fldEditedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
+        fldEditedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_timestamp">
       WHERE fldCategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
     </cfquery>
     <cfreturn {"result":true}>
@@ -44,30 +43,27 @@
     <cfset local.currentDate = Now()>
     <cfquery datasource="sqlDatabase">
         UPDATE tblcategories
-        SET
-            fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
-            fldDeactivatedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_timestamp">,
-            fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_integer">
+        SET fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
+          fldDeactivatedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_timestamp">,
+          fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_integer">
         WHERE fldCategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
     </cfquery>
     <cfquery datasource="sqlDatabase">
       UPDATE tblsubcategories
-      SET
-          fldDeactivatedBy = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">,
-          fldDeactivatedDate = <cfqueryparam value="#local.currentDate#" cfsqltype="cf_sql_timestamp">,
-          fldActive = <cfqueryparam value="0" cfsqltype="cf_sql_integer">
+      SET fldDeactivatedBy = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">,
+        fldDeactivatedDate = <cfqueryparam value="#local.currentDate#" cfsqltype="cf_sql_timestamp">,
+        fldActive = <cfqueryparam value="0" cfsqltype="cf_sql_integer">
       WHERE fldCategoryID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
     </cfquery>
     <cfquery datasource="sqlDatabase">
       UPDATE tblproducts
       SET fldActive = <cfqueryparam value="0" cfsqltype="cf_sql_integer">
       WHERE fldSubcategoryID IN (
-          SELECT fldSubcategory_ID
-          FROM tblsubcategories
-          WHERE fldCategoryID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
+        SELECT fldSubcategory_ID
+        FROM tblsubcategories
+        WHERE fldCategoryID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
       )
     </cfquery>
-
     <cfreturn {"result":true}>
   </cffunction>
 
@@ -128,26 +124,23 @@
 
   <!--- Delete SubCategories --->
   <cffunction name="deleteSubCategories" access="remote" returnformat="JSON">
-      <cfargument name="id" type="any" >
-          <cfset local.currentDate = Now()>
-          <cfquery datasource="sqlDatabase">
-            UPDATE tblsubcategories
-            SET
-              fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
-              fldDeactivatedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_date">,
-              fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_integer">
-            WHERE fldSubcategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
-          </cfquery>
-
-          <cfquery datasource="sqlDatabase">
-            UPDATE tblproducts
-            SET
-              fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
-              fldDeactivatedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_date">,
-              fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_integer">
-            WHERE fldSubcategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
-          </cfquery>
-        <cfreturn {"result":true}>
+    <cfargument name="id" type="any" >
+    <cfset local.currentDate = Now()>
+    <cfquery datasource="sqlDatabase">
+      UPDATE tblsubcategories
+      SET fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
+        fldDeactivatedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_date">,
+        fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_integer">
+      WHERE fldSubcategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
+    </cfquery>
+    <cfquery datasource="sqlDatabase">
+      UPDATE tblproducts
+      SET fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
+        fldDeactivatedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_date">,
+        fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_integer">
+      WHERE fldSubcategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
+    </cfquery>
+    <cfreturn {"result":true}>
   </cffunction>
 
   <!--- Check getSubCategoryID --->
@@ -365,7 +358,7 @@
           WHERE fldProductID =  <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_integer">
           AND fldUserID =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">;
         </cfquery>
-            <cfreturn {"result":true}>
+        <cfreturn {"result":true}>
       <cfelse>
         <cfquery datasource="sqlDatabase">
           INSERT INTO tblcart (fldUserID,fldProductID)
@@ -377,7 +370,7 @@
         <cfreturn {"result":true}>
       </cfif>
     <cfelse>
-    <cfreturn {"result":"login"}>
+      <cfreturn {"result":"login"}>
     </cfif>
   </cffunction>
 
@@ -698,5 +691,4 @@
     </cfquery>
     <cfreturn {"result":true}>
   </cffunction>
-  
 </cfcomponent>

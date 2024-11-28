@@ -826,209 +826,198 @@ $(document).ready(function() {
     });
 
     // PAY
-    $("#pay").off('click').on('click', function(event) {
-    var cardnumber =  jQuery.trim($('#cardnumber').val());
-    var cvv =  jQuery.trim($('#cvv').val());
-    var result = true;
-    if(cardnumber != '11111111111'){
-       $('#cardnumber').addClass("is-invalid");
-       result = false;
-    }
-    else{
-       $('#cardnumber').removeClass("is-invalid");
-       $('#cardnumber').addClass("is-valid");
-    }
-    if(cvv != '123'){
-       $('#cvv').addClass("is-invalid");
-       result = false;
-    }
-    else{
-       $('#cvv').removeClass("is-invalid");
-       $('#cvv').addClass("is-valid");
-    }
-    if(result){
-        var addressId =$(this).attr("address-id");
-        var proid =$(this).attr("proid");
-        var price =$("#productprice").attr("price");
-        var quantity =$('#productQuantity').text();
-
-        if(isNaN(proid)){
-            $.ajax({
-                url: '../models/savedetails.cfc?method=orderCartProduct',
-                method: 'post',
-                data: {addressId},
-                dataType: 'JSON',
-                success: function(response) {
-                    window.location.href="paysuccess.cfm"
-                },
-                error: function(status, error) {
-                    console.log("AJAX error: " + status + ", " + error);
-                }
-            });
+    $("#pay").off('click').on('click', function() {
+        var cardnumber =  jQuery.trim($('#cardnumber').val());
+        var cvv =  jQuery.trim($('#cvv').val());
+        var result = true;
+        if(cardnumber != '11111111111'){
+           $('#cardnumber').addClass("is-invalid");
+           result = false;
         }
         else{
+           $('#cardnumber').removeClass("is-invalid");
+           $('#cardnumber').addClass("is-valid");
+        }
+        if(cvv != '123'){
+           $('#cvv').addClass("is-invalid");
+           result = false;
+        }
+        else{
+           $('#cvv').removeClass("is-invalid");
+           $('#cvv').addClass("is-valid");
+        }
+        if(result){
+            var addressId =$(this).attr("address-id");
+            var proid =$(this).attr("proid");
+            var quantity =$('#productQuantity').text();
+
+            if(isNaN(proid)){
+                $.ajax({
+                    url: '../models/savedetails.cfc?method=orderCartProduct',
+                    method: 'post',
+                    data: {addressId},
+                    dataType: 'JSON',
+                    success: function() {
+                        window.location.href="paysuccess.cfm"
+                    },
+                    error: function(status, error) {
+                        console.log("AJAX error: " + status + ", " + error);
+                    }
+                });
+            }
+            else{
+                $.ajax({
+                    url: '../models/savedetails.cfc?method=orderProduct',
+                    method: 'post',
+                    data: {cardnumber,cvv,addressId,proid,quantity},
+                    dataType: 'JSON',
+                    success: function(response) {
+                        if (response.result) {
+                            window.location.href="paysuccess.cfm"
+                        }
+                        else{
+                            alert(response.msg)
+                        }
+                    },
+                    error: function(status, error) {
+                        console.log("AJAX error: " + status + ", " + error);
+                    }
+                });
+            }
+        }
+    });
+
+    $("#submitFilter").off('click').on('click', function(event) {
+        event.preventDefault();
+        var checkedValues = $(".form-check-input:checked").map(function() { return $(this).val(); }).get();
+        var subid=$(this).attr("sub-id");
+        var min = $('#minValue').val();
+        var max = $('#maxValue').val();
+
         $.ajax({
-            url: '../models/savedetails.cfc?method=orderProduct',
+            url: '../models/savedetails.cfc?method=filterSort',
             method: 'post',
-            data: {cardnumber,cvv,addressId,proid,quantity},
+            data: {checkedValues: JSON.stringify(checkedValues),subid,min,max},
+            dataType: 'json',
+            success: function(response) {
+
+                var productsHtml = '';
+                if(response.DATA.length === 0){
+                    productsHtml =`
+                    <h1 class="fw-bold">OOPS!!</h5>
+                    <p class="card-text productname fs-1">No Product found!</p>`
+                }
+                response.DATA.forEach(function(product) {
+                    productsHtml += `
+                    <a href="userProduct.cfm?proid=${product[0]}" class="col-md-3 mt-3 text-decor-none" proid="${product[0]}">
+                        <div class="card" style="width: 18rem; height: 24rem;">
+                            <img src="../assets/productImage/${product[4]}" class="card-img-top p-2" height="250" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title productname ">${product[1]}</h5>
+                                <p class="card-text productname ">${product[2]}</p>
+                                <p class="card-text fw-bold price-tag ">&#8377;${product[3]}</p>
+                            </div>
+                        </div>
+                    </a>`;
+                });
+
+                $('.item-row').empty().html(productsHtml);
+            },
+
+            error: function(xhr, status, error) {
+                console.error("AJAX error: " + status + ", " + error);
+            }
+        });
+    });
+
+    $("#orderSearch").off('click').on('click', function(event) {
+        event.preventDefault();
+        var orderid = $("#orderidInput").val();
+        window.location.href=`orderHistory.cfm?orderid=${orderid}`
+    });
+
+    $(document).on('click', '#imageThumbnail', function(event) {
+        event.preventDefault();
+        var proId=$(this).attr("data-id");
+        
+        $.ajax({
+            url: '../models/getList.cfc?method=getProductImages',
+            method: 'post',
+            data: {proId},
+            dataType: 'JSON',
+            success: function(response) {
+                var content = `
+                    <div id="carouselExampleIndicators" class="carousel carousel-dark slide col-12" data-bs-ride="carousel">
+                        <div class="carousel-indicators mb-0">
+                `;
+                for (var i = 0; i < response.IMAGES.length; i++) {
+                    content += `
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="${i}"
+                            class="${i === 0 ? 'active' : ''} bg-dark" aria-label="Slide ${i + 1}"></button>
+                    `;
+                }
+                content += `
+                        </div>
+                        <div class="carousel-inner carousel-style">
+                `;
+                var i=0
+                for (images of response.IMAGES) {
+                    i=i+1
+                    content += `
+                        <div class="carousel-item ${i === 1 ? 'active' : ''}">
+                            <div class="d-flex justify-content-center gap-3 align-items-center">
+                                <button class="btn btn-outline-danger mb-2 deleteProductimage"  data-id="${images.FLDIMAGEID}">Delete</button>
+                                ${images.FLDIMAGENAME === response.THUMBNAIL ? '' :` <button class="btn btn-outline-success mb-2 thumbnailimage"  data-id="${images.FLDIMAGEID}" pro-id="${proId}">Set as Thumbnail</button>`}
+                                </div>
+                            <img src="../assets/productImage/${images.FLDIMAGENAME}" alt="" style="max-width:100%; height:auto; display:block; margin:auto;">
+
+                        </div>
+                    `;
+                }
+                $("#imagemodalBody").html(content);
+                $("#imageModal").modal('show');
+            },
+            error: function(status, error) {
+                console.log("AJAX error: " + status + ", " + error);
+            }
+        });
+    });
+
+    $(document).on('click', '.deleteProductimage', function() {
+        var imageid=$(this).attr("data-id");
+        $.ajax({
+            url: '../models/savedetails.cfc?method=deleteProductimage',
+            method: 'post',
+            data: {imageid},
             dataType: 'JSON',
             success: function(response) {
                 if (response.result) {
-                    window.location.href="paysuccess.cfm"
-                }
-                else{
-                    alert(response.msg)
+                    location.reload()
                 }
             },
             error: function(status, error) {
                 console.log("AJAX error: " + status + ", " + error);
             }
         });
-    }
-    }
     });
 
-    $("#submitFilter").off('click').on('click', function(event) {
-    event.preventDefault();
-    var checkedValues = $(".form-check-input:checked").map(function() {
-        return $(this).val();
-    }).get();
-    var subid=$(this).attr("sub-id");
-    var min = $('#minValue').val();
-    var max = $('#maxValue').val();
-
-    $.ajax({
-        url: '../models/savedetails.cfc?method=filterSort',
-        method: 'post',
-        data: {checkedValues: JSON.stringify(checkedValues),subid,min,max},
-        dataType: 'json',
-        success: function(response) {
-            
-            var productsHtml = '';
-            if(response.DATA.length === 0){
-                productsHtml =`
-                <h1 class="fw-bold">OOPS!!</h5>
-                <p class="card-text productname fs-1">No Product found!</p>`
+    $(document).on('click', '.thumbnailimage', function() {
+        var imageid=$(this).attr("data-id");
+        var productId=$(this).attr("pro-id");
+        $.ajax({
+            url: '../models/savedetails.cfc?method=setThumbnailImage',
+            method: 'post',
+            data: {imageid,productId},
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.result) {
+                    location.reload()
+                }
+            },
+            error: function(status, error) {
+                console.log("AJAX error: " + status + ", " + error);
             }
-            
-            
-            response.DATA.forEach(function(product) {
-                productsHtml += `
-                <a href="userProduct.cfm?proid=${product[0]}" class="col-md-3 mt-3 text-decor-none" proid="${product[0]}">
-                    <div class="card" style="width: 18rem; height: 24rem;">
-                        <img src="../assets/productImage/${product[4]}" class="card-img-top p-2" height="250" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title productname ">${product[1]}</h5>
-                            <p class="card-text productname ">${product[2]}</p>
-                            <p class="card-text fw-bold price-tag ">&#8377;${product[3]}</p>
-                        </div>
-                    </div>
-                </a>`;
-            });
-            
-            $('.item-row').empty().html(productsHtml);
-        },
-        
-        error: function(xhr, status, error) {
-            console.error("AJAX error: " + status + ", " + error);
-        }
-    });
-    });
-
-    $("#orderSearch").off('click').on('click', function(event) {
-    event.preventDefault();
-    var orderid = $("#orderidInput").val();
-    window.location.href=`orderHistory.cfm?orderid=${orderid}`
-    });
-
-    $(document).on('click', '#imageThumbnail', function(event) {
-    event.preventDefault();
-    var proId=$(this).attr("data-id");
-
-    
-    $.ajax({
-        url: '../models/getList.cfc?method=getProductImages',
-        method: 'post',
-        data: {proId},
-        dataType: 'JSON',
-        success: function(response) {
-            var content = `
-                <div id="carouselExampleIndicators" class="carousel carousel-dark slide col-12" data-bs-ride="carousel">
-                    <div class="carousel-indicators mb-0">
-            `;
-            for (var i = 0; i < response.IMAGES.length; i++) {
-                content += `
-                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="${i}"
-                        class="${i === 0 ? 'active' : ''} bg-dark" aria-label="Slide ${i + 1}"></button>
-                `;
-            }
-            content += `
-                    </div>
-                    <div class="carousel-inner carousel-style">
-            `;
-            var i=0
-            for (images of response.IMAGES) {
-                
-                
-                i=i+1
-                content += `
-                    <div class="carousel-item ${i === 1 ? 'active' : ''}">
-                        <div class="d-flex justify-content-center gap-3 align-items-center">
-                            <button class="btn btn-outline-danger mb-2 deleteProductimage"  data-id="${images.FLDIMAGEID}">Delete</button>
-                            ${images.FLDIMAGENAME === response.THUMBNAIL ? '' :` <button class="btn btn-outline-success mb-2 thumbnailimage"  data-id="${images.FLDIMAGEID}" pro-id="${proId}">Set as Thumbnail</button>`}
-                            </div>
-                        <img src="../assets/productImage/${images.FLDIMAGENAME}" alt="" style="max-width:100%; height:auto; display:block; margin:auto;">
-
-                    </div>
-                `;
-            }
-            $("#imagemodalBody").html(content);
-            $("#imageModal").modal('show');
-        },
-        
-        
-        error: function(status, error) {
-            console.log("AJAX error: " + status + ", " + error);
-        }
-    });
-    
-    });
-
-    $(document).on('click', '.deleteProductimage', function(event) {
-    var imageid=$(this).attr("data-id");
-    $.ajax({
-        url: '../models/savedetails.cfc?method=deleteProductimage',
-        method: 'post',
-        data: {imageid},
-        dataType: 'JSON',
-        success: function(response) {
-            if (response.result) {
-                location.reload()
-            }
-        },
-        error: function(status, error) {
-            console.log("AJAX error: " + status + ", " + error);
-        }
-    });
-    });
-
-    $(document).on('click', '.thumbnailimage', function(event) {
-    var imageid=$(this).attr("data-id");
-    var productId=$(this).attr("pro-id");
-    $.ajax({
-        url: '../models/savedetails.cfc?method=setThumbnailImage',
-        method: 'post',
-        data: {imageid,productId},
-        dataType: 'JSON',
-        success: function(response) {
-            if (response.result) {
-                location.reload()
-            }
-        },
-        error: function(status, error) {
-            console.log("AJAX error: " + status + ", " + error);
-        }
-    });
+        });
     });
 
     $("#loginOnBuy").off('click').on('click', function(event) {
@@ -1041,7 +1030,6 @@ $(document).ready(function() {
         event.preventDefault();
         var proid = $(this).attr("data-id");
         var mode = $(this).attr("data-type");
-
         var isValid = validateForm();
         if (isValid) {
             var username = jQuery.trim($('#InputUname').val());
@@ -1054,7 +1042,6 @@ $(document).ready(function() {
                 data: { username, email, password, mode, proid},
                 dataType: 'JSON',
                 success: function(response) {
-                    
                     if (response.result === true) {
                         $("#InputEmail,#InputUname,#InputPassword,#roleOptions").removeClass("is-invalid");
                         $("#InputEmail,#InputUname,#InputPassword,#roleOptions").addClass("is-valid");
