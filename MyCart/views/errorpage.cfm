@@ -1,6 +1,5 @@
 <cfoutput>
   <cfif session.isLog>
-  <cfset local.cartList = application.getlistObj.getCart(session.userId)>
      <!DOCTYPE html>
      <html lang="en">
         <head>

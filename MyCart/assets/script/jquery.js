@@ -964,13 +964,11 @@ $(document).ready(function() {
                 for (images of response.IMAGES) {
                     i=i+1
                     content += `
-                        <div class="carousel-item ${i === 1 ? 'active' : ''}">
+                        <div class="carousel-item ${i === 1 ? 'active' : ''}" style="height:80vh">
                             <div class="d-flex justify-content-center gap-3 align-items-center">
-                                <button class="btn btn-outline-danger mb-2 deleteProductimage"  data-id="${images.FLDIMAGEID}">Delete</button>
-                                ${images.FLDIMAGENAME === response.THUMBNAIL ? '' :` <button class="btn btn-outline-success mb-2 thumbnailimage"  data-id="${images.FLDIMAGEID}" pro-id="${proId}">Set as Thumbnail</button>`}
-                                </div>
+                                ${images.FLDIMAGENAME === response.THUMBNAIL ? '<p class="form-text fs-3">Thumbnail image</p>' :`<button class="btn btn-outline-danger mb-2 deleteProductimage"  data-id="${images.FLDIMAGEID}">Delete</button> <button class="btn btn-outline-success mb-2 thumbnailimage"  data-id="${images.FLDIMAGEID}" pro-id="${proId}">Set as Thumbnail</button>`}
+                            </div>
                             <img src="../assets/productImage/${images.FLDIMAGENAME}" alt="" style="max-width:100%; height:auto; display:block; margin:auto;">
-
                         </div>
                     `;
                 }

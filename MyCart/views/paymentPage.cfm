@@ -72,25 +72,25 @@
                         <cfset local.cartList = application.getlistObj.getCartDetails(session.userId)>
                         <div class="row d-flex pb-5">
                            <div class="cart-wrapper col-12 ">
-                              <cfloop query="local.cartList.cartItems">
+                              <cfloop array="#local.cartList.cartitems#" item="cartItem">
                                  <div class="col-12 mt-5 px-2  d-flex justify-content-center">
                                     <div class="col-4 d-flex justify-content-center align-items-center">
-                                       <img src="../assets/productImage/#listToArray(FLDIMAGENAME)[1]#" height="100" alt="" class=" float-start">
+                                       <img src="../assets/productImage/#cartItem.fldProductThumbnail#" height="100" alt="" class=" float-start">
                                     </div>
                                     <div class="col-5">
                                        <h6  class="fw-bold  productname">
-                                       #FLDPRODUCTNAME#</h4>
-                                       <p class="form-text p-0 productname">#FLDBRANDNAME#</p>
+                                       #cartItem.FLDPRODUCTNAME#</h4>
+                                       <p class="form-text p-0 productname">#cartItem.FLDBRANDNAME#</p>
                                        <p class="mb-1 mt-2 form-text">Quantity</p>
                                        <div class="d-flex gap-2">
-                                          <div class="cartQuantity border border-1 w-25 text-center rounded">#FLDQUANTITY#</div>
+                                          <div class="cartQuantity border border-1 w-25 text-center rounded">#cartItem.FLDQUANTITY#</div>
                                        </div>
                                     </div>
                                     <div class="col-3 ms-3">
-                                       <p class="price-tag fw-bolder fs-4 mb-0">&##8377;#TOTALCOST#</p>
-                                       <p class="form-text p-0 m-0">Actual Amount: <span class="text-success">&##8377;#FLDPRODUCTPRICE#</span></p>
-                                       <p class="form-text p-0 productname m-0">Tax: <span class="text-success">#FLDPRODUCTTAX#%</span></p>
-                                       <cfif FLDACTIVE EQ 0>
+                                       <p class="price-tag fw-bolder fs-4 mb-0">&##8377;#cartItem.TOTALCOST#</p>
+                                       <p class="form-text p-0 m-0">Actual Amount: <span class="text-success">&##8377;#cartItem.FLDPRODUCTPRICE#</span></p>
+                                       <p class="form-text p-0 productname m-0">Tax: <span class="text-success">#cartItem.FLDPRODUCTTAX#%</span></p>
+                                       <cfif cartItem.FLDACTIVE EQ 0>
                                           <p class="text-danger p-0 m-0">Out Of Stock</p>
                                           <cfelse>
                                           <p class="text-danger p-0 m-0"></p>

@@ -190,23 +190,17 @@
              <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                <div class="modal-dialog modal-dialog-centered">    
                  <div class="modal-content">
-                   <div class="modal-body" id="imagemodalBody">
-                     
-                     
-                    </div>
-                    <button class="carousel-control-prev px-0" type="button" data-bs-target="##carouselExampleIndicators" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon bg-dark me-auto py-5 px-3 rounded-pill" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next px-0" type="button" data-bs-target="##carouselExampleIndicators" data-bs-slide="next">
-                        <span class="carousel-control-next-icon bg-dark ms-auto py-5 px-3 rounded-pill" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-                   </div>
-                   <div class="modal-footer">
-                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                   </div>
+                     <div class="modal-body" id="imagemodalBody">
+                         
+                     </div>
+                     <button class="carousel-control-prev px-0" type="button" data-bs-target="##carouselExampleIndicators" data-bs-slide="prev">
+                         <span class="carousel-control-prev-icon bg-dark me-auto py-5 px-3 rounded-pill" aria-hidden="true"></span>
+                         <span class="visually-hidden">Previous</span>
+                     </button>
+                     <button class="carousel-control-next px-0" type="button" data-bs-target="##carouselExampleIndicators" data-bs-slide="next">
+                         <span class="carousel-control-next-icon bg-dark ms-auto py-5 px-3 rounded-pill" aria-hidden="true"></span>
+                         <span class="visually-hidden">Next</span>
+                     </button>
                  </div>
                </div>
              </div>

@@ -3,8 +3,11 @@
   <cffunction name="checkCategory" access="remote" returnformat="JSON">
     <cfargument name="categoryName" type="string" >
     <cfquery datasource="sqlDatabase" result="local.checkResult">
-      SELECT 1 FROM tblcategories 
-      WHERE fldCategory_name = <cfqueryparam value="#trim(arguments.categoryName)#"  cfsqltype="cf_sql_varchar">;
+      SELECT 1 
+      FROM 
+        tblcategories 
+      WHERE 
+        fldCategory_name = <cfqueryparam value="#trim(arguments.categoryName)#"  cfsqltype="cf_sql_varchar">;
     </cfquery>
     <cfreturn {"result":local.checkResult}>
   </cffunction>
@@ -28,11 +31,14 @@
     <cfargument name="id" type="string" >
     <cfset local.currentDate = Now()>
     <cfquery datasource="sqlDatabase">
-      UPDATE tblcategories
-      SET fldCategory_name =  <cfqueryparam value="#arguments.categoryName#"  cfsqltype="cf_sql_varchar">,
+      UPDATE 
+        tblcategories
+      SET 
+        fldCategory_name =  <cfqueryparam value="#arguments.categoryName#"  cfsqltype="cf_sql_varchar">,
         fldEditedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
         fldEditedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_timestamp">
-      WHERE fldCategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
+      WHERE 
+        fldCategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
     </cfquery>
     <cfreturn {"result":true}>
   </cffunction>
@@ -42,27 +48,36 @@
     <cfargument name="id" type="string" >
     <cfset local.currentDate = Now()>
     <cfquery datasource="sqlDatabase">
-        UPDATE tblcategories
-        SET fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
+        UPDATE 
+          tblcategories
+        SET 
+          fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
           fldDeactivatedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_timestamp">,
           fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_integer">
-        WHERE fldCategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
+        WHERE 
+          fldCategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
     </cfquery>
     <cfquery datasource="sqlDatabase">
-      UPDATE tblsubcategories
-      SET fldDeactivatedBy = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">,
+      UPDATE 
+        tblsubcategories
+      SET 
+        fldDeactivatedBy = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">,
         fldDeactivatedDate = <cfqueryparam value="#local.currentDate#" cfsqltype="cf_sql_timestamp">,
         fldActive = <cfqueryparam value="0" cfsqltype="cf_sql_integer">
-      WHERE fldCategoryID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
+      WHERE 
+        fldCategoryID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
     </cfquery>
     <cfquery datasource="sqlDatabase">
-      UPDATE tblproducts
-      SET fldActive = <cfqueryparam value="0" cfsqltype="cf_sql_integer">
-      WHERE fldSubcategoryID IN (
-        SELECT fldSubcategory_ID
-        FROM tblsubcategories
-        WHERE fldCategoryID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
-      )
+      UPDATE 
+        tblproducts
+      SET 
+        fldActive = <cfqueryparam value="0" cfsqltype="cf_sql_integer">
+      WHERE 
+        fldSubcategoryID IN (
+          SELECT fldSubcategory_ID
+          FROM tblsubcategories
+          WHERE fldCategoryID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
+        )
     </cfquery>
     <cfreturn {"result":true}>
   </cffunction>
@@ -71,8 +86,12 @@
   <cffunction name="getCategoryID" access="remote" returnformat="JSON">
     <cfargument name="categoryName" type="string" >
     <cfquery name="local.checkCategoryList" datasource="sqlDatabase">
-      SELECT fldCategory_ID FROM tblcategories 
-      WHERE fldCategory_name = <cfqueryparam value="#arguments.categoryName#"  cfsqltype="cf_sql_varchar">;
+      SELECT 
+        fldCategory_ID 
+      FROM 
+        tblcategories 
+      WHERE 
+        fldCategory_name = <cfqueryparam value="#arguments.categoryName#"  cfsqltype="cf_sql_varchar">;
     </cfquery>
     <cfreturn {"result":local.checkCategoryList}>
   </cffunction>
@@ -82,10 +101,15 @@
     <cfargument name="subCategoryName" type="string" >
     <cfargument name="id" type="string" >
     <cfquery datasource="sqlDatabase" result="local.checkResult">
-      SELECT 1 FROM tblsubcategories
-      WHERE fldSubcategoryName = <cfqueryparam value="#trim(arguments.subCategoryName)#"  cfsqltype="cf_sql_varchar">
-      AND fldActive = <cfqueryparam value="1"  cfsqltype="cf_sql_integer">
-      AND fldCategoryID = <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
+      SELECT 1 
+      FROM 
+        tblsubcategories
+      WHERE 
+        fldSubcategoryName = <cfqueryparam value="#trim(arguments.subCategoryName)#"  cfsqltype="cf_sql_varchar">
+      AND 
+        fldActive = <cfqueryparam value="1"  cfsqltype="cf_sql_integer">
+      AND 
+        fldCategoryID = <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
     </cfquery>
     <cfreturn {"result":local.checkResult.recordCount}>
   </cffunction>
@@ -112,12 +136,15 @@
     <cfargument name="id" type="any" >
       <cfset local.currentDate = Now()>
       <cfquery datasource="sqlDatabase">
-        UPDATE tblsubcategories
-        SET fldSubcategoryName =  <cfqueryparam value="#arguments.subCategoryName#"  cfsqltype="cf_sql_varchar">,
-            fldEditedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
-            fldEditedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_date">,
-            fldCategoryID = <cfqueryparam value="#arguments.categoryID#"  cfsqltype="cf_sql_integer">
-        WHERE fldSubcategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
+        UPDATE 
+          tblsubcategories
+        SET 
+          fldSubcategoryName =  <cfqueryparam value="#arguments.subCategoryName#"  cfsqltype="cf_sql_varchar">,
+          fldEditedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
+          fldEditedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_date">,
+          fldCategoryID = <cfqueryparam value="#arguments.categoryID#"  cfsqltype="cf_sql_integer">
+        WHERE 
+          fldSubcategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
       </cfquery>
       <cfreturn {"result":true}>
   </cffunction>
@@ -127,18 +154,24 @@
     <cfargument name="id" type="any" >
     <cfset local.currentDate = Now()>
     <cfquery datasource="sqlDatabase">
-      UPDATE tblsubcategories
-      SET fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
+      UPDATE 
+        tblsubcategories
+      SET 
+        fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
         fldDeactivatedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_date">,
         fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_integer">
-      WHERE fldSubcategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
+      WHERE 
+        fldSubcategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
     </cfquery>
     <cfquery datasource="sqlDatabase">
-      UPDATE tblproducts
-      SET fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
+      UPDATE 
+        tblproducts
+      SET 
+        fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
         fldDeactivatedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_date">,
         fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_integer">
-      WHERE fldSubcategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
+      WHERE 
+        fldSubcategory_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">;
     </cfquery>
     <cfreturn {"result":true}>
   </cffunction>
@@ -147,9 +180,14 @@
   <cffunction name="getSubCategoryID" access="remote" returnformat="JSON">
     <cfargument name="subCategoryName" type="string" >
     <cfquery name="local.checkSubCategoryList" datasource="sqlDatabase">
-      SELECT fldSubcategory_ID FROM tblsubcategories 
-      WHERE fldSubcategoryName = <cfqueryparam value="#arguments.subCategoryName#"  cfsqltype="cf_sql_varchar">
-      AND fldActive = <cfqueryparam value="1"  cfsqltype="cf_sql_integer">;
+      SELECT 
+        fldSubcategory_ID 
+      FROM 
+        tblsubcategories 
+      WHERE 
+        fldSubcategoryName = <cfqueryparam value="#arguments.subCategoryName#"  cfsqltype="cf_sql_varchar">
+      AND 
+        fldActive = <cfqueryparam value="1"  cfsqltype="cf_sql_integer">;
     </cfquery>
     <cfreturn {"result":local.checkSubCategoryList}>
   </cffunction>
@@ -159,9 +197,14 @@
     <cfargument name="categoryId" type="string" >
     <cfargument name="subid" type="string" >
     <cfquery datasource="sqlDatabase" result="local.id">
-      SELECT fldSubcategoryName FROM tblsubcategories 
-      WHERE fldCategoryID = <cfqueryparam value="#arguments.categoryId#"  cfsqltype="cf_sql_integer">
-      AND fldSubcategoryName = <cfqueryparam value="#trim(arguments.subid)#"  cfsqltype="cf_sql_varchar">;
+      SELECT 
+        fldSubcategoryName 
+      FROM 
+        tblsubcategories 
+      WHERE 
+        fldCategoryID = <cfqueryparam value="#arguments.categoryId#"  cfsqltype="cf_sql_integer">
+      AND 
+        fldSubcategoryName = <cfqueryparam value="#trim(arguments.subid)#"  cfsqltype="cf_sql_varchar">;
     </cfquery>
     <cfreturn {"result":local.id}>
   </cffunction>
@@ -172,11 +215,17 @@
     <cfargument name="productBrand" type="string" >
     <cfargument name="subid" type="any" >
     <cfquery datasource="sqlDatabase" result="local.checkResult">
-      SELECT 1 FROM tblproducts
-      WHERE fldProductName = <cfqueryparam value="#arguments.productName#"  cfsqltype="cf_sql_varchar">
-      AND fldActive = <cfqueryparam value="1"  cfsqltype="cf_sql_integer">
-      AND fldBrandName = <cfqueryparam value="#productBrand#"  cfsqltype="cf_sql_varchar">
-      AND fldSubcategoryID = <cfqueryparam value="#arguments.subid#"  cfsqltype="cf_sql_integer">;
+      SELECT 1 
+      FROM 
+        tblproducts
+      WHERE 
+        fldProductName = <cfqueryparam value="#arguments.productName#"  cfsqltype="cf_sql_varchar">
+      AND 
+        fldActive = <cfqueryparam value="1"  cfsqltype="cf_sql_integer">
+      AND 
+        fldBrandName = <cfqueryparam value="#productBrand#"  cfsqltype="cf_sql_varchar">
+      AND 
+        fldSubcategoryID = <cfqueryparam value="#arguments.subid#"  cfsqltype="cf_sql_integer">;
     </cfquery>
     <cfreturn {"result":local.checkResult.recordCount}>
   </cffunction>
@@ -204,11 +253,12 @@
       );
     </cfquery>
     <cfset local.productID = local.addResult.generatedKey>
-    <cffile action="uploadall"
-            filefield="ProductImages"
-            destination="#expandPath('../assets/productImage/')#"
-            accept="image/*"
-            nameconflict="makeUnique">
+    <cffile 
+      action="uploadall"
+      filefield="ProductImages"
+      destination="#expandPath('../assets/productImage/')#"
+      accept="image/*"
+      nameconflict="makeUnique">
     <cfset local.uploadedFiles = cffile.UPLOADALLRESULTS>
     <cfloop array="#local.uploadedFiles#" index="files">
       <cfquery datasource="sqlDatabase">
@@ -220,11 +270,13 @@
         )
       </cfquery>
     </cfloop>
-    <cfdump var="#local.uploadedFiles[1].SERVERFILE#">
     <cfquery datasource="sqlDatabase">
-      UPDATE tblproducts
-      SET fldProductThumbnail = <cfqueryparam value="#local.uploadedFiles[1].SERVERFILE#" cfsqltype="cf_sql_varchar">
-      WHERE fldProduct_ID = <cfqueryparam value="#local.productID#" cfsqltype="cf_sql_integer">;
+      UPDATE 
+        tblproducts
+      SET 
+        fldProductThumbnail = <cfqueryparam value="#local.uploadedFiles[1].SERVERFILE#" cfsqltype="cf_sql_varchar">
+      WHERE 
+        fldProduct_ID = <cfqueryparam value="#local.productID#" cfsqltype="cf_sql_integer">;
     </cfquery>
     <cfreturn {"result": true}>
   </cffunction>
@@ -243,17 +295,19 @@
     <cfset local.currentDate = Now()>
 
     <cfquery name="editCategoryList" datasource="sqlDatabase">
-      UPDATE tblproducts
+      UPDATE 
+        tblproducts
       SET 
-          fldProductName = <cfqueryparam value="#arguments.ProductName#" cfsqltype="cf_sql_varchar">,
-          fldEditedBy = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">,
-          fldEditedDate = <cfqueryparam value="#local.currentDate#" cfsqltype="cf_sql_timestamp">,
-          fldProductDescription = <cfqueryparam value="#arguments.ProductDescription#" cfsqltype="cf_sql_varchar">,
-          fldProductPrice = <cfqueryparam value="#arguments.ProductPrice#" cfsqltype="cf_sql_float">,
-          fldBrandName = <cfqueryparam value="#arguments.ProductBrand#" cfsqltype="cf_sql_varchar">,
-          fldSubcategoryID = <cfqueryparam value="#arguments.subcategoryID#" cfsqltype="cf_sql_integer">,
-          fldProductTax = <cfqueryparam value="#arguments.productTax#" cfsqltype="cf_sql_float">
-      WHERE fldProduct_ID = <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_integer">;
+        fldProductName = <cfqueryparam value="#arguments.ProductName#" cfsqltype="cf_sql_varchar">,
+        fldEditedBy = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">,
+        fldEditedDate = <cfqueryparam value="#local.currentDate#" cfsqltype="cf_sql_timestamp">,
+        fldProductDescription = <cfqueryparam value="#arguments.ProductDescription#" cfsqltype="cf_sql_varchar">,
+        fldProductPrice = <cfqueryparam value="#arguments.ProductPrice#" cfsqltype="cf_sql_float">,
+        fldBrandName = <cfqueryparam value="#arguments.ProductBrand#" cfsqltype="cf_sql_varchar">,
+        fldSubcategoryID = <cfqueryparam value="#arguments.subcategoryID#" cfsqltype="cf_sql_integer">,
+        fldProductTax = <cfqueryparam value="#arguments.productTax#" cfsqltype="cf_sql_float">
+      WHERE 
+        fldProduct_ID = <cfqueryparam value="#arguments.proId#" cfsqltype="cf_sql_integer">;
     </cfquery>
 
     <cffile action="uploadall"
@@ -280,11 +334,15 @@
   <cffunction name="deleteProductimage" access="remote" returnformat="JSON">
     <cfargument name="imageid" type="numeric">
     <cfset local.currentDate = Now()>
+
     <cfquery datasource="sqlDatabase">
-      UPDATE tblproductimages
-      set fldActive=<cfqueryparam value="0" cfsqltype="cf_sql_bit">,
-      fldDeletedDate=<cfqueryparam value="#local.currentDate#" cfsqltype="cf_sql_timestamp">
-      WHERE fldimageID=<cfqueryparam value="#arguments.imageid#" cfsqltype="cf_sql_integer">;
+      UPDATE
+        tblproductimages
+      set
+        fldActive=<cfqueryparam value="0" cfsqltype="cf_sql_bit">,
+        fldDeletedDate=<cfqueryparam value="#local.currentDate#" cfsqltype="cf_sql_timestamp">
+      WHERE
+        fldimageID=<cfqueryparam value="#arguments.imageid#" cfsqltype="cf_sql_integer">;
    </cfquery>
    <cfreturn {"result": true}>
   </cffunction>
@@ -301,16 +359,19 @@
 
     <cfset local.currentDate = Now()>
     <cfquery datasource="sqlDatabase">
-      UPDATE tblproducts
-      SET fldProductName =  <cfqueryparam value="#arguments.ProductName#"  cfsqltype="cf_sql_varchar">,
-          fldEditedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
-          fldEditedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_timestamp">,
-          fldProductDescription = <cfqueryparam value="#arguments.ProductDescription#"  cfsqltype="cf_sql_varchar">,
-          fldProductPrice = <cfqueryparam value="#arguments.ProductPrice#"  cfsqltype="cf_sql_float">,
-          fldBrandName = <cfqueryparam value="#arguments.ProductBrand#"  cfsqltype="cf_sql_varchar">,
-          fldSubcategoryID = <cfqueryparam value="#arguments.subcategoryID#"  cfsqltype="cf_sql_integer">,
-          fldProductTax = <cfqueryparam value="#arguments.productTax#"  cfsqltype="cf_sql_float">
-      WHERE fldProduct_ID =  <cfqueryparam value="#arguments.proId#"  cfsqltype="cf_sql_integer">;
+      UPDATE 
+        tblproducts
+      SET 
+        fldProductName =  <cfqueryparam value="#arguments.ProductName#"  cfsqltype="cf_sql_varchar">,
+        fldEditedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
+        fldEditedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_timestamp">,
+        fldProductDescription = <cfqueryparam value="#arguments.ProductDescription#"  cfsqltype="cf_sql_varchar">,
+        fldProductPrice = <cfqueryparam value="#arguments.ProductPrice#"  cfsqltype="cf_sql_float">,
+        fldBrandName = <cfqueryparam value="#arguments.ProductBrand#"  cfsqltype="cf_sql_varchar">,
+        fldSubcategoryID = <cfqueryparam value="#arguments.subcategoryID#"  cfsqltype="cf_sql_integer">,
+        fldProductTax = <cfqueryparam value="#arguments.productTax#"  cfsqltype="cf_sql_float">
+      WHERE 
+        fldProduct_ID =  <cfqueryparam value="#arguments.proId#"  cfsqltype="cf_sql_integer">;
     </cfquery>
     <cfreturn {"result":true}>
   </cffunction>
@@ -321,13 +382,16 @@
     <cfargument name="subId" type="numeric" >
     <cfset local.currentDate = Now()>
     <cfquery datasource="sqlDatabase">
-      UPDATE tblproducts
+      UPDATE 
+        tblproducts
       SET
         fldDeactivatedBy =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
         fldDeactivatedDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_timestamp">,
         fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_integer">
-      WHERE fldProduct_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">
-      AND fldSubcategoryID = <cfqueryparam value="#arguments.subId#"  cfsqltype="cf_sql_integer">;
+      WHERE 
+        fldProduct_ID =  <cfqueryparam value="#arguments.id#"  cfsqltype="cf_sql_integer">
+      AND 
+        fldSubcategoryID = <cfqueryparam value="#arguments.subId#"  cfsqltype="cf_sql_integer">;
     </cfquery>
 
     <cfquery datasource="sqlDatabase">
@@ -345,18 +409,27 @@
 
     <cfif session.isLog>
       <cfquery datasource="sqlDatabase" result="checkResult">
-        SELECT 1 FROM tblcart
-        WHERE fldProductID = <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_integer">
-        AND fldActive = <cfqueryparam value="1"  cfsqltype="cf_sql_integer">
-        AND fldUserID = <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">;
+        SELECT 1 
+        FROM 
+          tblcart
+        WHERE 
+          fldProductID = <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_integer">
+        AND 
+          fldActive = <cfqueryparam value="1"  cfsqltype="cf_sql_integer">
+        AND 
+          fldUserID = <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">;
       </cfquery>
     
       <cfif checkResult.recordCount>
         <cfquery datasource="sqlDatabase">
-          UPDATE tblcart
-          SET fldQuantity =  fldQuantity + 1
-          WHERE fldProductID =  <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_integer">
-          AND fldUserID =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">;
+          UPDATE 
+            tblcart
+          SET 
+            fldQuantity =  fldQuantity + 1
+          WHERE 
+            fldProductID =  <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_integer">
+          AND 
+            fldUserID =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">;
         </cfquery>
         <cfreturn {"result":true}>
       <cfelse>
@@ -379,12 +452,15 @@
     <cfargument name="proid" type="numeric" >
     <cfset local.currentDate = Now()>
       <cfquery datasource="sqlDatabase">
-        UPDATE tblcart
+        UPDATE 
+          tblcart
         SET
           fldRemoveDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_timestamp">,
           fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_integer">
-        WHERE fldProductID =  <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_integer">
-        AND fldUserID = <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">;
+        WHERE 
+          fldProductID =  <cfqueryparam value="#arguments.proid#"  cfsqltype="cf_sql_integer">
+        AND 
+          fldUserID = <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">;
       </cfquery>
       <cfreturn {"result":true}>
   </cffunction>
@@ -397,23 +473,32 @@
     <cfset local.response = {}>
 
     <cfquery datasource="sqlDatabase">
-        UPDATE tblcart
-        SET fldQuantity = 
-        <cfif arguments.type EQ 'increase'>
-          fldQuantity + 1
-        <cfelse>
-            fldQuantity - 1
-        </cfif>
-        WHERE fldProductID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
-          AND fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">
+      UPDATE 
+        tblcart
+      SET 
+        fldQuantity = fldQuantity + <cfif arguments.type EQ 'increase'>1<cfelse>-1</cfif>
+      WHERE 
+        fldProductID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
+      AND 
+        fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">
     </cfquery>
 
     <cfquery name="local.priceDetails" datasource="sqlDatabase">
-        SELECT p.fldProductPrice, p.fldProductTax, c.fldQuantity, ROUND(((p.fldProductTax / 100) * p.fldProductPrice) + p.fldProductPrice, 2) * c.fldQuantity AS fldPriceWithTax
-        FROM tblproducts p
-        INNER JOIN tblcart c ON p.fldProduct_ID = c.fldProductID
-        WHERE p.fldProduct_ID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
-        AND c.fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">
+        SELECT 
+          p.fldProductPrice, 
+          p.fldProductTax, 
+          c.fldQuantity, 
+          ROUND(((p.fldProductTax / 100) * p.fldProductPrice) + p.fldProductPrice, 2) * c.fldQuantity AS fldPriceWithTax
+        FROM 
+          tblproducts p
+        INNER JOIN 
+          tblcart c 
+        ON 
+          p.fldProduct_ID = c.fldProductID
+        WHERE 
+          p.fldProduct_ID = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer">
+        AND 
+          c.fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">
     </cfquery>
 
     <cfset local.cartTotalCost = application.getlistObj.getCartDetails(session.userId)>
@@ -476,8 +561,13 @@
       
     <cfif cardnumber EQ 11111111111 AND cvv EQ 123>
       <cfquery name="local.getTax" datasource="sqlDatabase">
-        SELECT fldProductTax, fldProductPrice FROM tblproducts
-        WHERE fldProduct_ID = <cfqueryparam value="#proid#" cfsqltype="cf_sql_integer">
+        SELECT 
+          fldProductTax, 
+          fldProductPrice 
+        FROM 
+          tblproducts
+        WHERE 
+          fldProduct_ID = <cfqueryparam value="#proid#" cfsqltype="cf_sql_integer">
       </cfquery>
 
       <cfset local.productPriceWithTax = (local.getTax.fldProductTax / 100) * local.getTax.fldProductPrice + local.getTax.fldProductPrice>
@@ -542,27 +632,31 @@
 
   <!---  Order Cart Product  --->
   <cffunction name="orderCartProduct" access="remote" returnformat="JSON">
-    <cfargument name="addressId" type="numeric" >
+    <cfargument name="addressId" type="numeric" required="yes">
     <cfset local.id = createuuid()>
+
+    <cfset local.cartDetails = application.getlistObj.getCartDetails(userId=session.userId)>
     
     <cfquery datasource="sqlDatabase">
-      INSERT INTO tblorder (fldOrder_ID,fldUserID,fldShippingAddress)
-      VALUES(
-        <cfqueryparam value="#local.id#"  cfsqltype="cf_sql_varchar">,
-        <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">,
-        <cfqueryparam value="#arguments.addressId#"  cfsqltype="cf_sql_integer">
+      INSERT INTO tblorder (fldOrder_ID, fldUserID, fldShippingAddress,fldTotalPrice, fldTaxAmount)
+      VALUES (
+        <cfqueryparam value="#local.id#" cfsqltype="cf_sql_varchar">,
+        <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">,
+        <cfqueryparam value="#arguments.addressId#" cfsqltype="cf_sql_integer">,
+        <cfqueryparam value="#local.cartDetails.cartitems.fldProductPrice#" cfsqltype="cf_sql_varchar">,
+        <cfqueryparam value="#local.getTax.fldProductTax#" cfsqltype="cf_sql_float">
       );
     </cfquery>
-    <cfset local.cartList = application.getlistObj.getCart(session.userId)>
     
-    <cfloop query="local.cartList.cartItems">
+    
+    <cfloop array="#local.cartDetails.cartItems#" index="item">
       <cfquery datasource="sqlDatabase">
-        INSERT INTO tblorderproducts (fldOrderID,fldProduct,fldProductQuantity,fldProductPrice)
-        VALUES(
-          <cfqueryparam value="#local.id#"  cfsqltype="cf_sql_varchar">,
-          <cfqueryparam value="#FLDPRODUCT_ID#"  cfsqltype="cf_sql_integer">,
-          <cfqueryparam value="#FLDQUANTITY#"  cfsqltype="cf_sql_integer">,
-          <cfqueryparam value="#FLDPRODUCTPRICE#"  cfsqltype="cf_sql_integer">
+        INSERT INTO tblorderproducts (fldOrderID, fldProduct, fldProductQuantity, fldProductPrice)
+        VALUES (
+          <cfqueryparam value="#local.id#" cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#item.fldProduct_ID#" cfsqltype="cf_sql_integer">,
+          <cfqueryparam value="#item.fldQuantity#" cfsqltype="cf_sql_integer">,
+          <cfqueryparam value="#item.fldProductPrice#" cfsqltype="cf_sql_numeric">,
         );
       </cfquery>
     </cfloop>
@@ -610,11 +704,13 @@
   <cffunction name="removeCartProduct" access="remote" returnformat="JSON">
         <cfset local.currentDate = Now()>
         <cfquery datasource="sqlDatabase">
-          UPDATE tblcart
+          UPDATE 
+            tblcart
           SET
             fldRemoveDate =  <cfqueryparam value="#local.currentDate#"  cfsqltype="cf_sql_timestamp">,
             fldActive = <cfqueryparam value="0"  cfsqltype="cf_sql_integer">
-          WHERE fldUserID =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">;
+          WHERE 
+            fldUserID =  <cfqueryparam value="#session.userId#"  cfsqltype="cf_sql_integer">;
         </cfquery>
       <cfreturn {"result":true}>
   </cffunction>
@@ -658,19 +754,30 @@
     <cfset local.whereClause = arrayLen(local.conditions) ? "(" & arrayToList(local.conditions, " OR ") & ")" : "1=1">
 
     <cfquery name="local.filteredProducts" datasource="sqlDatabase">
-        SELECT p.fldProduct_ID, 
-               p.fldProductName, 
-               ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice, 
-               p.fldBrandName,p.fldProductThumbnail,
-               GROUP_CONCAT(pi.fldimagename) AS fldImageNames, 
-               p.fldProductDescription 
-        FROM tblproducts p
-        INNER JOIN tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
-        WHERE p.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-          AND p.fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_integer">
-          AND pi.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
-          AND #local.whereClause#
-        GROUP BY p.fldProduct_ID
+        SELECT 
+          p.fldProduct_ID, 
+          p.fldProductName, 
+          ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) AS fldProductPrice, 
+          p.fldBrandName,
+          p.fldProductThumbnail,
+          GROUP_CONCAT(pi.fldimagename) AS fldImageNames, 
+          p.fldProductDescription 
+        FROM 
+          tblproducts p
+        INNER JOIN 
+          tblproductimages pi 
+        ON 
+          p.fldProduct_ID = pi.fldproduct_id
+        WHERE 
+          p.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+        AND 
+          p.fldSubcategoryID = <cfqueryparam value="#arguments.subid#" cfsqltype="cf_sql_integer">
+        AND 
+          pi.fldActive = <cfqueryparam value="1" cfsqltype="cf_sql_integer">
+        AND 
+          #local.whereClause#
+        GROUP BY 
+          p.fldProduct_ID
     </cfquery>
 
     <cfreturn serializeJSON(local.filteredProducts)>
@@ -680,14 +787,21 @@
   <cffunction name="setThumbnailImage" access="remote" returnformat="json">
     <cfargument name="imageid" type="numeric" required="true">
     <cfargument name="productId" type="numeric" required="true">
-    <cfquery name="getImage" datasource="sqlDatabase">
-      SELECT fldimagename FROM tblproductimages 
-      WHERE fldimageID = <cfqueryparam value="#arguments.imageid#" cfsqltype="cf_sql_integer">
+    <cfquery name="local.getImage" datasource="sqlDatabase">
+      SELECT 
+        fldimagename 
+      FROM 
+        tblproductimages 
+      WHERE 
+        fldimageID = <cfqueryparam value="#arguments.imageid#" cfsqltype="cf_sql_integer">
     </cfquery>
     <cfquery name="setThumbnail" datasource="sqlDatabase">
-      UPDATE tblproducts
-        SET fldProductThumbnail = <cfqueryparam value="#getImage.FLDIMAGENAME#" cfsqltype="cf_sql_varchar">
-        WHERE fldProduct_ID = <cfqueryparam value="#arguments.productId#" cfsqltype="cf_sql_integer">;
+      UPDATE 
+        tblproducts
+      SET 
+        fldProductThumbnail = <cfqueryparam value="#local.getImage.FLDIMAGENAME#" cfsqltype="cf_sql_varchar">
+      WHERE 
+        fldProduct_ID = <cfqueryparam value="#arguments.productId#" cfsqltype="cf_sql_integer">;
     </cfquery>
     <cfreturn {"result":true}>
   </cffunction>
