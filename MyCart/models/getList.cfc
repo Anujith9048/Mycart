@@ -283,7 +283,8 @@
                 GROUP_CONCAT(pi.fldimagename) AS fldimagename,
                 p.fldProductDescription,
                 c.fldQuantity,
-                SUM(ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) * c.fldQuantity) OVER () AS totalPrice
+                SUM(ROUND((p.fldProductTax / 100) * p.fldProductPrice + p.fldProductPrice, 2) * c.fldQuantity) OVER () AS totalPrice,
+                SUM(ROUND(((p.fldProductTax /100)*(p.fldProductPrice * c.fldQuantity)) , 2)) OVER () AS totalTax
             FROM tblproducts p
             INNER JOIN tblcart c ON p.fldProduct_ID = c.fldProductID
             INNER JOIN tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
@@ -304,7 +305,8 @@
     
         <cfset var result = {
             "cartItems": [],
-            "totalPrice": 0
+            "totalPrice": 0,
+            "totalTax":0
         }>
     
         <cfloop query="local.cartDetails">
@@ -325,6 +327,7 @@
 
         <cfif local.cartDetails.recordCount gt 0>
             <cfset result.totalPrice = local.cartDetails.totalPrice>
+            <cfset result.totalTax = local.cartDetails.totalTax>
         </cfif>
         <cfreturn result>
     </cffunction>
@@ -419,29 +422,17 @@
                 p.fldBrandName, 
                 a.fldFullname, 
                 a.fldPhone, 
-                a.fldPincode ,
+                a.fldPincode,
                 a.fldState, 
                 a.fldCity, 
                 a.fldBuildingName, 
                 a.fldArea
             FROM 
                 tblorder o
-                INNER JOIN 
-                    tblorderproducts op 
-                ON 
-                    o.fldOrder_ID = op.fldOrderID
-                INNER JOIN 
-                    tblproducts p 
-                ON 
-                    op.fldProduct = p.fldProduct_ID
-                INNER JOIN 
-                    tblproductimages pi 
-                ON 
-                    p.fldProduct_ID = pi.fldproduct_id
-                INNER JOIN 
-                    tblsavedaddress a 
-                ON 
-                    o.fldShippingAddress = a.fldAddress_ID
+                INNER JOIN tblorderproducts op ON o.fldOrder_ID = op.fldOrderID
+                INNER JOIN tblproducts p ON op.fldProduct = p.fldProduct_ID
+                INNER JOIN tblproductimages pi ON p.fldProduct_ID = pi.fldproduct_id
+                INNER JOIN tblsavedaddress a ON o.fldShippingAddress = a.fldAddress_ID
             WHERE 
                 o.fldUserID = <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">
             GROUP BY 
@@ -464,42 +455,40 @@
                 op.fldProductTax, 
                 p.fldProduct_ID
             ORDER BY 
-                o.fldOrderDate DESC
+                o.fldOrderDate DESC, 
+                fldOrder_ID, 
+                p.fldProduct_ID
         </cfquery>
-        
+    
         <cfset orderStruct = {}>
-        <cfloop query="local.getOrderHistory">
-            <cfset orderID = FLDORDER_ID>
-        
-            <cfif NOT structKeyExists(orderStruct, orderID)>
-                <cfset orderStruct[orderID] = []>
-            </cfif>
-        
-            <cfset local.product = {
-                productImage =fldProductThumbnail,
-                productID = fldProduct_ID,
-                productName = fldProductName,
-                productQuantity = FLDPRODUCTQUANTITY,
-                productBrand = FLDBRANDNAME,
-                area = FLDAREA,
-                building = FLDBUILDINGNAME,
-                city = FLDCITY,
-                name = FLDFULLNAME,
-                orderDate = FLDORDERDATE,
-                orderId = FLDORDER_ID,
-                phone = FLDPHONE,
-                pincode = FLDPINCODE,
-                state = FLDSTATE,
-                cost = FLDPRODUCTPRICE,
-                tax = FLDPRODUCTTAX,
-                totalCost:TOTALORDERCOST
-            }>
-        
-            <cfset ArrayAppend(orderStruct[orderID], product)>
+        <cfloop query="local.getOrderHistory" group="fldOrder_ID">
+            <cfset local.productArray = []>
+            <cfloop>
+                <cfset ArrayAppend(local.productArray, {
+                    productImage = fldProductThumbnail,
+                    productID = fldProduct_ID,
+                    productName = fldProductName,
+                    productQuantity = fldProductQuantity,
+                    productBrand = fldBrandName,
+                    area = fldArea,
+                    building = fldBuildingName,
+                    city = fldCity,
+                    name = fldFullname,
+                    orderDate = fldOrderDate,
+                    orderId = fldOrder_ID,
+                    phone = fldPhone,
+                    pincode = fldPincode,
+                    state = fldState,
+                    cost = fldProductPrice,
+                    tax = fldProductTax,
+                    totalCost = totalOrderCost
+                })>
+            </cfloop>
+            <cfset orderStruct[fldOrder_ID] = local.productArray>
         </cfloop>
         <cfreturn { "result": orderStruct }>
     </cffunction>
-
+    
     <cffunction name="getorderTotalCost" access="remote" returnFormat="JSON">
         <cfargument name="orderId" type="string">
         <cfquery name="local.getorderTotalCost" datasource="sqlDatabase">

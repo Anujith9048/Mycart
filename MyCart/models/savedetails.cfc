@@ -464,6 +464,82 @@
       </cfquery>
       <cfreturn {"result":true}>
   </cffunction>
+  
+  <!---  Order Product  --->
+  <cffunction name="orderProduct" access="remote" returnformat="JSON">
+    <cfargument name="cardnumber" type="numeric" >
+    <cfargument name="cvv" type="numeric" >
+    <cfargument name="addressId" type="numeric" >
+    <cfargument name="proid" type="numeric" >
+    <cfargument name="quantity" type="numeric" >
+    <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
+      
+    <cfif cardnumber EQ 11111111111 AND cvv EQ 123>
+      <cfquery name="local.getTax" datasource="sqlDatabase">
+        SELECT 
+          fldProductTax,
+          fldProductPrice,
+          (fldProductPrice + (fldProductPrice * fldProductTax / 100)) * <cfqueryparam value="#arguments.quantity#" cfsqltype="cf_sql_integer"> AS totalPriceWithTax,
+          (fldProductPrice * fldProductTax / 100) * <cfqueryparam value="#arguments.quantity#" cfsqltype="cf_sql_integer"> AS totalTax
+        FROM 
+          tblproducts
+        WHERE 
+          fldProduct_ID = <cfqueryparam value="#proid#" cfsqltype="cf_sql_integer">
+      </cfquery>
+      <cfset local.id = createuuid()>
+      <cfquery datasource="sqlDatabase">
+        INSERT INTO tblorder (fldOrder_ID, fldUserID, fldShippingAddress, fldTotalPrice, fldTaxAmount)
+        VALUES (
+          <cfqueryparam value="#local.id#" cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">,
+          <cfqueryparam value="#arguments.addressId#" cfsqltype="cf_sql_integer">,
+          <cfqueryparam value="#local.getTax.totalPriceWithTax#" cfsqltype="cf_sql_float">,
+          <cfqueryparam value="#local.getTax.totalTax#" cfsqltype="cf_sql_float">
+        );
+      </cfquery>
+
+      <cfquery datasource="sqlDatabase">
+        INSERT INTO tblorderproducts (fldOrderID,fldProduct,fldProductQuantity,fldProductPrice,fldProductTax)
+        VALUES(
+          <cfqueryparam value="#local.id#" cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#arguments.proid#" cfsqltype="cf_sql_integer">,
+          <cfqueryparam value="#arguments.quantity#" cfsqltype="cf_sql_integer">,
+          <cfqueryparam value="#local.getTax.fldProductPrice#" cfsqltype="cf_sql_varchar">,
+          <cfqueryparam value="#local.getTax.fldProductTax#" cfsqltype="cf_sql_float">
+        );
+      </cfquery>
+      <cfset local.productslist=application.getlistObj.getSingleProduct(arguments.proid)>
+      <cfset local.product = local.productslist.product>
+      <cfset local.userDetails = application.getlistObj.getUserDetails()>
+      <cfset local.address = application.getlistObj.getselectedAddress(arguments.addressId)>
+
+      <cfmail from="mycart@gmail.com"
+        subject="Your Booking is Confirmed!"  
+        to="#local.userDetails.data.fldemail#"
+        server="smtp.gmail.com"
+        port="25">
+        Dear #session.username#,
+          Thank you for shopping with us! 
+          We are excited to let you know that we have received your order. 
+          Below are the details of your purchase:
+
+          Product Name : #local.product.FLDPRODUCTNAME#
+          Brand : #local.product.FLDBRANDNAME#
+          Price : Rs.#local.product.FLDPRODUCTPRICE#/-
+          Order ID: #local.id#
+          Order Date: #local.currentDate#
+          Shipping Address:
+          #local.address.result.FLDBUILDINGNAME# #local.address.result.FLDAREA#, #local.address.result.FLDCITY#, #local.address.result.FLDSTATE# #local.address.result.FLDPINCODE#
+          Contact Details:
+          Name:#local.address.result.FLDFULLNAME#
+          Phone:#local.address.result.FLDPHONE#
+      </cfmail>
+      <cfreturn {"result":true,"orderid":local.id}>
+
+      <cfelse>
+        <cfreturn {"result":false,"msg":"Invalid Card Details"}>
+    </cfif>
+  </cffunction>
 
   <!---  addQuantity  --->
   <cffunction name="addQuantity" access="remote" returnformat="JSON">
@@ -550,101 +626,20 @@
     <cfreturn {"result":true,"id":local.id}>
   </cffunction>
 
-  <!---  Order Product  --->
-  <cffunction name="orderProduct" access="remote" returnformat="JSON">
-    <cfargument name="cardnumber" type="numeric" >
-    <cfargument name="cvv" type="numeric" >
-    <cfargument name="addressId" type="numeric" >
-    <cfargument name="proid" type="numeric" >
-    <cfargument name="quantity" type="numeric" >
-    <cfset local.currentDate = dateFormat(now(),"yyyy-mm-dd")>
-      
-    <cfif cardnumber EQ 11111111111 AND cvv EQ 123>
-      <cfquery name="local.getTax" datasource="sqlDatabase">
-        SELECT 
-          fldProductTax, 
-          fldProductPrice 
-        FROM 
-          tblproducts
-        WHERE 
-          fldProduct_ID = <cfqueryparam value="#proid#" cfsqltype="cf_sql_integer">
-      </cfquery>
-
-      <cfset local.productPriceWithTax = (local.getTax.fldProductTax / 100) * local.getTax.fldProductPrice + local.getTax.fldProductPrice>
-
-      <cfset local.totalProductPriceWithTax = local.productPriceWithTax * arguments.quantity>
-      <cfset local.totalTax = (local.getTax.fldProductTax / 100) * (local.getTax.fldProductPrice * arguments.quantity)>
-      
-      <cfset local.id = createuuid()>
-      <cfquery datasource="sqlDatabase">
-          INSERT INTO tblorder (fldOrder_ID, fldUserID, fldShippingAddress, fldTotalPrice, fldTaxAmount)
-          VALUES (
-              <cfqueryparam value="#local.id#" cfsqltype="cf_sql_varchar">,
-              <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">,
-              <cfqueryparam value="#arguments.addressId#" cfsqltype="cf_sql_integer">,
-              <cfqueryparam value="#local.totalProductPriceWithTax#" cfsqltype="cf_sql_float">,
-              <cfqueryparam value="#local.totalTax#" cfsqltype="cf_sql_float">
-          );
-      </cfquery>
-
-      <cfquery datasource="sqlDatabase">
-        INSERT INTO tblorderproducts (fldOrderID,fldProduct,fldProductQuantity,fldProductPrice,fldProductTax)
-        VALUES(
-          <cfqueryparam value="#local.id#" cfsqltype="cf_sql_varchar">,
-          <cfqueryparam value="#arguments.proid#" cfsqltype="cf_sql_integer">,
-          <cfqueryparam value="#arguments.quantity#" cfsqltype="cf_sql_integer">,
-          <cfqueryparam value="#local.getTax.fldProductPrice#" cfsqltype="cf_sql_varchar">,
-          <cfqueryparam value="#local.getTax.fldProductTax#" cfsqltype="cf_sql_float">
-        );
-      </cfquery>
-      <cfset local.productslist=application.getlistObj.getSingleProduct(arguments.proid)>
-      <cfset local.product = local.productslist.product>
-      <cfset local.userDetails = application.getlistObj.getUserDetails()>
-      <cfset local.address = application.getlistObj.getselectedAddress(arguments.addressId)>
-
-      <cfmail from="mycart@gmail.com"
-        subject="Your Booking is Confirmed!"  
-        to="#local.userDetails.data.fldemail#"
-        server="smtp.gmail.com"
-        port="25">
-        Dear #session.username#,
-          Thank you for shopping with us! 
-          We are excited to let you know that we have received your order. 
-          Below are the details of your purchase:
-
-          Product Name : #local.product.FLDPRODUCTNAME#
-          Brand : #local.product.FLDBRANDNAME#
-          Price : Rs.#local.product.FLDPRODUCTPRICE#/-
-          Order ID: #local.id#
-          Order Date: #local.currentDate#
-          Shipping Address:
-          #local.address.result.FLDBUILDINGNAME# #local.address.result.FLDAREA#, #local.address.result.FLDCITY#, #local.address.result.FLDSTATE# #local.address.result.FLDPINCODE#
-          Contact Details:
-          Name:#local.address.result.FLDFULLNAME#
-          Phone:#local.address.result.FLDPHONE#
-      </cfmail>
-      <cfreturn {"result":true,"orderid":local.id}>
-
-      <cfelse>
-        <cfreturn {"result":false,"msg":"Invalid Card Details"}>
-    </cfif>
-  </cffunction>
-
   <!---  Order Cart Product  --->
   <cffunction name="orderCartProduct" access="remote" returnformat="JSON">
     <cfargument name="addressId" type="numeric" required="yes">
     <cfset local.id = createuuid()>
 
     <cfset local.cartDetails = application.getlistObj.getCartDetails(userId=session.userId)>
-    
     <cfquery datasource="sqlDatabase">
       INSERT INTO tblorder (fldOrder_ID, fldUserID, fldShippingAddress,fldTotalPrice, fldTaxAmount)
       VALUES (
         <cfqueryparam value="#local.id#" cfsqltype="cf_sql_varchar">,
         <cfqueryparam value="#session.userId#" cfsqltype="cf_sql_integer">,
         <cfqueryparam value="#arguments.addressId#" cfsqltype="cf_sql_integer">,
-        <cfqueryparam value="#local.cartDetails.cartitems.fldProductPrice#" cfsqltype="cf_sql_varchar">,
-        <cfqueryparam value="#local.getTax.fldProductTax#" cfsqltype="cf_sql_float">
+        <cfqueryparam value="#local.cartDetails.totalPrice#" cfsqltype="cf_sql_varchar">,
+        <cfqueryparam value="#local.cartDetails.totalTax#" cfsqltype="cf_sql_float">
       );
     </cfquery>
     
@@ -656,7 +651,7 @@
           <cfqueryparam value="#local.id#" cfsqltype="cf_sql_varchar">,
           <cfqueryparam value="#item.fldProduct_ID#" cfsqltype="cf_sql_integer">,
           <cfqueryparam value="#item.fldQuantity#" cfsqltype="cf_sql_integer">,
-          <cfqueryparam value="#item.fldProductPrice#" cfsqltype="cf_sql_numeric">,
+          <cfqueryparam value="#item.fldProductPrice#" cfsqltype="cf_sql_numeric">
         );
       </cfquery>
     </cfloop>
@@ -682,8 +677,8 @@
         Name:#local.address.result.FLDFULLNAME#
         Phone:#local.address.result.FLDPHONE#
         Products:
-        <cfloop query="local.cartList.cartItems">
-          <cfset local.productslist=application.getlistObj.getSingleProduct(FLDPRODUCT_ID)>
+        <cfloop array="#local.cartDetails.cartItems#" item="item">
+          <cfset local.productslist=application.getlistObj.getSingleProduct(item.FLDPRODUCT_ID)>
           <cfset local.product = local.productslist.product>
 
           Product Name : #local.product.FLDPRODUCTNAME#
