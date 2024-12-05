@@ -1,6 +1,8 @@
 body{
     background-color: rgb(253, 255, 251) !important;
     overflow-x: hidden;
+    min-height: 80vh;
+    font-family: "Source Sans Pro", sans-serif;
 }
 .main-color{
     background-image:url(../images/output.jpg);
@@ -28,7 +30,7 @@ body{
 }
 
 .btn-outline{
-    border: 1px solid #49be02;
+    border: 1px solid #198754;
     border-radius: .4rem;
     color: rgb(0, 0, 0) !important;
     position: relative;
@@ -36,7 +38,7 @@ body{
     
 }
 .btn-outline:hover{
-    border: 1px solid #49be02;
+    border: 1px solid #198754;
     color: white !important;
 }
 .btn-outline1::before {
@@ -45,7 +47,7 @@ body{
     left: 0;
     width: 0%;
     height: 100%;
-    background: #49be02;
+    background: #198754;
     z-index: -1;
     transition: 0.8s;
     border-radius: 0 10px 10px 0 ;
@@ -56,7 +58,7 @@ body{
     right: 0px;
     width: 0%;
     height: 100%;
-    background: #4abe028f;
+    background: #19875463;
     z-index: -1;
     transition: 0.8s;
     border-radius:  10px 0 0 10px ;
@@ -103,8 +105,31 @@ body{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.productnameMin{
+    white-space: nowrap; 
+    width: 90% !important; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.productnameMax{
+    white-space: nowrap; 
+    width: 60% !important; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.pathname{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.pathname:hover{
+    overflow:visible;
+}
 .bottom-space{
     box-shadow: 1px 1px 1px white !important;
+}
+.adminProductimage:hover{
+    filter: drop-shadow(1px 1px 3px rgb(0, 0, 0));
 }
 
 /* User Home */
@@ -112,7 +137,7 @@ body{
     height: 30vh;
 }
 .btn-outline2{
-    border: 1px solid #00c5e0;
+    border: 1px solid #0d6efd;
     border-radius: .4rem;
     color: rgb(0, 0, 0) !important;
     position: relative;
@@ -127,7 +152,7 @@ body{
 }
 
 .btn-outline2:hover{
-    border: 1px solid #00c5e0;
+    border: 1px solid #0d6efd;
     color: white !important;
 }
 .btn-outline3:hover{
@@ -142,7 +167,7 @@ body{
     left: 0;
     width: 0%;
     height: 100%;
-    background: #00c5e0;
+    background: #0d6efd;
     z-index: -1;
     transition: 0.8s;
     border-radius: 0 10px 10px 0 ;
@@ -164,8 +189,8 @@ body{
     right: 0px;
     width: 0%;
     height: 100%;
-    background: #00c6e06b;
-    z-index: -1;
+    background: #0d6dfd41;
+    z-index: -1; 
     transition: 0.8s;
     border-radius:  10px 0 0 10px ;
 }
@@ -189,3 +214,103 @@ body{
 .btn-outline2:hover::after, .btn-outline3:hover::after{
     width: 180%;
 }
+.quantityControl{
+    width: 28px;
+    height: 28px;
+    text-align: center;
+}
+.quantityControlPayment{
+    width: 28px;
+    height: 28px;
+    text-align: center;
+}
+
+
+
+.dropdown-menu {
+    display: none;
+  }
+
+  .categ-head:hover .dropdown-menu {
+    display: block;
+  }
+
+  .dropdown-menu {
+    top: 101%;
+    left: 0;
+    z-index: 1000;
+  }
+  .subcategory-label:hover{
+    text-decoration: underline !important;
+  }
+  .modal{
+    filter: drop-shadow(8px 8px 8px rgba(41, 41, 41, 0.247));
+  }
+  
+  .paybody{
+    height: 70vh;
+  }
+  .pdf-img{
+    cursor: pointer;
+  }
+  .wi-100{
+    width: 100% !important;
+  }
+  .card:hover{
+    filter: drop-shadow(0 0 0.75rem #0000002a);
+    background-color: #f6fffe;
+  }
+  .text-decor-none{
+    text-decoration: none !important;
+  }
+  .carousel-style img {
+    width: auto;         
+    max-width: 100%;     
+    height: 400px;      
+    object-fit: contain;
+    margin: auto;  
+}
+.card-img-top {
+    width: 100%;             
+    height: 250px;            
+    object-fit: contain;        
+}
+.body-cart {
+    overflow: hidden;
+ }
+ 
+ .row-cart {
+    height: 100vh;
+ }
+ 
+ 
+ .cart-wrapper {
+    overflow-y: auto;
+    max-height: 80vh; 
+    padding-right: 15px; 
+    padding-bottom: 100px;
+ }
+ 
+ .sticky-price-details {
+    position: sticky;
+    top: 20px; 
+ }
+ 
+ 
+
+ /* --------- */
+
+ ::-webkit-scrollbar{
+    width: 10px;
+ }
+ ::-webkit-scrollbar-track{
+    background: #ffffff;
+    border-radius: 15px;
+ }
+ ::-webkit-scrollbar-thumb:hover{
+    background: linear-gradient(white,#1e9e62);
+ }
+ ::-webkit-scrollbar-thumb{
+    background: linear-gradient(white,#198754);
+    border-radius: 15px;
+ }

@@ -183,59 +183,43 @@ $(document).ready(function() {
             // Submit Product
             else if(type ==='product' || type === 'editProduct'){
                 var productImage = $("#productImage")[0].files[0];
-                if(type ==='product'){
-                    var subid=$(this).attr("sub-id");
-                    var categoryName = jQuery.trim($("#categoriesName").val());
-                    var subCategoryName = jQuery.trim($("#subCategoriesName").val());
-                    var productName = jQuery.trim($("#productName").val());
-                    var productBrand = jQuery.trim($("#productBrand").val());
-                    var productDescription = jQuery.trim($("#productDescription").val());
-                    var productPrice = jQuery.trim($("#productPrice").val());
-                    
-
+                var subid = $(this).attr("sub-id");
+                if(type === 'product') {
                     var formData = new FormData();
-                    formData.append("categoryName", categoryName);
-                    formData.append("subCategoryName", subCategoryName);
-                    formData.append("productName",productName);
-                    formData.append("productDescription", productDescription);
-                    formData.append("productBrand", productBrand);
-                    formData.append("productPrice", productPrice);
-                    formData.append("productImage", $("#productImage")[0].files[0]);
+                    formData.append("categoryName", $("#categoriesName").val());
+                    formData.append("subCategoryName", $("#subCategoriesName").val());
+                    formData.append("subCategoryID", subid);
+                    formData.append("productName", $("#productName").val());
+                    formData.append("productDescription", $("#productDescription").val());
+                    formData.append("productBrand", $("#productBrand").val());
+                    formData.append("productPrice", $("#productPrice").val());
+                    formData.append("productTax", $("#productTax").val());
 
+                    var files = $("#productImage")[0].files;
+                      
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append("productImages", files[i]);
+                    }
 
                     $.ajax({
-                        url: '../controllers/savedetails.cfc?method=addProduct',
-                        method: 'post',
+                        url: '../models/savedetails.cfc?method=addProduct',
+                        method: 'POST',
                         data: formData,
-                        dataType: 'JSON',
                         processData: false, 
                         contentType: false,
                         success: function(response) {
                             console.log(response);
-                            if(response.result === true){
-                                $("#subCategoriesName").removeClass('is-invalid');
-                                $("#errorSubcategory").text('');
-
-                                $("#categoriesName").removeClass('is-invalid');
-                                $("#errorCategory").text('');
-                                window.location.href=`productList.cfm?subid=${subid}`;
-                            }
-                            else if(response.result ==='NoSubCategory'){
-                                $("#subCategoriesName").addClass('is-invalid');
-                                $("#errorSubcategory").text(response.msg);
-                            }
-                            else if(response.result ==='NoCategory'){
-                                $("#categoriesName").addClass('is-invalid');
-                                $("#errorCategory").text(response.msg);
+                            if (response.result) {
+                                window.location.href = `productList.cfm?subid=${subid}`;
                             }
                         },
                         error: function(xhr, status, error) {
                             console.log("AJAX error: " + status + ", " + error);
-                            console.log("Full response:", xhr.responseText);
                         }
-
                     });
+
                 }
+                
                 else{
                     if(productImage){
                         var condition ='withImage';
@@ -247,6 +231,8 @@ $(document).ready(function() {
                         var productBrand = jQuery.trim($("#productBrand").val());
                         var productDescription = jQuery.trim($("#productDescription").val());
                         var productPrice = jQuery.trim($("#productPrice").val());
+                        var productTax = jQuery.trim($("#productTax").val());
+                        let files = document.getElementById("productImage").files;
 
                         var formData = new FormData();
                         formData.append("categoryName", categoryName);
@@ -255,9 +241,13 @@ $(document).ready(function() {
                         formData.append("productDescription", productDescription);
                         formData.append("productBrand", productBrand);
                         formData.append("productPrice", productPrice);
-                        formData.append("productImage", $("#productImage")[0].files[0]);
                         formData.append("condition", condition);
                         formData.append("proId", proId);
+                        formData.append("productTax", productTax);
+                        
+                        for (let i = 0; i < files.length; i++) {
+                            formData.append("ProductImage", files[i]);
+                        }
 
 
                         $.ajax({
@@ -303,6 +293,7 @@ $(document).ready(function() {
                         var productBrand = jQuery.trim($("#productBrand").val());
                         var productDescription = jQuery.trim($("#productDescription").val());
                         var productPrice = jQuery.trim($("#productPrice").val());
+                        var productTax = jQuery.trim($("#productTax").val());
 
                         var formData = new FormData();
                         formData.append("categoryName", categoryName);
@@ -313,6 +304,7 @@ $(document).ready(function() {
                         formData.append("productPrice", productPrice);
                         formData.append("condition", condition);
                         formData.append("proId", proId);
+                        formData.append("productTax", productTax);
 
 
                         $.ajax({
@@ -381,7 +373,7 @@ $(document).ready(function() {
         });
         
     });
-    
+
     // Delete Categories
     $(document).on('click', '.deleteItem', function(event) {
         event.preventDefault();
@@ -434,7 +426,7 @@ $(document).ready(function() {
         });
     });
 
-    
+
     // Edit SubCategories
     $(document).on('click', '.editSubcategory', function(event) {
         event.preventDefault();
@@ -536,6 +528,7 @@ $(document).ready(function() {
                 var categoryList = response.subcategory.DATA[0];
                 var category = categoryList[0];
                 var subcategory = categoryList[1];
+                console.log(product);
                 
                 if (response) {
                     $("#modalSubmit").attr("data-type", 'editProduct');
@@ -543,10 +536,11 @@ $(document).ready(function() {
                     $("#exampleModalLabel").text("Edit Product");
                     $("#categoriesName").val(category);
                     $("#productName").val(product[0]);
-                    $("#productBrand").val(product[3]);
+                    $("#productBrand").val(product[4]);
                     $("#productDescription").val(product[1]);
-                    $("#productPrice").val(product[2]);
+                    $("#productPrice").val(product[3]);
                     $("#subCategoriesName").val(subcategory);
+                    $("#productTax").val(product[6]);
                     $("#productModal").modal('show');
                 }
             },
@@ -610,18 +604,16 @@ $(document).ready(function() {
         } else {
           $("#subCategoriesName").html(`<option value="" selected></option>`);
         }
-      });
-
-
-
-      $("#closeProduct").off('click').on('click', function(event) {
-        location.reload();
+    });
+    
+    $("#closeProduct").off('click').on('click', function(event) {
+  location.reload();
     });
 
 
     // -------------User View------------------------
 
-    
+
     $("#addToCart").off('click').on('click', function(event) {
         event.preventDefault();
         var proid = $(this).attr("pro-id");
@@ -633,13 +625,10 @@ $(document).ready(function() {
             success: function(response) {
              
                 if (response.result === true) {
-                    alert("Added To Cart");
+                    window.location.href="cartPage.cfm";
                 }
                 else if(response.result === "login"){
-                    window.location.href="userloginPage.cfm";
-                }
-                else{
-                    alert("Item already added to cart");
+                    $('#logModal').modal('show');
                 }
             },
             error: function(status, error) {
@@ -647,8 +636,6 @@ $(document).ready(function() {
             }
         });
     });
-
-
     // Login User
     $("#submitLogin").off('click').on('click', function(event) {
         event.preventDefault();
@@ -683,7 +670,6 @@ $(document).ready(function() {
             });
         }
     });
-
      // Logout
      $("#Userlogout").off('click').on('click', function() {
         $.ajax({
@@ -692,7 +678,7 @@ $(document).ready(function() {
             dataType: 'JSON',
             success: function(response) {
                 if (response) {
-                    window.location.href="userloginPage.cfm";
+                    location.reload();
                 }
             },
             error: function(status, error) {
@@ -720,24 +706,366 @@ $(document).ready(function() {
         });
     });
 
+    // Search Item
+    $("#searchItem").off('click').on('click', function(event) {
+        event.preventDefault();
+        var productName = $("#productName").val();
+        window.location.href=`userProductList.cfm?search=${productName}`;
+    });
+
+     // Cart Quantity
+     $(".quantityControl").off("click").on("click", function (event) {
+        event.preventDefault();
+        
+        var id = $(this).attr("pro-id");
+        var type = $(this).attr("data-type");
+        var $quantityElement = $(this).closest(".d-flex").find(".cartQuantity");
+        var $totalCostElement = $(this).closest(".col-3").find("#totalcost");
+        var $decreaseButton = $(this).closest(".d-flex").find("[data-type='decrease']");
+    
+        $.ajax({
+            url: "../models/savedetails.cfc?method=addQuantity",
+            method: "POST",
+            data: { id: id, type: type },
+            dataType: "JSON",
+            success: function (response) {
+                if (response.result) {
+                    
+                    $quantityElement.text(response.priceDetails.quantity);
+                    $totalCostElement.text("₹" + response.priceDetails.fldPriceWithTax.toFixed(2));
+                    $("#cartTotalPrice").text("₹" + response.priceDetails.totalPrice)
+
+                    if (response.priceDetails.quantity <= 1) {
+                        $decreaseButton.addClass("disabled");
+                    } else {
+                        $decreaseButton.removeClass("disabled");
+                    }
+                } else {
+                    console.error("Error: " + response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX error: " + status + ", " + error);
+            }
+        });
+    });
+    
+
+    // Sort Items
+    $(".sort").off('click').on('click', function(event) {
+    event.preventDefault();
+    var type =$(this).attr("type");
+    var data =$(this).attr("data-id");
+    var mode =$(this).attr("data-mode");
+    if (mode==="search") {
+        window.location.href = `userProductList.cfm?search=${data}&sort=${type}`;
+    }
+    else if(mode==="sub"){
+        window.location.href = `userProductList.cfm?subid=${data}&sort=${type}`;
+    }
+    });
+
+    // Submit Address
+    $("#submitAddress").off('click').on('click', function(event) {
+    event.preventDefault();
+    var validate = validateAddress();
+    if(validate){
+        var name = jQuery.trim($('#name').val());
+        var phone = jQuery.trim($('#phone').val());
+        var pincode = jQuery.trim($('#pincode').val());
+        var state = jQuery.trim($('#state').val());
+        var city = jQuery.trim($('#city').val());
+        var building = jQuery.trim($('#building').val());
+        var area = jQuery.trim($('#area').val());
+        $.ajax({
+            url: '../models/savedetails.cfc?method=addAddress',
+            method: 'post',
+            data: {name,phone,pincode,state,city,building,area},
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.result) {
+                    window.location.href = "userProfile.cfm";
+                }
+            },
+            error: function(status, error) {
+                console.log("AJAX error: " + status + ", " + error);
+            }
+        });
+    }
+    });
+
+    // selectAddress
+    $("#selectAddress").off('click').on('click', function(event) {
+    
+    event.preventDefault();
+    var addressId = $('input[name="addressRadio"]:checked').val();
+    var proid = $(this).attr('proid');
+    if(proid === ""){
+        window.location.href=`paymentPage.cfm?addressid=${addressId}&order=cart`
+    }
+    else{
+        window.location.href=`paymentPage.cfm?addressid=${addressId}&proid=${proid}`
+    }
+    });
+
+    $(".quantityControlPayment").off('click').on('click', function(event) {event.preventDefault();
+    var type = $(this).attr('data-type');
+    var quantity = parseInt($("#productQuantity").text(), 10); 
+    
+    if (type === 'increase') {
+        quantity = quantity + 1;
+    } else if (type === 'decrease') {
+        quantity = quantity - 1;
+    }
+    if (quantity < 1) {
+        quantity = 1;
+    }
+    
+    $("#productQuantity").text(quantity);
+    
+    });
+
+    // PAY
+    $("#pay").off('click').on('click', function() {
+        var cardnumber =  jQuery.trim($('#cardnumber').val());
+        var cvv =  jQuery.trim($('#cvv').val());
+        var result = true;
+        if(cardnumber != '11111111111'){
+           $('#cardnumber').addClass("is-invalid");
+           result = false;
+        }
+        else{
+           $('#cardnumber').removeClass("is-invalid");
+           $('#cardnumber').addClass("is-valid");
+        }
+        if(cvv != '123'){
+           $('#cvv').addClass("is-invalid");
+           result = false;
+        }
+        else{
+           $('#cvv').removeClass("is-invalid");
+           $('#cvv').addClass("is-valid");
+        }
+        if(result){
+            var addressId =$(this).attr("address-id");
+            var proid =$(this).attr("proid");
+            var quantity =$('#productQuantity').text();
+
+            if(isNaN(proid)){
+                $.ajax({
+                    url: '../models/savedetails.cfc?method=orderCartProduct',
+                    method: 'post',
+                    data: {addressId},
+                    dataType: 'JSON',
+                    success: function() {
+                        window.location.href="paysuccess.cfm"
+                    },
+                    error: function(status, error) {
+                        console.log("AJAX error: " + status + ", " + error);
+                    }
+                });
+            }
+            else{
+                $.ajax({
+                    url: '../models/savedetails.cfc?method=orderProduct',
+                    method: 'post',
+                    data: {cardnumber,cvv,addressId,proid,quantity},
+                    dataType: 'JSON',
+                    success: function(response) {
+                        if (response.result) {
+                            window.location.href="paysuccess.cfm"
+                        }
+                        else{
+                            alert(response.msg)
+                        }
+                    },
+                    error: function(status, error) {
+                        console.log("AJAX error: " + status + ", " + error);
+                    }
+                });
+            }
+        }
+    });
+
+    $("#submitFilter").off('click').on('click', function(event) {
+        event.preventDefault();
+        var checkedValues = $(".form-check-input:checked").map(function() { return $(this).val(); }).get();
+        var subid=$(this).attr("sub-id");
+        var min = $('#minValue').val();
+        var max = $('#maxValue').val();
+
+        $.ajax({
+            url: '../models/savedetails.cfc?method=filterSort',
+            method: 'post',
+            data: {checkedValues: JSON.stringify(checkedValues),subid,min,max},
+            dataType: 'json',
+            success: function(response) {
+
+                var productsHtml = '';
+                if(response.DATA.length === 0){
+                    productsHtml =`
+                    <h1 class="fw-bold">OOPS!!</h5>
+                    <p class="card-text productname fs-1">No Product found!</p>`
+                }
+                response.DATA.forEach(function(product) {
+                    productsHtml += `
+                    <a href="userProduct.cfm?proid=${product[0]}" class="col-md-3 mt-3 text-decor-none" proid="${product[0]}">
+                        <div class="card" style="width: 18rem; height: 24rem;">
+                            <img src="../assets/productImage/${product[4]}" class="card-img-top p-2" height="250" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title productname ">${product[1]}</h5>
+                                <p class="card-text productname ">${product[2]}</p>
+                                <p class="card-text fw-bold price-tag ">&#8377;${product[3]}</p>
+                            </div>
+                        </div>
+                    </a>`;
+                });
+
+                $('.item-row').empty().html(productsHtml);
+            },
+
+            error: function(xhr, status, error) {
+                console.error("AJAX error: " + status + ", " + error);
+            }
+        });
+    });
+
+    $("#orderSearch").off('click').on('click', function(event) {
+        event.preventDefault();
+        var orderid = $("#orderidInput").val();
+        window.location.href=`orderHistory.cfm?orderid=${orderid}`
+    });
+
+    $(document).on('click', '#imageThumbnail', function(event) {
+        event.preventDefault();
+        var proId=$(this).attr("data-id");
+        
+        $.ajax({
+            url: '../models/getList.cfc?method=getProductImages',
+            method: 'post',
+            data: {proId},
+            dataType: 'JSON',
+            success: function(response) {
+                var content = `
+                    <div id="carouselExampleIndicators" class="carousel carousel-dark slide col-12" data-bs-ride="carousel">
+                        <div class="carousel-indicators mb-0">
+                `;
+                for (var i = 0; i < response.IMAGES.length; i++) {
+                    content += `
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="${i}"
+                            class="${i === 0 ? 'active' : ''} bg-dark" aria-label="Slide ${i + 1}"></button>
+                    `;
+                }
+                content += `
+                        </div>
+                        <div class="carousel-inner carousel-style">
+                `;
+                var i=0
+                for (images of response.IMAGES) {
+                    i=i+1
+                    content += `
+                        <div class="carousel-item ${i === 1 ? 'active' : ''}" style="height:80vh">
+                            <div class="d-flex justify-content-center gap-3 align-items-center">
+                                ${images.FLDIMAGENAME === response.THUMBNAIL ? '<p class="form-text fs-3">Thumbnail image</p>' :`<button class="btn btn-outline-danger mb-2 deleteProductimage"  data-id="${images.FLDIMAGEID}">Delete</button> <button class="btn btn-outline-success mb-2 thumbnailimage"  data-id="${images.FLDIMAGEID}" pro-id="${proId}">Set as Thumbnail</button>`}
+                            </div>
+                            <img src="../assets/productImage/${images.FLDIMAGENAME}" alt="" style="max-width:100%; height:auto; display:block; margin:auto;">
+                        </div>
+                    `;
+                }
+                $("#imagemodalBody").html(content);
+                $("#imageModal").modal('show');
+            },
+            error: function(status, error) {
+                console.log("AJAX error: " + status + ", " + error);
+            }
+        });
+    });
+
+    $(document).on('click', '.deleteProductimage', function() {
+        var imageid=$(this).attr("data-id");
+        $.ajax({
+            url: '../models/savedetails.cfc?method=deleteProductimage',
+            method: 'post',
+            data: {imageid},
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.result) {
+                    location.reload()
+                }
+            },
+            error: function(status, error) {
+                console.log("AJAX error: " + status + ", " + error);
+            }
+        });
+    });
+
+    $(document).on('click', '.thumbnailimage', function() {
+        var imageid=$(this).attr("data-id");
+        var productId=$(this).attr("pro-id");
+        $.ajax({
+            url: '../models/savedetails.cfc?method=setThumbnailImage',
+            method: 'post',
+            data: {imageid,productId},
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.result) {
+                    location.reload()
+                }
+            },
+            error: function(status, error) {
+                console.log("AJAX error: " + status + ", " + error);
+            }
+        });
+    });
+
+    $("#loginOnBuy").off('click').on('click', function(event) {
+        event.preventDefault();
+        $("#loginModal").attr("data-type",'buy');
+        $('#logModal').modal('show');
+    });
+
+    $("#loginModal").off('click').on('click', function(event) {
+        event.preventDefault();
+        var proid = $(this).attr("data-id");
+        var mode = $(this).attr("data-type");
+        var isValid = validateForm();
+        if (isValid) {
+            var username = jQuery.trim($('#InputUname').val());
+            var email = jQuery.trim($('#InputEmail').val());
+            var password = jQuery.trim($('#InputPassword').val());
+            
+            $.ajax({
+                url: '../controllers/loginUser.cfc?method=checkLogin',
+                method: 'post',
+                data: { username, email, password, mode, proid},
+                dataType: 'JSON',
+                success: function(response) {
+                    if (response.result === true) {
+                        $("#InputEmail,#InputUname,#InputPassword,#roleOptions").removeClass("is-invalid");
+                        $("#InputEmail,#InputUname,#InputPassword,#roleOptions").addClass("is-valid");
+                        $("#passwordHelp").text('');
+                        window.location.href=`cartPage.cfm`;
+                    }else if (response.result === 'buy') {
+                        location.reload();
+                    }else{
+                        $("#InputEmail,#InputUname,#InputPassword,#roleOptions").addClass("is-invalid");
+                        $("#InputEmail,#InputUname,#InputPassword,#roleOptions").removeClass("is-valid");
+                        $("#passwordHelp").addClass("text-danger");
+                        $("#passwordHelp").removeClass("text-success");
+                        $("#passwordHelp").text("login faild");
+                    }
+                },
+                error: function(status, error) {
+                    console.log("AJAX Error: " + xhr.responseText);
+                    console.log("Status: " + status + ", Error: " + error);
+                }
+            });
+        }
+    });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//---------Validate---------- 
-function validateForm(){ 
+    //---------Validate---------- 
+    function validateForm(){ 
         var username = jQuery.trim($('#InputUname').val());
         var email = jQuery.trim($('#InputEmail').val());
         var password = jQuery.trim($('#InputPassword').val());
@@ -783,148 +1111,256 @@ function validateForm(){
             result = false;
         }
         return result;
+        };
+
+    function validateModal(type){
+        if(type === 'category' || type === 'editCategory'){
+            var categoryName = jQuery.trim($("#categoriesName").val());
+            if(categoryName.length){
+                $("#categoriesName").removeClass("is-invalid");
+                $("#categoriesName").addClass("is-valid");
+                $("#errorCategory").text("");
+                return true;
+            }
+            else{
+                $("#categoriesName").addClass("is-invalid");
+                $("#categoriesName").removeClass("is-valid");
+                $("#errorCategory").text("Enter Category name");
+                return false;
+            }
+        }
+        else if(type ==='subcategory' || type ==='editSubcategory'){
+            var categoryName = jQuery.trim($("#categoriesName").val());
+            var subCategoryName = jQuery.trim($("#subCategoriesName").val());
+            var result = true;
+            if(categoryName.length){
+                $("#categoriesName").removeClass("is-invalid");
+                $("#categoriesName").addClass("is-valid");
+                $("#errorCategory").text("");
+            }
+            else{
+                $("#categoriesName").addClass("is-invalid");
+                $("#categoriesName").removeClass("is-valid");
+                $("#errorCategory").text("Enter Category name");
+                result = false;
+            }
+
+            if(subCategoryName.length){
+                $("#subCategoriesName").removeClass("is-invalid");
+                $("#subCategoriesName").addClass("is-valid");
+                $("#errorSubcategory").text("");
+            }
+            else{
+                $("#subCategoriesName").addClass("is-invalid");
+                $("#subCategoriesName").removeClass("is-valid");
+                $("#errorSubcategory").text("Enter SubCategory name");
+                result = false;
+            }
+            return result;
+
+        }
+        else if(type ==='product'|| type ==='editProduct'){
+            var categoryName = jQuery.trim($("#categoriesName").val());
+            var subCategoryName = jQuery.trim($("#subCategoriesName").val());
+
+            var productName = jQuery.trim($("#productName").val());
+            var productDescription = jQuery.trim($("#productDescription").val());
+            var productPrice = jQuery.trim($("#productPrice").val());
+            var productTax = jQuery.trim($("#productTax").val());
+            var productBrand = jQuery.trim($("#productBrand").val());
+            var result = true;
+            if(categoryName.length){
+                $("#categoriesName").removeClass("is-invalid");
+                $("#categoriesName").addClass("is-valid");
+                $("#errorCategory").text("");
+            }
+            else{
+                $("#categoriesName").addClass("is-invalid");
+                $("#categoriesName").removeClass("is-valid");
+                $("#errorCategory").text("Enter Category name");
+                result = false;
+            }
+
+            if(subCategoryName.length){
+                $("#subCategoriesName").removeClass("is-invalid");
+                $("#subCategoriesName").addClass("is-valid");
+                $("#errorSubcategory").text("");
+            }
+            else{
+                $("#subCategoriesName").addClass("is-invalid");
+                $("#subCategoriesName").removeClass("is-valid");
+                $("#errorSubcategory").text("Enter SubCategory name");
+                result = false;
+            }
+
+            if(productName.length){
+                $("#productName").removeClass("is-invalid");
+                $("#productName").addClass("is-valid");
+                $("#errorProductName").text("");
+            }
+            else{
+                $("#productName").addClass("is-invalid");
+                $("#productName").removeClass("is-valid");
+                $("#errorProductName").text("Enter Product name");
+                result = false;
+            }
+
+            if(productBrand.length){
+                $("#productBrand").removeClass("is-invalid");
+                $("#productBrand").addClass("is-valid");
+                $("#errorProductBrand").text("");
+            }
+            else{
+                $("#productBrand").addClass("is-invalid");
+                $("#productBrand").removeClass("is-valid");
+                $("#errorProductBrand").text("Enter Brand name");
+                result = false;
+            }
+
+            if(productDescription.length){
+                $("#productDescription").removeClass("is-invalid");
+                $("#productDescription").addClass("is-valid");
+                $("#errorProductDesc").text("");
+            }
+            else{
+                $("#productDescription").addClass("is-invalid");
+                $("#productDescription").removeClass("is-valid");
+                $("#errorProductDesc").text("Enter Product Description");
+                result = false;
+            }
+
+            if(productPrice.length){
+                $("#productPrice").removeClass("is-invalid");
+                $("#productPrice").addClass("is-valid");
+                $("#errorProductPrice").text("");
+            }
+            else{
+                $("#productPrice").addClass("is-invalid");
+                $("#productPrice").removeClass("is-valid");
+                $("#errorProductPrice").text("Enter Product Price");
+                result = false;
+            }
+
+            if(productTax.length){
+                $("#productTax").removeClass("is-invalid");
+                $("#productTax").addClass("is-valid");
+                $("#errorProductTax").text("");
+            }
+            else{
+                $("#productTax").addClass("is-invalid");
+                $("#productTax").removeClass("is-valid");
+                $("#errorProductTax").text("Enter Tax Percentage");
+                result = false;
+            }
+            return result;
+        }
+    }
+
+    function validateAddress(){ 
+        var name = jQuery.trim($('#name').val());
+        var phone = jQuery.trim($('#phone').val());
+        var pincode = jQuery.trim($('#pincode').val());
+        var state = jQuery.trim($('#state').val());
+        var city = jQuery.trim($('#city').val());
+        var building = jQuery.trim($('#building').val());
+        var area = jQuery.trim($('#area').val());
+        var result = true;
+        if(name.length){
+            $("#name").removeClass("is-invalid");
+            $("#name").addClass("is-valid");
+            $("#errorName").text("");
+
+        }
+        else{
+            $("#name").addClass("is-invalid");
+            $("#name").removeClass("is-valid");
+            $("#errorName").text("Enter Full Name");
+            $("#errorName").addClass("text-danger");
+            result = false;
+        }
+
+        let phonePattern = /^(?:\+91)?[0-9]{10}$/; 
+        if(phone.length && phonePattern.test(phone)){
+            $("#phone").removeClass("is-invalid");
+            $("#phone").addClass("is-valid");
+            $("#errorPhone").text("");
+        } else {
+            $("#phone").addClass("is-invalid");
+            $("#phone").removeClass("is-valid");
+            $("#errorPhone").text("Enter a valid Phone Number");
+            $("#errorPhone").addClass("text-danger");
+            result = false;
+        }
+
+        if(pincode.length){
+            $("#pincode").removeClass("is-invalid");
+            $("#pincode").addClass("is-valid");
+            $("#errorPincode").text("");
+        }
+        else{
+            $("#pincode").addClass("is-invalid");
+            $("#pincode").removeClass("is-valid");
+            $("#errorPincode").text("Enter Pincode");
+            $("#errorPincode").addClass("text-danger");
+            $("#errorPincode").removeClass("text-success");
+            result = false;
+        }
+
+        if(state.length){
+            $("#state").removeClass("is-invalid");
+            $("#state").addClass("is-valid");
+            $("#errorState").text("");
+        }
+        else{
+            $("#state").addClass("is-invalid");
+            $("#state").removeClass("is-valid");
+            $("#errorState").text("Enter State");
+            $("#errorState").addClass("text-danger");
+            $("#errorState").removeClass("text-success");
+            result = false;
+        }
+
+        if(city.length){
+            $("#city").removeClass("is-invalid");
+            $("#city").addClass("is-valid");
+            $("#errorCity").text("");
+        }
+        else{
+            $("#city").addClass("is-invalid");
+            $("#city").removeClass("is-valid");
+            $("#errorCity").text("Enter City");
+            $("#errorCity").addClass("text-danger");
+            $("#errorCity").removeClass("text-success");
+            result = false;
+        }
+
+        if(building.length){
+            $("#building").removeClass("is-invalid");
+            $("#building").addClass("is-valid");
+            $("#errorBuilding").text("");
+        }
+        else{
+            $("#building").addClass("is-invalid");
+            $("#building").removeClass("is-valid");
+            $("#errorBuilding").text("Enter Building");
+            $("#errorBuilding").addClass("text-danger");
+            $("#errorBuilding").removeClass("text-success");
+            result = false;
+        }
+
+        if(area.length){
+            $("#area").removeClass("is-invalid");
+            $("#area").addClass("is-valid");
+            $("#errorArea").text("");
+        }
+        else{
+            $("#area").addClass("is-invalid");
+            $("#area").removeClass("is-valid");
+            $("#errorArea").text("Enter Area");
+            $("#errorArea").addClass("text-danger");
+            $("#errorArea").removeClass("text-success");
+            result = false;
+        }
+        return result;
     };
 });
-
-function validateModal(type){
-    if(type === 'category' || type === 'editCategory'){
-        var categoryName = jQuery.trim($("#categoriesName").val());
-        if(categoryName.length){
-            $("#categoriesName").removeClass("is-invalid");
-            $("#categoriesName").addClass("is-valid");
-            $("#errorCategory").text("");
-            return true;
-        }
-        else{
-            $("#categoriesName").addClass("is-invalid");
-            $("#categoriesName").removeClass("is-valid");
-            $("#errorCategory").text("Enter Category name");
-            return false;
-        }
-    }
-    else if(type ==='subcategory' || type ==='editSubcategory'){
-        var categoryName = jQuery.trim($("#categoriesName").val());
-        var subCategoryName = jQuery.trim($("#subCategoriesName").val());
-        var result = true;
-        if(categoryName.length){
-            $("#categoriesName").removeClass("is-invalid");
-            $("#categoriesName").addClass("is-valid");
-            $("#errorCategory").text("");
-        }
-        else{
-            $("#categoriesName").addClass("is-invalid");
-            $("#categoriesName").removeClass("is-valid");
-            $("#errorCategory").text("Enter Category name");
-            result = false;
-        }
-        
-        if(subCategoryName.length){
-            $("#subCategoriesName").removeClass("is-invalid");
-            $("#subCategoriesName").addClass("is-valid");
-            $("#errorSubcategory").text("");
-        }
-        else{
-            $("#subCategoriesName").addClass("is-invalid");
-            $("#subCategoriesName").removeClass("is-valid");
-            $("#errorSubcategory").text("Enter SubCategory name");
-            result = false;
-        }
-        return result;
-        
-    }
-    else if(type ==='product'|| type ==='editProduct'){
-        var categoryName = jQuery.trim($("#categoriesName").val());
-        var subCategoryName = jQuery.trim($("#subCategoriesName").val());
-
-        var productName = jQuery.trim($("#productName").val());
-        var productDescription = jQuery.trim($("#productDescription").val());
-        var productPrice = jQuery.trim($("#productPrice").val());
-        // var productImage = jQuery.trim($("#productImage").val());
-        var productBrand = jQuery.trim($("#productBrand").val());
-        var result = true;
-        if(categoryName.length){
-            $("#categoriesName").removeClass("is-invalid");
-            $("#categoriesName").addClass("is-valid");
-            $("#errorCategory").text("");
-        }
-        else{
-            $("#categoriesName").addClass("is-invalid");
-            $("#categoriesName").removeClass("is-valid");
-            $("#errorCategory").text("Enter Category name");
-            result = false;
-        }
-        
-        if(subCategoryName.length){
-            $("#subCategoriesName").removeClass("is-invalid");
-            $("#subCategoriesName").addClass("is-valid");
-            $("#errorSubcategory").text("");
-        }
-        else{
-            $("#subCategoriesName").addClass("is-invalid");
-            $("#subCategoriesName").removeClass("is-valid");
-            $("#errorSubcategory").text("Enter SubCategory name");
-            result = false;
-        }
-        
-        if(productName.length){
-            $("#productName").removeClass("is-invalid");
-            $("#productName").addClass("is-valid");
-            $("#errorProductName").text("");
-        }
-        else{
-            $("#productName").addClass("is-invalid");
-            $("#productName").removeClass("is-valid");
-            $("#errorProductName").text("Enter Product name");
-            result = false;
-        }
-        
-        if(productBrand.length){
-            $("#productBrand").removeClass("is-invalid");
-            $("#productBrand").addClass("is-valid");
-            $("#errorProductBrand").text("");
-        }
-        else{
-            $("#productBrand").addClass("is-invalid");
-            $("#productBrand").removeClass("is-valid");
-            $("#errorProductBrand").text("Enter Brand name");
-            result = false;
-        }
-        
-        if(productDescription.length){
-            $("#productDescription").removeClass("is-invalid");
-            $("#productDescription").addClass("is-valid");
-            $("#errorProductDesc").text("");
-        }
-        else{
-            $("#productDescription").addClass("is-invalid");
-            $("#productDescription").removeClass("is-valid");
-            $("#errorProductDesc").text("Enter Product Description");
-            result = false;
-        }
-        
-        if(productPrice.length){
-            $("#productPrice").removeClass("is-invalid");
-            $("#productPrice").addClass("is-valid");
-            $("#errorProductPrice").text("");
-        }
-        else{
-            $("#productPrice").addClass("is-invalid");
-            $("#productPrice").removeClass("is-valid");
-            $("#errorProductPrice").text("Enter Product Price");
-            result = false;
-        }
-        
-        // if(productImage.length){
-        //     $("#productImage").removeClass("is-invalid");
-        //     $("#productImage").addClass("is-valid");
-        //     $("#errorProductImage").text("");
-        // }
-        // else{
-        //     $("#productImage").addClass("is-invalid");
-        //     $("#productImage").removeClass("is-valid");
-        //     $("#errorProductImage").text("Select Product Image");
-        //     result = false;
-        // }
-        return result;
-    }
-}
